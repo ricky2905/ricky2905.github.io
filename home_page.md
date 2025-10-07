@@ -23,15 +23,20 @@ Here you will find all the homework assignments, projects, and resources for the
 
 All homework assignments are organized in dedicated folders within this repository:
 
-- [Homework 1]({{ site.baseurl }}/HOMEWORK/homework1/) – *What is Statistics, and Why Can It Be Useful for Cybersecurity?*  
+- [Homework 1](/HOMEWORK/homework1/) – *What is Statistics, and Why Can It Be Useful for Cybersecurity?*  
   Cybersecurity is more important than ever. Using statistics, we can detect threats, analyze patterns, and prevent attacks before they happen.
 
+- [Homework 2](/HOMEWORK/homework2/) – *(Add a short description here)*
+
+- [Homework 3](/HOMEWORK/homework3/) – *(Add a short description here)*
+
+> Each homework folder contains detailed explanations, analysis, and related resources.
 
 ---
 
 ## About
 
-Learn more about me in the [About page]({{ site.baseurl }}/about/).
+Learn more about me in the [About page](/about/).
 
 ---
 
