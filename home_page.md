@@ -26,11 +26,6 @@ All homework assignments are organized in dedicated folders within this reposito
 - [Homework 1]({{ site.baseurl }}/HOMEWORK/homework1/) – *What is Statistics, and Why Can It Be Useful for Cybersecurity?*  
   Cybersecurity is more important than ever. Using statistics, we can detect threats, analyze patterns, and prevent attacks before they happen.
 
-- [Homework 2]({{ site.baseurl }}/HOMEWORK/homework2/) – *(Add a short description here)*
-
-- [Homework 3]({{ site.baseurl }}/HOMEWORK/homework3/) – *(Add a short description here)*
-
-> Each homework folder contains detailed explanations, analysis, and related resources.
 
 ---
 
