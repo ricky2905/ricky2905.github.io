@@ -1,6 +1,12 @@
+---
+layout: page
+title: Home Page
+permalink: /
+---
+
 # Riccardo D'Annibale – 2063306
 
-**Email:** [dannibale.2063306@studenti.uniroma1.it](mailto:dannibale.2063306@studenti.uniroma1.it)
+**Email:** [dannibale.2063306@studenti.uniroma1.it](mailto:dannibale.2063301@studenti.uniroma1.it)
 
 [![View on GitHub](https://img.shields.io/badge/View-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/ricky2905)
 
@@ -17,14 +23,12 @@ Here you will find all the homework assignments, projects, and resources for the
 
 All homework assignments are organized in dedicated folders within this repository:
 
-- [Homework 1](HOMEWORK1/homework1.md) – *What is Statistics, and Why Can It Be Useful for Cybersecurity?*  
+- [Homework 1]({{ site.baseurl }}/HOMEWORK/homework1/) – *What is Statistics, and Why Can It Be Useful for Cybersecurity?*  
   Cybersecurity is more important than ever. Using statistics, we can detect threats, analyze patterns, and prevent attacks before they happen.
 
-- [Homework 2](HOMEWORK2/homework2.md)  
-  *(Add a short description here)*
+- [Homework 2]({{ site.baseurl }}/HOMEWORK/homework2/) – *(Add a short description here)*
 
-- [Homework 3](HOMEWORK3/homework3.md)  
-  *(Add a short description here)*
+- [Homework 3]({{ site.baseurl }}/HOMEWORK/homework3/) – *(Add a short description here)*
 
 > Each homework folder contains detailed explanations, analysis, and related resources.
 
@@ -32,7 +36,7 @@ All homework assignments are organized in dedicated folders within this reposito
 
 ## About
 
-Learn more about me in the [About page](about.md).
+Learn more about me in the [About page]({{ site.baseurl }}/about/).
 
 ---
 
