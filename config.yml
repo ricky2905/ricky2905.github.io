@@ -1,0 +1,4 @@
+title: "Il mio sito"
+description: "Benvenuto sul mio sito creato con Markdown e GitHub Pages"
+baseurl: "" 
+theme: minima
