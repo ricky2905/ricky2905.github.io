@@ -1,7 +1,7 @@
-/* Font e sfondo generale */
+/* Body e font */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #1c1c1c;
+  background-color: #0f111a;
   color: #e0e0e0;
   line-height: 1.8;
   padding: 2rem;
@@ -11,41 +11,39 @@ body {
 
 /* Titoli */
 h1 {
-  font-size: 2.5rem;
-  color: #4caf50;
-  border-bottom: 3px solid #4caf50;
+  font-size: 2.8rem;
+  color: #00ff99;
+  border-bottom: 3px solid #00ff99;
   padding-bottom: 0.3rem;
 }
 h2 {
   font-size: 2rem;
-  color: #81c784;
+  color: #33ffcc;
   margin-top: 2rem;
 }
 h3 {
   font-size: 1.5rem;
-  color: #a5d6a7;
+  color: #66ffcc;
   margin-top: 1.5rem;
 }
 
-/* Card per contenuti */
+/* Card */
 .card {
-  background-color: #2c2c2c;
-  border-radius: 10px;
+  background-color: #1a1c2b;
+  border-left: 5px solid #00ff99;
+  border-radius: 8px;
   padding: 1.5rem;
   margin: 2rem 0;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-  transition: transform 0.2s;
-}
-.card:hover {
-  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,255,153,0.2);
 }
 
 /* Link */
 a {
-  color: #4caf50;
+  color: #00ff99;
   text-decoration: none;
 }
 a:hover {
+  color: #33ffcc;
   text-decoration: underline;
 }
 
@@ -53,7 +51,7 @@ a:hover {
 hr {
   border: none;
   height: 2px;
-  background-color: #4caf50;
+  background-color: #00ff99;
   margin: 2rem 0;
 }
 
@@ -62,9 +60,9 @@ select {
   padding:0.5rem 1rem;
   border-radius:5px;
   font-size:1rem;
-  background-color: #333;
+  background-color: #222236;
   color: #e0e0e0;
-  border: 1px solid #4caf50;
+  border: 1px solid #00ff99;
   margin-top:0.5rem;
 }
 
@@ -76,18 +74,17 @@ select {
   margin-bottom: 2rem;
 }
 .topnav a {
-  color: #4caf50;
   font-weight: bold;
 }
 .topnav a:hover {
-  color: #81c784;
+  color: #33ffcc;
 }
 
 /* Footer */
 footer {
   margin-top: 3rem;
   padding-top: 1rem;
-  border-top: 1px solid #4caf50;
+  border-top: 1px solid #00ff99;
   text-align: center;
   font-size: 0.9rem;
   color: #999;
