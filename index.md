@@ -37,4 +37,4 @@ Learn more about me in the [About page](/about/).
 
 ## Statistics 2025/2026
 
-This blog corresponds to the **Statistics course** for the **2025/2026 academic year**.
+In this Website I will publish the **homeworks** of the Statistics course (delivered in the academic year 2025/2026).
