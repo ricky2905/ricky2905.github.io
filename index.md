@@ -13,11 +13,11 @@ permalink: /
 
 <hr>
 
-## Welcome to My Statistics Page
+## Welcome to My Cybersecurity Blog
 
 <div class="card">
-This repository is dedicated to the **Statistics course** of the **Master’s Degree in Cybersecurity** at **Sapienza University of Rome**.  
-Here you will find all the homework assignments, projects, and resources for the course.
+This blog is dedicated to **Statistics and Cybersecurity**.  
+Here you will find homework, projects, articles, and insights on cybersecurity topics.
 </div>
 
 <hr>
@@ -45,5 +45,5 @@ Learn more about me in the [About page](/about/).
 ## Statistics 2025/2026
 
 <div class="card">
-This repository corresponds to the **Statistics course** for the **2025/2026 academic year**.
+This blog corresponds to the **Statistics course** for the **2025/2026 academic year**.
 </div>
