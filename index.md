@@ -7,14 +7,17 @@ permalink: /
 # Riccardo D'Annibale – 2063306
 
 **Email:** [dannibale.2063306@studenti.uniroma1.it](mailto:dannibale.2063301@studenti.uniroma1.it)  
-[GitHub](https://github.com/ricky2905)
+
+**GitHub:** [ricky2905](https://github.com/ricky2905)  
+[![View on GitHub](https://img.shields.io/badge/View-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/ricky2905)
 
 ---
 
 ## Welcome to My Cybersecurity Blog
 
-Questo blog è dedicato a **Statistics & Cybersecurity**.  
-Qui troverai homework, progetti, articoli e insight su tematiche di cybersecurity.
+This blog is dedicated to **Statistics and Cybersecurity**.  
+
+Here you will find **homework, projects, articles, and insights** on cybersecurity topics.
 
 ---
 
@@ -28,10 +31,10 @@ Select Homework:
 
 ## About Me
 
-Scopri di più su di me nella [pagina About](/about/).
+Learn more about me in the [About page](/about/).
 
 ---
 
 ## Statistics 2025/2026
 
-Questo blog corrisponde al corso di **Statistics 2025/2026**.
+This blog corresponds to the **Statistics course** for the **2025/2026 academic year**.
