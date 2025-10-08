@@ -11,5 +11,5 @@ My name is **Riccardo D'Annibale** (ID: 2063306), and I am enrolled in the first
 
 ## Contact
 
-- **Email:** [ricky290503@gmail.com](mailto:ricky290503@gmail.com)  
+- **Email:** [riccardodannibale1.com](mailto:riccardodannibale1.com)  
 - **GitHub:** [ricky2905](https://github.com/ricky2905)
