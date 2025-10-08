@@ -15,7 +15,7 @@ In cybersecurity, trasforma i dati grezzi in insight utili.
 
 ---
 
-## Why Statistics is Useful
+## Why Can It Be Useful for Cybersecurity
 
 I cyber threats sono sempre più sofisticati.  
 Le aziende raccolgono enormi quantità di dati: log, trasferimenti, traffico di rete.  
