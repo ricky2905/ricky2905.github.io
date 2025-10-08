@@ -4,9 +4,6 @@ title: Homework 1 – Statistics and Its Role in Cybersecurity
 permalink: /HOMEWORK/homework1/
 ---
 
-# Statistics and Its Role in Cybersecurity
-
----
 
 ## What is Statistics?
 
