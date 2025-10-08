@@ -4,39 +4,6 @@ title: Homework 1 – Statistics and Its Role in Cybersecurity
 permalink: /HOMEWORK/homework1/
 ---
 
-<style>
-body {
-  line-height: 1.8;
-  font-size: 1.1rem;
-  padding: 1rem;
-}
-h1, h2, h3 {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  color: #2c3e50;
-}
-hr {
-  border: none;
-  height: 2px;
-  background-color: #4CAF50;
-  margin: 2rem 0;
-}
-.card {
-  background-color: #f7f9fc;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-a {
-  color: #1a73e8;
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-</style>
-
 # Statistics and Its Role in Cybersecurity
 
 <div class="card">
@@ -49,9 +16,7 @@ a:hover {
 
 <div class="card">
 Statistics is the branch of mathematics that studies how to collect, analyze, interpret, and present data.  
-
-It provides tools to understand patterns, make predictions, and make decisions under uncertainty.  
-
+It provides tools to understand patterns, make predictions, and prendere decisioni under uncertainty.  
 **In cybersecurity**, statistics transforms raw data into actionable insights.
 </div>
 
@@ -61,19 +26,15 @@ It provides tools to understand patterns, make predictions, and make decisions u
 
 <div class="card">
 Modern cyber threats are increasingly sophisticated. Companies collect massive streams of data: login attempts, file transfers, logs, network traffic, etc.  
-
 Statistical analysis is essential to detect anomalies or potential security incidents.
 </div>
 
 ### Key Applications
 
 <div class="card">
-**Anomaly Detection:** Detect deviations from normal behavior, e.g., unusual login patterns or data transfers.  
-
+**Anomaly Detection:** Detect deviations from normal behavior.  
 **Threat Prediction:** Use historical data to forecast possible attacks.  
-
 **Resource Optimization:** Prioritize alerts and focus on critical incidents.  
-
 **Risk Assessment:** Quantify breach probabilities and expected impacts for informed decisions.
 </div>
 
@@ -97,7 +58,6 @@ Statistical analysis is essential to detect anomalies or potential security inci
 - **Dynamic Threats**  
 - **Complexity**  
 - **Over-Reliance on Models**  
-
 Despite challenges, statistics is a key tool in cybersecurity.
 </div>
 
