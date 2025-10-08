@@ -4,7 +4,6 @@ title: About Me
 permalink: /about/
 ---
 
-# About Me
 
 Mi chiamo **Riccardo D'Annibale** (ID: 2063306), iscritto al **primo anno del Master in Cybersecurity** presso **Sapienza University of Rome**.
 
