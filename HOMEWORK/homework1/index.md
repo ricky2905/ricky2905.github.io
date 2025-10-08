@@ -6,8 +6,6 @@ permalink: /HOMEWORK/homework1/
 
 # Statistics and Its Role in Cybersecurity
 
-[GitHub Repository](https://github.com/ricky2905)
-
 ---
 
 ## What is Statistics?
