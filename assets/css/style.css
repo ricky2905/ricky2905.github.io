@@ -11,7 +11,7 @@ body {
 
 /* Titoli verdi */
 h1, h2, h3, h4, h5, h6 {
-  color: #4CAF50;  /* verde normale */
+  color: green;  /* verde normale */
 }
 
 /* Stile specifico per h1-h3 */
