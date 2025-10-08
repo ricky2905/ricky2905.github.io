@@ -4,15 +4,17 @@
 body {
   line-height: 1.8;
   font-size: 1.1rem;
+  padding: 1rem;
 }
 
 /* Titoli più eleganti */
 h1, h2, h3 {
   margin-top: 2rem;
   margin-bottom: 1rem;
+  color: #2c3e50;
 }
 
-/* Separatore più carino */
+/* Separatore colorato */
 hr {
   border: none;
   height: 2px;
@@ -20,21 +22,20 @@ hr {
   margin: 2rem 0;
 }
 
-/* Evidenzia i link */
+/* Card per contenuti */
+.card {
+  background-color: #f7f9fc;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Link */
 a {
   color: #1a73e8;
   text-decoration: none;
 }
-
 a:hover {
   text-decoration: underline;
-}
-
-/* Card per i contenuti principali */
-.card {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
