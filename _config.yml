@@ -1,3 +1,5 @@
 title: "Statistics and Cybersecurity"
 description: "Benvenuto sul sito del corso di Statistics per Cybersecurity"
 theme: minima
+plugins:
+  - jekyll-feed
