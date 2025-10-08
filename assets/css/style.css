@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0f111a;
+  background-color: #0f111a;  /* tema scuro */
   color: #e0e0e0;
   line-height: 1.8;
   padding: 2rem;
@@ -10,46 +10,46 @@ body {
 
 h1 {
   font-size: 2.8rem;
-  color: #00ff99;
-  border-bottom: 3px solid #00ff99;
+  color: #4CAF50;  /* verde normale */
+  border-bottom: 3px solid #4CAF50;
   padding-bottom: 0.3rem;
 }
 
 h2 {
   font-size: 2rem;
-  color: #33ffcc;
+  color: #4CAF50;
   margin-top: 2rem;
 }
 
 h3 {
   font-size: 1.5rem;
-  color: #66ffcc;
+  color: #4CAF50;
   margin-top: 1.5rem;
 }
 
 .card {
   background-color: #1a1c2b;
-  border-left: 5px solid #00ff99;
+  border-left: 5px solid #4CAF50;  /* bordo verde */
   border-radius: 8px;
   padding: 1.5rem;
   margin: 2rem 0;
-  box-shadow: 0 4px 15px rgba(0,255,153,0.2);
+  box-shadow: 0 4px 15px rgba(76,175,80,0.2);
 }
 
 a {
-  color: #00ff99;
+  color: #4CAF50;
   text-decoration: none;
 }
 
 a:hover {
-  color: #33ffcc;
+  color: #66bb6a;
   text-decoration: underline;
 }
 
 hr {
   border: none;
   height: 2px;
-  background-color: #00ff99;
+  background-color: #4CAF50;
   margin: 2rem 0;
 }
 
@@ -59,7 +59,7 @@ select {
   font-size:1rem;
   background-color: #222236;
   color: #e0e0e0;
-  border: 1px solid #00ff99;
+  border: 1px solid #4CAF50;
   margin-top:0.5rem;
 }
 
@@ -75,13 +75,13 @@ select {
 }
 
 .topnav a:hover {
-  color: #33ffcc;
+  color: #66bb6a;
 }
 
 footer {
   margin-top: 3rem;
   padding-top: 1rem;
-  border-top: 1px solid #00ff99;
+  border-top: 1px solid #4CAF50;
   text-align: center;
   font-size: 0.9rem;
   color: #999;
