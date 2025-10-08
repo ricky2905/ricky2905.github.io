@@ -4,13 +4,46 @@ title: Homework 1 – Statistics and Its Role in Cybersecurity
 permalink: /HOMEWORK/homework1/
 ---
 
+<style>
+body {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  padding: 1rem;
+}
+h1, h2, h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+hr {
+  border: none;
+  height: 2px;
+  background-color: #4CAF50;
+  margin: 2rem 0;
+}
+.card {
+  background-color: #f7f9fc;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+</style>
+
 # Statistics and Its Role in Cybersecurity
 
 <div class="card">
 [![View on GitHub](https://img.shields.io/badge/View-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/ricky2905)
 </div>
 
----
+<hr>
 
 ## What is Statistics?
 
@@ -22,7 +55,7 @@ It provides tools to understand patterns, make predictions, and make decisions u
 **In cybersecurity**, statistics transforms raw data into actionable insights.
 </div>
 
----
+<hr>
 
 ## Why Statistics is Useful in Cybersecurity
 
@@ -44,7 +77,7 @@ Statistical analysis is essential to detect anomalies or potential security inci
 **Risk Assessment:** Quantify breach probabilities and expected impacts for informed decisions.
 </div>
 
----
+<hr>
 
 ## Advantages of Using Statistics
 
@@ -55,7 +88,7 @@ Statistical analysis is essential to detect anomalies or potential security inci
 - **Predictive Capability**  
 </div>
 
----
+<hr>
 
 ## Limitations and Challenges
 
@@ -68,7 +101,7 @@ Statistical analysis is essential to detect anomalies or potential security inci
 Despite challenges, statistics is a key tool in cybersecurity.
 </div>
 
----
+<hr>
 
 ## References / Scientific Articles
 
