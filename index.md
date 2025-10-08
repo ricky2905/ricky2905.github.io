@@ -4,6 +4,45 @@ title: Home Page
 permalink: /
 ---
 
+<style>
+body {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  padding: 1rem;
+}
+h1, h2, h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+hr {
+  border: none;
+  height: 2px;
+  background-color: #4CAF50;
+  margin: 2rem 0;
+}
+.card {
+  background-color: #f7f9fc;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+select {
+  padding:0.5rem;
+  border-radius:5px;
+  font-size:1rem;
+  margin-top:0.5rem;
+}
+</style>
+
 # Riccardo D'Annibale – 2063306
 
 <div class="card">
@@ -11,7 +50,7 @@ permalink: /
 [![View on GitHub](https://img.shields.io/badge/View-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/ricky2905)
 </div>
 
----
+<hr>
 
 ## Welcome to My Statistics Page
 
@@ -21,7 +60,7 @@ This repository is dedicated to the **Statistics course** of the **Master’s De
 Here you will find all the homework assignments, projects, and resources for the course.
 </div>
 
----
+<hr>
 
 ## Homework Assignments
 
@@ -34,7 +73,7 @@ Here you will find all the homework assignments, projects, and resources for the
 </select>
 </div>
 
----
+<hr>
 
 ## About Me
 
@@ -42,7 +81,7 @@ Here you will find all the homework assignments, projects, and resources for the
 Learn more about me in the [About page](/about/).
 </div>
 
----
+<hr>
 
 ## Statistics 2025/2026
 
