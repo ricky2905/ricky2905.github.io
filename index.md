@@ -26,7 +26,7 @@ Here you will find **homework, projects, articles, and insights** on cybersecuri
 Select Homework:
 
 - [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
-- [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/)
+- [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/index.html)
 
 ---
 
