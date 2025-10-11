@@ -172,7 +172,7 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
   </header>
 
   <main>
-    <!-- Contenuto inserito nella struttura richieste -->
+    <!-- Contenuto principale -->
     <article class="card">
       <h1>Datasets in Statistics and Cybersecurity</h1>
       <p>Datasets are fundamental for analyzing and modeling behaviors in cybersecurity. They form the basis for detecting anomalies, training predictive models, and evaluating intrusion detection systems [1].</p>
@@ -355,6 +355,9 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
         <button id="sortChi">Sort by Chi²</button>
         <button id="sortComb">Sort by Combined</button>
         <label style="margin-left:8px" class="small">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label>
+
+        <!-- NEW: Toggle button per your request -->
+        <button id="toggleAllShifts" class="small" title="Mostra tutti gli shift">Mostra tutti gli shift</button>
       </div>
 
       <div class="controls" style="margin-top:6px">
@@ -585,6 +588,27 @@ document.getElementById('copyCipher').addEventListener('click', async () => {
   }
 });
 
+/* NEW: Toggle "Mostra tutti gli shift" behavior */
+let __showingAll = false;
+let __prevTopN = null;
+const toggleAllBtn = document.getElementById('toggleAllShifts');
+const topNInput = document.getElementById('topN');
+toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
+  // Toggle state
+  if (!__showingAll) {
+    __prevTopN = parseInt(topNInput.value || '5', 10);
+    topNInput.value = 26;
+    toggleAllBtn.textContent = 'Mostra solo top';
+    __showingAll = true;
+  } else {
+    topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
+    toggleAllBtn.textContent = 'Mostra tutti gli shift';
+    __showingAll = false;
+  }
+  // Re-render table with current results
+  renderResults(window._lastResults || [], 'combined');
+});
+
 /* read weights */
 function readWeights(){
   const w_word = parseFloat(document.getElementById('w_word').value) || 0.45;
@@ -662,12 +686,31 @@ function renderResults(results, mode){
       <td class="${showExtra?'':'hiddenCol'}">${r.chi2.toFixed(2)}</td>
       <td class="${showExtra?'':'hiddenCol'}">${(r.bigramScore*100).toFixed(1)}%</td>
       <td><code>${escapeHtml(r.shifted.slice(0,160))}${r.shifted.length>160?'…':''}</code></td>
-      <td><button data-shift="${r.shift}">Select</button></td>
+      <td><button data-shift="${r.shift}" class="small">Select</button></td>
     `;
     tbody.appendChild(tr);
   });
 
-  tbody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', e => {
+  // If topN < results.length, append a small "Mostra altri" row (for usability)
+  if (topN < results.length) {
+    const trMore = document.createElement('tr');
+    trMore.innerHTML = `
+      <td colspan="8" style="text-align:center;">
+        <button id="showRemaining" class="small">Mostra ${results.length - topN} risultati rimanenti</button>
+      </td>
+    `;
+    tbody.appendChild(trMore);
+    document.getElementById('showRemaining').addEventListener('click', () => {
+      // set topN to total and update toggle button state
+      __prevTopN = parseInt(document.getElementById('topN').value || '5', 10);
+      document.getElementById('topN').value = results.length;
+      __showingAll = true;
+      toggleAllBtn && (toggleAllBtn.textContent = 'Mostra solo top');
+      renderResults(results, 'combined');
+    });
+  }
+
+  tbody.querySelectorAll('button[data-shift]').forEach(btn => btn.addEventListener('click', e => {
     const s = parseInt(e.currentTarget.getAttribute('data-shift'),10);
     const obj = results.find(r => r.shift === s);
     showSelected(obj);
