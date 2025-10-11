@@ -176,93 +176,95 @@
 
 ---
 
-## 🔍 Code & Theoretical Explanation
+# 🔍 Code & Theoretical Explanation
 
-### 1. Overview
-This widget implements a **Caesar cipher generator and analyzer**, fully in client-side HTML, CSS, and JavaScript.  
-It allows the user to:
-
-- Encrypt plaintext using a chosen shift.
-- Automatically analyze all 26 possible shifts.
-- Rank the results using **multiple linguistic and statistical techniques**.
-
----
-
-### 2. Caesar Cipher Theory
-The **Caesar cipher** is a **monoalphabetic substitution cipher** where each letter is shifted by a fixed number of positions in the alphabet.  
-Example: with shift 3, “A→D”, “B→E”, etc.  
-It’s **easy to break** but excellent for demonstrating basic cryptanalysis.
+## 1️⃣ Overview
+This widget implements a **Caesar cipher generator and analyzer**, written entirely in **HTML, CSS, and JavaScript**.  
+It allows you to:
+- Encrypt text using a chosen shift.  
+- Try all 26 possible shifts automatically.  
+- Compare and rank results using **linguistic + statistical** methods.
 
 ---
 
-### 3. Analytical Techniques Used
+## 2️⃣ Caesar Cipher Theory
+The Caesar cipher shifts letters by a fixed amount.  
+Example (shift = 3):  
+`A → D`, `B → E`, `C → F`, etc.  
 
-#### 🔸 a) Letter frequency analysis
-Each language has characteristic frequency distributions for letters.  
-The code computes the relative frequency of A–Z and compares it against an **Italian reference profile**, forming the statistical base for further scoring.
-
-#### 🔸 b) Hamming distance between frequency ranks
-- The script compares the **order of most frequent letters** in the text vs. the reference language.  
-- **Hamming distance** counts how many letters are out of place.  
-- A smaller distance implies a more plausible decryption.
-
-#### 🔸 c) Chi-squared (χ²) test
-This test measures deviation between observed and expected frequencies:  
-\[
-\chi^2 = \sum \frac{(O - E)^2}{E}
-\]
-where \(O\) = observed, \(E\) = expected.  
-Lower χ² indicates closer resemblance to real Italian.
-
-#### 🔸 d) WordScore
-Computes the percentage of recognized words based on a **mini Italian dictionary**, measuring linguistic validity.
-
-#### 🔸 e) BigramScore
-Checks for the presence of **common Italian bigrams** (e.g., “CH”, “QU”, “TR”).  
-The more common bigrams, the more likely the text is readable.
+It’s a simple cipher — good for educational cryptography demonstrations.
 
 ---
 
-### 4. Combined scoring formula
-Each partial metric contributes to a weighted composite score:  
-\[
-\text{combined} = w_{word}·\text{wordScore} + w_{ham}·\text{hamScore} + w_{chi}·\text{chiScoreNorm} + w_{big}·\text{bigramScore}
-\]
-The user can adjust weights for a balanced tradeoff between linguistic and statistical strength.
+## 3️⃣ Analytical Techniques
+
+**a) Letter frequency analysis**  
+Counts how often each letter (A–Z) appears and compares to an Italian frequency model.
+
+**b) Hamming distance**  
+Compares the rank order of letters by frequency vs. Italian.  
+Fewer mismatches = more likely the correct decryption.
+
+**c) Chi-squared test**  
+Measures how much observed frequencies differ from expected:
+
+chi² = Σ ( (Observed - Expected)² / Expected )
+
+Lower = closer to natural Italian.
+
+**d) WordScore**  
+Percentage of words matching a small Italian dictionary.
+
+**e) BigramScore**  
+Checks for presence of common letter pairs (CH, QU, TR, etc.).
 
 ---
 
-### 5. Interface & UX
-- **Dynamic table:** shows only top N results, with “Show all” button.
-- **Green color palette** for soft contrast and readability.
-- **Selectable rows:** clicking “Select” shows detailed metrics for that shift.
-- **Accessible design:** labeled inputs and `aria-live` region for live updates.
+## 4️⃣ Combined Score Formula
+
+combined =
+(w_word × WordScore) +
+(w_ham × HamScore) +
+(w_chi × ChiScoreNormalized) +
+(w_big × BigramScore)
+
+
+User can adjust the weights dynamically.
 
 ---
 
-### 6. Method Comparison
-
-| Method | Advantages | Limitations | Ideal use |
-|--------|-------------|--------------|-----------|
-| **Hamming** | Simple and fast | Less reliable on short texts | Bulk testing |
-| **Chi²** | Statistically solid | Needs longer samples | Long text analysis |
-| **WordScore** | Linguistically accurate | Needs dictionary | Italian plaintexts |
-| **BigramScore** | Detects common patterns | Language-specific | Complementary metric |
-
-Combining these provides a **robust hybrid cryptanalysis**, balancing statistical and linguistic signals.
+## 5️⃣ Interface
+- **Top N results** visible by default.  
+- “Show all” toggles all 26 shifts.  
+- Click **Select** to show detailed info.  
+- Green, high-contrast theme for readability.  
+- Works entirely in-browser, no server calls.
 
 ---
 
-### 7. Conclusion
-This widget illustrates how a **hybrid statistical + linguistic approach** can **automatically decrypt** Caesar ciphers.  
-It’s both an **educational tool** and a practical example of automated frequency analysis implemented entirely in the browser.
+## 6️⃣ Comparison Table
+
+| Method        | Advantages              | Limitations                | Ideal Use |
+|----------------|-------------------------|-----------------------------|------------|
+| **Hamming**    | Fast and simple         | Less precise on short text  | Initial scan |
+| **Chi-squared**| Statistically solid     | Requires longer text        | Long messages |
+| **WordScore**  | Language-sensitive      | Needs dictionary            | Italian text |
+| **BigramScore**| Detects patterns        | Language-specific           | Secondary metric |
 
 ---
 
-### 📸 Illustration
-*(Add an image or screenshot of the widget below, for example:)*  
+## 7️⃣ Conclusion
+This widget demonstrates a **hybrid approach** combining:
+- Frequency analysis  
+- Word recognition  
+- Statistical comparison  
+
+All implemented in **client-side JavaScript** — a complete cryptanalysis tool for Caesar cipher.
+
+---
+
+## 📸 Illustration
+Add an image of the script here (replace with your own path):
+
+```markdown
 ![Cesare widget screenshot](/assets/images/script.png)
-
-
----
-
