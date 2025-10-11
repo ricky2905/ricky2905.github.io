@@ -145,7 +145,7 @@ Calculates scores based on:
 
 ---
 
-<iframe src="assets/script/caesar_tool.html" width="100%" height="400px"></iframe>
+<iframe src="tools/caesar_tool.html" width="100%" height="400px"></iframe>
 ---
 
 # Overview of the Caesar Cipher with Statistical Analysis
