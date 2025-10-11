@@ -5,12 +5,12 @@
   <title>Datasets in Statistics and Cybersecurity | Riccardo D'Annibale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-/* ---------- STILE PRINCIPALE (da template fornito) ---------- */
+/* ---------- MAIN STYLE (from provided template) ---------- */
 
-/* Corpo principale */
+/* Main body */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0f111a;  /* sfondo scuro */
+  background-color: #0f111a;  /* dark background */
   color: #e0e0e0;
   line-height: 1.8;
   padding: 2rem;
@@ -18,12 +18,12 @@ body {
   margin: auto;
 }
 
-/* Titoli verdi */
+/* Green headings */
 h1, h2, h3, h4, h5, h6 {
-  color: #4CAF50;  /* verde */
+  color: #4CAF50;  /* green */
 }
 
-/* Stile specifico per h1-h3 */
+/* Specific styles for h1-h3 */
 h1 {
   font-size: 2.8rem;
   border-bottom: 3px solid #4CAF50;
@@ -51,7 +51,7 @@ h3 {
   box-shadow: 0 4px 15px rgba(76,175,80,0.08);
 }
 
-/* Link */
+/* Links */
 a {
   color: #4CAF50;
   text-decoration: none;
@@ -62,7 +62,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Separatore */
+/* Separator */
 hr {
   border: none;
   height: 2px;
@@ -70,7 +70,7 @@ hr {
   margin: 2rem 0;
 }
 
-/* Menu a discesa */
+/* Dropdown */
 select {
   padding:0.5rem 1rem;
   border-radius:5px;
@@ -81,7 +81,7 @@ select {
   margin-top:0.5rem;
 }
 
-/* Navigazione top */
+/* Top navigation */
 .topnav {
   display: flex;
   justify-content: flex-start;
@@ -107,7 +107,7 @@ footer {
   color: #999;
 }
 
-/* ---------- STILI AGGIUNTIVI PER CONTENUTI ---------- */
+/* ---------- ADDITIONAL STYLES FOR CONTENT ---------- */
 
 table {
   border-collapse: collapse;
@@ -165,6 +165,15 @@ th.dimmed { opacity: 0.55; }
   h1 { font-size: 2rem; }
 }
   </style>
+
+  <!-- MathJax (render LaTeX) -->
+  <script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 </head>
 <body>
   <header>
@@ -176,7 +185,7 @@ th.dimmed { opacity: 0.55; }
 
   <main>
     <!-- ===========================
-         Full content (as provided)
+         Full content (translated to English and formulas added)
          =========================== -->
 
     <!-- Article: Datasets -->
@@ -255,6 +264,80 @@ th.dimmed { opacity: 0.55; }
 
       <hr/>
 
+      <h2>Mathematical Formulas for Distributions</h2>
+      <p>The following formulas summarize commonly used measures and distributions. They are rendered with MathJax.</p>
+
+      <h3>Measures of location and dispersion</h3>
+      <ul>
+        <li><strong>Population mean</strong>:
+          \[
+            \mu = \frac{1}{N}\sum_{i=1}^N x_i
+          \]
+        </li>
+        <li><strong>Sample mean</strong>:
+          \[
+            \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i
+          \]
+        </li>
+        <li><strong>Population variance</strong>:
+          \[
+            \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i-\mu)^2
+          \]
+        </li>
+        <li><strong>Sample variance (unbiased)</strong>:
+          \[
+            s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2
+          \]
+        </li>
+        <li><strong>Standard deviation</strong>:
+          \[
+            \sigma=\sqrt{\sigma^2},\qquad s=\sqrt{s^2}
+          \]
+        </li>
+      </ul>
+
+      <h3>Common probability distributions</h3>
+      <ul>
+        <li><strong>Normal distribution (pdf)</strong>:
+          \[
+            f(x)=\frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+          \]
+        </li>
+        <li><strong>Binomial distribution (pmf)</strong>:
+          \[
+            P(X=k)=\binom{n}{k} p^k (1-p)^{\,n-k},\qquad k=0,\dots,n
+          \]
+        </li>
+        <li><strong>Poisson distribution (pmf)</strong>:
+          \[
+            P(X=k)=\frac{\lambda^k e^{-\lambda}}{k!},\qquad k=0,1,2,\dots
+          \]
+        </li>
+      </ul>
+
+      <h3>Moments and shape</h3>
+      <ul>
+        <li><strong>Skewness (sample)</strong>:
+          \[
+            \text{skew}=\frac{\frac{1}{n}\sum_{i}(x_i-\bar{x})^3}{\left(\frac{1}{n}\sum_{i}(x_i-\bar{x})^2\right)^{3/2}}
+          \]
+        </li>
+        <li><strong>Excess kurtosis (sample)</strong>:
+          \[
+            \text{kurtosis}=\frac{\frac{1}{n}\sum_{i}(x_i-\bar{x})^4}{\left(\frac{1}{n}\sum_{i}(x_i-\bar{x})^2\right)^{2}} - 3
+          \]
+        </li>
+      </ul>
+
+      <h3>Chi-squared statistic</h3>
+      <p>Used to compare observed vs expected frequencies (also used in your scoring implementation):</p>
+      \[
+        \chi^2=\sum_{i}\frac{(O_i-E_i)^2}{E_i},
+      \]
+      <p>where \(O_i\) are observed counts and \(E_i\) are expected counts.</p>
+
+      <hr/>
+
       <h2>Final Considerations</h2>
       <p>Proper analysis of datasets and distributions is essential in cybersecurity for identifying threats and optimizing defense systems. The combined use of structured, unstructured, and semi-structured datasets, along with rigorous data management, allows the development of robust and reliable statistical and machine learning models [1][6].</p>
 
@@ -277,19 +360,44 @@ th.dimmed { opacity: 0.55; }
       <h2>Univariate and Bivariate Distribution on a Dataset</h2>
       <p>Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions. For the univariate distribution, we consider the <strong>Age</strong> variable, while for the bivariate distribution we examine <strong>Age</strong> and <strong>Height</strong>.</p>
 
-      <img src="/assets/images/dati.png" alt="Esempio di dati tabellari" title="Esempio di dati tabellari"/>
+      <img src="/assets/images/dati.png" alt="Example tabular data" title="Example tabular data"/>
 
       <h3>Univariate Distribution on Age</h3>
-      <img src="/assets/images/Dist_univariata.png" alt="Distribuzione Univariata" title="Distribuzione Univariata"/>
+      <img src="/assets/images/Dist_univariata.png" alt="Univariate Distribution" title="Univariate Distribution"/>
 
       <p><strong>SQL Code:</strong></p>
-      <img src="/assets/images/Dist_univariata_sql.png" alt="Distribuzione Univariata SQL" title="Distribuzione Univariata SQL"/>
+      <img src="/assets/images/Dist_univariata_sql.png" alt="Univariate Distribution SQL" title="Univariate Distribution SQL"/>
 
       <h3>Bivariate Distribution on Age and Height</h3>
-      <img src="/assets/images/Dist_bivariata.png" alt="Distribuzione Bivariata" title="Distribuzione Bivariata"/>
+      <img src="/assets/images/Dist_bivariata.png" alt="Bivariate Distribution" title="Bivariate Distribution"/>
 
       <p><strong>SQL Code:</strong></p>
-      <img src="/assets/images/dist_bivariata_sql.png" alt="Distribuzione Bivariata SQL" title="Distribuzione Bivariata SQL"/>
+      <img src="/assets/images/dist_bivariata_sql.png" alt="Bivariate Distribution SQL" title="Bivariate Distribution SQL"/>
+
+      <h3>Formulas for univariate / bivariate analysis</h3>
+      <p>Useful formulas for the displayed analyses:</p>
+      <ul>
+        <li><strong>Expected value of a discrete variable</strong>:
+          \[
+            E[X]=\sum_i x_i p_i
+          \]
+        </li>
+        <li><strong>Variance (alternative form)</strong>:
+          \[
+            \mathrm{Var}(X)=E[X^2]-(E[X])^2
+          \]
+        </li>
+        <li><strong>Covariance (sample)</strong>:
+          \[
+            \mathrm{Cov}(X,Y)=\frac{1}{n}\sum_{i=1}^n (x_i-\bar{x})(y_i-\bar{y})
+          \]
+        </li>
+        <li><strong>Pearson correlation coefficient</strong>:
+          \[
+            \rho_{X,Y}=\frac{\mathrm{Cov}(X,Y)}{\sigma_X \sigma_Y}
+          \]
+        </li>
+      </ul>
     </article>
 
     <!-- Section: Using Distribution to Break Caesar -->
@@ -319,7 +427,7 @@ th.dimmed { opacity: 0.55; }
       <ul>
         <li>Hamming distance (letter order)</li>
         <li>Chi-squared statistic (χ²) for frequencies</li>
-        <li>Presence of common Italian words (wordScore)</li>
+        <li>Presence of common English/Italian words (wordScore)</li>
         <li>Presence of common bigrams (bigramScore)</li>
       </ul>
 
@@ -346,7 +454,7 @@ th.dimmed { opacity: 0.55; }
 
       <div class="generator">
         <div class="small"><strong>Caesar Cipher Generator</strong></div>
-        <textarea id="plaintext">La mia password è Ciao.123!</textarea>
+        <textarea id="plaintext">My password is Hello.123!</textarea>
         <div class="controls">
           <label class="inline">Shift <input id="genShift" type="number" min="0" max="25" value="7"></label>
           <label class="inline"><input id="genMapAcc" type="checkbox" checked> Map accents before encrypting</label>
@@ -371,7 +479,7 @@ th.dimmed { opacity: 0.55; }
         <label style="margin-left:8px" class="small">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label>
 
         <!-- NEW: Toggle button to show all shifts -->
-        <button id="toggleAllShifts" class="small" title="Mostra tutti gli shift">Mostra tutti gli shift</button>
+        <button id="toggleAllShifts" class="small" title="Show all shifts">Show all shifts</button>
       </div>
 
       <div class="controls" style="margin-top:6px">
@@ -445,7 +553,7 @@ for(let shift = 1; shift < 26; shift++){
       <h2>Metrics Explained</h2>
       <table>
         <tr><th>Metric</th><th>Description</th><th>Weight</th></tr>
-        <tr><td><strong>Word%</strong></td><td>Fraction of valid Italian words</td><td>0.45</td></tr>
+        <tr><td><strong>Word%</strong></td><td>Fraction of valid common words (English/Italian)</td><td>0.45</td></tr>
         <tr><td><strong>Hamming</strong></td><td>Letter rank similarity</td><td>0.25</td></tr>
         <tr><td><strong>Chi²</strong></td><td>Statistical deviation from expected frequencies</td><td>0.15</td></tr>
         <tr><td><strong>Bigram%</strong></td><td>Common bigram presence</td><td>0.15</td></tr>
@@ -465,7 +573,7 @@ for(let shift = 1; shift < 26; shift++){
       <h2>Original standalone Caesar HTML (preserved)</h2>
       <p>Below is the original small standalone HTML you included earlier — kept here verbatim so no piece is lost.</p>
       <details>
-        <summary>Clicca per vedere il codice originale</summary>
+        <summary>Click to view the original code</summary>
         <pre><code>&lt;!doctype html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
@@ -509,7 +617,7 @@ for(let shift = 1; shift < 26; shift++){
   <!-- ===========================
        JavaScript: full integrated Caesar tool
        (includes all logic: accent map, frequencies, scoring,
-       rendering, "Mostra tutti gli shift" toggle, and header visibility)
+       rendering, "Show all shifts" toggle, and header visibility)
        =========================== -->
   <script>
 /* --- Reference frequencies (Italian) --- */
@@ -536,7 +644,9 @@ const commonWords = new Set([
   'di','e','il','la','che','a','in','un','per','con','non','una','sono','si','da','al','lo','ma','più',
   'come','su','o','se','anche','perché','quando','dove','questo','quella','queste','noi','voi','loro',
   'mia','mio','tua','tuo','suo','nostro','l','ha','hai','ho','era','stato','stata','cioè',
-  'ora','bene','male','molto','poco','grande','piccolo','anno','giorno','giorni'
+  'ora','bene','male','molto','poco','grande','piccolo','anno','giorno','giorni',
+  // add some common English words to make scoring flexible across EN/IT
+  'the','and','is','in','to','of','that','it','on','for','with','as','are','this','be','by','was','or','from'
 ]);
 
 /* common bigrams */
@@ -680,18 +790,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* Toggle "Mostra tutti gli shift" behavior */
+  /* Toggle "Show all shifts" behavior */
   let __showingAll = false;
   let __prevTopN = null;
   toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
     if (!__showingAll) {
       __prevTopN = parseInt(topNInput.value || '5', 10);
       topNInput.value = 26;
-      toggleAllBtn.textContent = 'Mostra solo top';
+      toggleAllBtn.textContent = 'Show top only';
       __showingAll = true;
     } else {
       topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
-      toggleAllBtn.textContent = 'Mostra tutti gli shift';
+      toggleAllBtn.textContent = 'Show all shifts';
       __showingAll = false;
     }
     renderResults(window._lastResults || [], 'combined');
@@ -794,13 +904,13 @@ function renderResults(results, mode){
     tbody.appendChild(tr);
   });
 
-  // If topN < results.length, append a "Mostra altri" row (usability)
+  // If topN < results.length, append a "Show more" row (usability)
   if (topN < results.length) {
     const remaining = results.length - topN;
     const trMore = document.createElement('tr');
     trMore.innerHTML = `
       <td colspan="8" style="text-align:center;">
-        <button id="showRemaining" class="small">Mostra ${remaining} risultati rimanenti</button>
+        <button id="showRemaining" class="small">Show ${remaining} remaining results</button>
       </td>
     `;
     tbody.appendChild(trMore);
@@ -808,7 +918,7 @@ function renderResults(results, mode){
       const topNInput = document.getElementById('topN');
       const toggleAllBtn = document.getElementById('toggleAllShifts');
       topNInput.value = results.length;
-      if (toggleAllBtn) toggleAllBtn.textContent = 'Mostra solo top';
+      if (toggleAllBtn) toggleAllBtn.textContent = 'Show top only';
       renderResults(results, mode);
     });
   }
