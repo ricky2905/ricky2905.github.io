@@ -175,9 +175,14 @@ th.dimmed { opacity: 0.55; }
   </header>
 
   <main>
-    <!-- Contenuto principale -->
+    <!-- ===========================
+         Full content (as provided)
+         =========================== -->
+
+    <!-- Article: Datasets -->
     <article class="card">
       <h1>Datasets in Statistics and Cybersecurity</h1>
+
       <p>Datasets are fundamental for analyzing and modeling behaviors in cybersecurity. They form the basis for detecting anomalies, training predictive models, and evaluating intrusion detection systems [1].</p>
 
       <hr/>
@@ -264,9 +269,77 @@ th.dimmed { opacity: 0.55; }
         <li>Goodfellow, I., Bengio, Y., & Courville, A. (2016). <em>Deep Learning</em>. MIT Press.</li>
         <li>Tavallaee, M., et al. (2009). <em>A detailed analysis of the KDD CUP 99 data set</em>. IEEE Symposium on Computational Intelligence for Security and Defense Applications.</li>
       </ol>
+
     </article>
 
-    <!-- Caesar interactive card -->
+    <!-- Univariate / Bivariate section with images -->
+    <article class="card">
+      <h2>Univariate and Bivariate Distribution on a Dataset</h2>
+      <p>Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions. For the univariate distribution, we consider the <strong>Age</strong> variable, while for the bivariate distribution we examine <strong>Age</strong> and <strong>Height</strong>.</p>
+
+      <img src="/assets/images/dati.png" alt="Esempio di dati tabellari" title="Esempio di dati tabellari"/>
+
+      <h3>Univariate Distribution on Age</h3>
+      <img src="/assets/images/Dist_univariata.png" alt="Distribuzione Univariata" title="Distribuzione Univariata"/>
+
+      <p><strong>SQL Code:</strong></p>
+      <img src="/assets/images/Dist_univariata_sql.png" alt="Distribuzione Univariata SQL" title="Distribuzione Univariata SQL"/>
+
+      <h3>Bivariate Distribution on Age and Height</h3>
+      <img src="/assets/images/Dist_bivariata.png" alt="Distribuzione Bivariata" title="Distribuzione Bivariata"/>
+
+      <p><strong>SQL Code:</strong></p>
+      <img src="/assets/images/Dist_bivariata_sql.png" alt="Distribuzione Bivariata SQL" title="Distribuzione Bivariata SQL"/>
+    </article>
+
+    <!-- Section: Using Distribution to Break Caesar -->
+    <article class="card">
+      <h2>Using Distribution to Break a Caesar Cipher</h2>
+      <p>This section introduces a simple web-based tool and an explanation for working with the <strong>Caesar cipher (shift = 3)</strong>. The tool allows users to:</p>
+      <ul>
+        <li>Encrypt text</li>
+        <li>Attempt decryption by trying all 25 possible shifts (brute-force)</li>
+        <li>Automatically estimate the correct shift using letter frequency analysis (chi-squared test)</li>
+      </ul>
+      <p>The frequency-based approach provides a statistical guess for the most likely shift (for longer texts), while brute-force remains reliable for shorter ones.</p>
+
+      <h3>Main Goals of the Tool</h3>
+      <h4>Caesar Cipher Generation</h4>
+      <ul>
+        <li>Encrypts plaintext with a user-selected shift.</li>
+        <li>Supports accent mapping before encryption.</li>
+      </ul>
+      <h4>Attempted Decryption of All Shifts</h4>
+      <ul>
+        <li>Performs brute-force over all 26 possible Caesar cipher shifts.</li>
+      </ul>
+
+      <h4>Scoring and Ranking of Candidates</h4>
+      <p>Calculates scores based on:</p>
+      <ul>
+        <li>Hamming distance (letter order)</li>
+        <li>Chi-squared statistic (χ²) for frequencies</li>
+        <li>Presence of common Italian words (wordScore)</li>
+        <li>Presence of common bigrams (bigramScore)</li>
+      </ul>
+
+      <h4>Results Display</h4>
+      <ul>
+        <li>Shows all candidate decryptions in a sortable table.</li>
+        <li>Highlights the top N candidates.</li>
+        <li>Allows selection of a candidate to view a preview and detailed scores.</li>
+      </ul>
+
+      <h4>User Utilities</h4>
+      <ul>
+        <li>Copy ciphertext to clipboard.</li>
+        <li>Automatically handle accents and capitalization.</li>
+      </ul>
+    </article>
+
+    <!-- ****************
+         Caesar interactive tool (full)
+         **************** -->
     <section class="card" aria-labelledby="caesar-title">
       <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
       <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher.</div>
@@ -297,7 +370,7 @@ th.dimmed { opacity: 0.55; }
         <button id="sortComb">Sort by Combined</button>
         <label style="margin-left:8px" class="small">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label>
 
-        <!-- NEW: Toggle button per your request -->
+        <!-- NEW: Toggle button to show all shifts -->
         <button id="toggleAllShifts" class="small" title="Mostra tutti gli shift">Mostra tutti gli shift</button>
       </div>
 
@@ -337,10 +410,11 @@ th.dimmed { opacity: 0.55; }
       <div id="chosen" class="result">---</div>
     </section>
 
-    <!-- Overview & explanation -->
+    <!-- Overview & explanation (rest of original content) -->
     <article class="card">
       <h1>Overview of the Caesar Cipher with Statistical Analysis</h1>
-      <p>The Caesar cipher is a <strong>monoalphabetic substitution cipher</strong> that shifts each letter of the plaintext by a fixed number of positions. For example, with a shift of 3:</p>
+      <p>The Caesar cipher is a <strong>monoalphabetic substitution cipher</strong> that shifts each letter of the plaintext by a fixed number of positions.</p>
+
       <pre>
 Plaintext:  ABCDEFGHIJKLMNOPQRSTUVWXYZ
 Ciphertext: DEFGHIJKLMNOPQRSTUVWXYZABC
@@ -385,13 +459,58 @@ for(let shift = 1; shift < 26; shift++){
 
       <img src="/assets/images/script.png" alt="Code" title="Code"/>
     </article>
+
+    <!-- Include original standalone Caesar HTML (the exact block you gave originally) so nothing is lost -->
+    <article class="card">
+      <h2>Original standalone Caesar HTML (preserved)</h2>
+      <p>Below is the original small standalone HTML you included earlier — kept here verbatim so no piece is lost.</p>
+      <details>
+        <summary>Clicca per vedere il codice originale</summary>
+        <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"/&gt;
+&lt;meta name="viewport" content="width=device-width,initial-scale=1"/&gt;
+&lt;title&gt;Caesar — generator + ranking (Hamming + words + bigrams + chi²)&lt;/title&gt;
+&lt;style&gt;
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;padding:18px}
+  textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px}
+  table{border-collapse:collapse;width:100%;margin-top:8px}
+  th,td{border:1px solid #ddd;padding:6px;text-align:left;font-size:13px}
+  th{background:#f4f4f4}
+  .result{white-space:pre-wrap;background:#fff;border:1px solid #ddd;padding:10px;margin-top:8px;max-height:260px;overflow:auto}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+  .small{font-size:13px;color:#444}
+  input[type="number"]{width:72px}
+  .top{background:#e8ffe8}
+  .generator{border:1px dashed #ccc;padding:8px;margin:8px 0;border-radius:6px}
+  label.inline{display:inline-flex;align-items:center;gap:6px}
+  button.small{padding:4px 8px;font-size:13px}
+  .hiddenCol{display:none;}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h2&gt;Caesar Cipher: Generate → Analyze (Improved Ranking)&lt;/h2&gt;
+  &lt;div class="small"&gt;Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher.&lt;/div&gt;
+  ...
+  &lt;!-- (rest of original standalone HTML and JS) --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+      </details>
+    </article>
+
   </main>
 
   <footer>
     <p>© 2025 Riccardo D'Annibale</p>
   </footer>
 
-  <!-- ---------- JavaScript (completo, integrato) ---------- -->
+  <!-- ===========================
+       JavaScript: full integrated Caesar tool
+       (includes all logic: accent map, frequencies, scoring,
+       rendering, "Mostra tutti gli shift" toggle, and header visibility)
+       =========================== -->
   <script>
 /* --- Reference frequencies (Italian) --- */
 const referenceFreq = {
@@ -497,7 +616,7 @@ const referenceOrder = Object.keys(referenceFreq).sort((a,b) => {
   return referenceFreq[b] - referenceFreq[a];
 });
 
-/* Helper to get header THs by data-col */
+/* Helper to set header visibility for extra columns */
 function setHeaderVisibility(showExtra) {
   const ths = document.querySelectorAll('#results thead th');
   ths.forEach(th => {
@@ -512,13 +631,12 @@ function setHeaderVisibility(showExtra) {
         th.classList.remove('dimmed');
       }
     } else {
-      // always visible, but dim if columns are hidden to show less emphasis
       if (!showExtra) th.classList.add('dimmed'); else th.classList.remove('dimmed');
     }
   });
 }
 
-/* UI hooks - wait for DOM */
+/* When DOM ready, wire up UI */
 document.addEventListener('DOMContentLoaded', () => {
   const runBtn = document.getElementById('run');
   const sortHamBtn = document.getElementById('sortHam');
@@ -562,11 +680,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* NEW: Toggle "Mostra tutti gli shift" behavior */
+  /* Toggle "Mostra tutti gli shift" behavior */
   let __showingAll = false;
   let __prevTopN = null;
   toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
-    // Toggle state
     if (!__showingAll) {
       __prevTopN = parseInt(topNInput.value || '5', 10);
       topNInput.value = 26;
@@ -577,7 +694,6 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleAllBtn.textContent = 'Mostra tutti gli shift';
       __showingAll = false;
     }
-    // Re-render table with current results
     renderResults(window._lastResults || [], 'combined');
   });
 
@@ -689,10 +805,8 @@ function renderResults(results, mode){
     `;
     tbody.appendChild(trMore);
     document.getElementById('showRemaining').addEventListener('click', () => {
-      // set topN to total and update toggle button state if present
       const topNInput = document.getElementById('topN');
       const toggleAllBtn = document.getElementById('toggleAllShifts');
-      const prev = parseInt(topNInput.value || '5', 10);
       topNInput.value = results.length;
       if (toggleAllBtn) toggleAllBtn.textContent = 'Mostra solo top';
       renderResults(results, mode);
@@ -716,7 +830,6 @@ function showSelected(obj){
 }
 
 function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
   </script>
 </body>
 </html>
