@@ -431,7 +431,7 @@ th.dimmed { opacity: 0.55; }
         <div class="small"><strong>Caesar Cipher Generator</strong></div>
         <textarea id="plaintext">My password is Hello.123!</textarea>
         <div class="controls">
-          <label class="inline">Shift <input id="genShift" type="number" min="0" max="25" value="7"></label>
+          <label class="inline">Shift <input id="genShift" type="number" min="0" max="25" value="3"></label>
           <label class="inline"><input id="genMapAcc" type="checkbox" checked> Map accents before encrypting</label>
           <button id="genBtn" class="small">Generate</button>
           <button id="genAnalyzeBtn" class="small">Generate & Analyze</button>
@@ -573,8 +573,6 @@ for(let shift = 1; shift < 26; shift++){
 &lt;body&gt;
   &lt;h2&gt;Caesar Cipher: Generate → Analyze (Improved Ranking)&lt;/h2&gt;
   &lt;div class="small"&gt;Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher.&lt;/div&gt;
-  ...
-  &lt;!-- (rest of original standalone HTML and JS) --&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
