@@ -4,11 +4,11 @@ Questo widget permette di cifrare testi con il **Cifrario di Cesare** e di anali
 
 ---
 
+## Widget interattivo
+
 <div id="cesare-widget" role="region" aria-label="Cesare widget">
   <h3>Cesare: generate cipher → analyze</h3>
-  <div class="small">
-    Enter plaintext below, choose the shift, and click <strong>Generate</strong>. You can also use <strong>Generate and Analyze</strong> to immediately generate and analyze the cipher.
-  </div>
+  <div class="small">Enter plaintext below, choose the shift, and click <strong>Generate</strong>. You can also use <strong>Generate and Analyze</strong> to immediately generate and analyze the cipher.</div>
 
   <div class="generator" aria-label="Caesar generator">
     <div class="small"><strong>Generator</strong></div>
@@ -63,7 +63,6 @@ Questo widget permette di cifrare testi con il **Cifrario di Cesare** e di anali
 </div>
 
 <style>
-/* widget style */
 #cesare-widget { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial; padding: 12px; border: 1px solid #cfe6cfe0; border-radius: 8px; background-color: #e6f7e6; color: #000; }
 #cesare-widget h3, #cesare-widget h4 { margin-top:0; }
 #cesare-widget textarea { width:100%; font-family: monospace; font-size:13px; margin-bottom:8px; background:#f7fff7; color:#000; border:1px solid #cfe6cf; padding:8px; box-sizing:border-box;}
@@ -83,7 +82,7 @@ Questo widget permette di cifrare testi con il **Cifrario di Cesare** e di anali
 </style>
 
 <script>
-// Widget JS — funziona direttamente in Markdown
+// Cesare widget JS (completo)
 (function(){
   const el=id=>document.getElementById(id);
   const textareaCipher=el('cipher');
@@ -95,7 +94,7 @@ Questo widget permette di cifrare testi con il **Cifrario di Cesare** e di anali
   const ACC_MAP={'à':'a','á':'a','â':'a','ä':'a','ã':'a','å':'a','è':'e','é':'e','ê':'e','ë':'e','ì':'i','í':'i','î':'i','ï':'i','ò':'o','ó':'o','ô':'o','ö':'o','õ':'o','ù':'u','ú':'u','û':'u','ü':'u','ý':'y','ÿ':'y','ç':'c','ñ':'n'};
   
   function mapAccents(s){return s.split('').map(ch=>ACC_MAP[ch]||ACC_MAP[ch?.toLowerCase()]?.toUpperCase?.()||ch).join('');}
-  function caesarShift(text, shift, opts={ignoreCase:true,mapAcc:false}){if(opts.mapAcc) text=mapAccents(text);const out=[];for(let i=0;i<text.length;i++){const ch=text[i];if(/[A-Za-z]/.test(ch)){if(opts.ignoreCase){const lower=ch.toLowerCase();const code=(lower.charCodeAt(0)-97+shift)%26;out.push(String.fromCharCode(97+code));}else{const base=(ch===ch.toUpperCase())?65:97;const code=(ch.charCodeAt(0)-base+shift)%26;out.push(String.fromCharCode(base+code));}}else{out.push(ch);}}return out.join('');}
+  function caesarShift(text, shift, opts={ignoreCase:true,mapAcc:false}){if(opts.mapAcc) text=mapAccents(text);const out=[];for(let i=0;i<text.length;i++){const ch=text[i];if(/[A-Za-z]/.test(ch)){const base=(ch===ch.toUpperCase())?65:97;if(opts.ignoreCase){const lower=ch.toLowerCase();const code=(lower.charCodeAt(0)-97+shift)%26;out.push(String.fromCharCode(97+code));}else{const code=(ch.charCodeAt(0)-base+shift)%26;out.push(String.fromCharCode(base+code));}}else{out.push(ch);}}return out.join('');}
   function letterFrequencies(text){const counts={};let total=0;for(const ch of text.toUpperCase()){if(ch>='A'&&ch<='Z'){counts[ch]=(counts[ch]||0)+1;total++;}}const freqs={};for(let c=65;c<=90;c++){const ch=String.fromCharCode(c);freqs[ch]=(counts[ch]||0)/(total||1)*100;}return {freqs,counts,total};}
   function chiSquared(obsFreq){let chi=0;for(const L in italianFreq){const expected=italianFreq[L];const observed=obsFreq[L]||0;const diff=observed-expected;chi+=(diff*diff)/(expected||0.0001);}return chi;}
   function hamScoreFromFreqs(obsFreq){const obsSorted=Object.keys(obsFreq).sort((a,b)=>obsFreq[b]-obsFreq[a]);const expSorted=Object.keys(italianFreq).sort((a,b)=>italianFreq[b]-italianFreq[a]);const rankObs={};obsSorted.forEach((ch,i)=>rankObs[ch]=i);const rankExp={};expSorted.forEach((ch,i)=>rankExp[ch]=i);let sumAbs=0;for(const ch in rankObs){sumAbs+=Math.abs(rankObs[ch]-rankExp[ch]);}return Math.max(0,Math.min(1,1-sumAbs/(26*25))); }
@@ -106,22 +105,48 @@ Questo widget permette di cifrare testi con il **Cifrario di Cesare** e di anali
   const tbody=document.querySelector('#results tbody');const topNInput=el('topN');const toggleExpandBtn=el('toggleExpand');let lastResults=[];let expanded=false;
 
   function renderResults(results,sortKey='combined'){const rows=[...results].sort((a,b)=>sortKey==='ham'?b.ham-a.ham:sortKey==='chi'?b.chiNorm-a.chiNorm:b.combined-a.combined);lastResults=rows;const topN=Math.max(1,Math.min(26,parseInt(topNInput.value)||5));tbody.innerHTML='';const toShow=expanded?rows:rows.slice(0,topN);toShow.forEach((r,idx)=>{const tr=document.createElement('tr');if(idx<topN&&!expanded) tr.classList.add('top');tr.innerHTML=`<td>${r.shift}</td><td>${(r.combined*100).toFixed(1)}%</td><td>${(r.word*100).toFixed(1)}%</td><td>${(r.ham*100).toFixed(1)}%</td><td>${r.chi.toFixed(2)}</td><td>${(r.big*100).toFixed(1)}%</td><td style="max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(r.decrypt)}</td><td><button class="small selectBtn" data-shift="${r.shift}">Select</button></td>`;tbody.appendChild(tr);});tbody.querySelectorAll('.selectBtn').forEach(btn=>{btn.addEventListener('click',()=>{const shift=parseInt(btn.dataset.shift,10);const sel=rows.find(x=>x.shift===shift);if(sel) showChosen(sel);});});}
-
   function showChosen(result){el('chosen').textContent=`Shift: ${result.shift}\nCombined: ${(result.combined*100).toFixed(2)}%\nWord match: ${(result.word*100).toFixed(1)}%\nHamming score: ${(result.ham*100).toFixed(1)}%\nChi²: ${result.chi.toFixed(2)} (chiNorm:${result.chiNorm.toFixed(4)})\nBigram: ${(result.big*100).toFixed(1)}%\n\n${result.decrypt}`;}
   function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
   function runAnalysis(){const cipher=textareaCipher.value||'';const opts={mapAcc:el('mapAccents').checked,ignoreCase:el('ignoreCase').checked};const w_word=parseFloat(el('w_word').value)||0;const w_ham=parseFloat(el('w_ham').value)||0;const w_chi=parseFloat(el('w_chi').value)||0;const w_big=parseFloat(el('w_big').value)||0;const sumW=w_word+w_ham+w_chi+w_big;const weights=sumW?{w_word:w_word/sumW,w_ham:w_ham/sumW,w_chi:w_chi/sumW,w_big:w_big/sumW}:{w_word:0.4,w_ham:0.3,w_chi:0.15,w_big:0.15};const results=[];for(let s=0;s<26;s++){const r=analyzeShift(cipher,s,opts);r.combined=weights.w_word*r.word+weights.w_ham*r.ham+weights.w_chi*r.chiNorm+weights.w_big*r.big;results.push(r);}renderResults(results,'combined');el('summary').textContent=`Analyzed ${results.length} shifts — showing Top ${topNInput.value}. Weights (normalized): word ${weights.w_word.toFixed(2)}, ham ${weights.w_ham.toFixed(2)}, chi ${weights.w_chi.toFixed(2)}, bigram ${weights.w_big.toFixed(2)}.`;}
-
-  el('run').addEventListener('click',runAnalysis);
-  el('sortHam').addEventListener('click',()=>renderResults(lastResults,'ham'));
-  el('sortChi').addEventListener('click',()=>renderResults(lastResults,'chi'));
-  el('sortComb').addEventListener('click',()=>renderResults(lastResults,'combined'));
+  el('run').addEventListener('click',runAnalysis);el('sortHam').addEventListener('click',()=>renderResults(lastResults,'ham'));el('sortChi').addEventListener('click',()=>renderResults(lastResults,'chi'));el('sortComb').addEventListener('click',()=>renderResults(lastResults,'combined'));
   toggleExpandBtn.addEventListener('click',()=>{expanded=!expanded;toggleExpandBtn.textContent=expanded?'Show top':'Show all';toggleExpandBtn.setAttribute('aria-pressed',expanded?'true':'false');renderResults(lastResults,'combined');});
-
   el('genBtn').addEventListener('click',()=>{const shift=parseInt(el('genShift').value||0,10)%26;const opts={mapAcc:el('genMapAcc').checked,ignoreCase:true};textareaGenerated.value=caesarShift(plaintextEl.value||'',shift,opts);});
   el('genAnalyzeBtn').addEventListener('click',()=>{const shift=parseInt(el('genShift').value||0,10)%26;const opts={mapAcc:el('genMapAcc').checked,ignoreCase:true};const gen=caesarShift(plaintextEl.value||'',shift,opts);textareaGenerated.value=gen;textareaCipher.value=gen;runAnalysis();});
   el('copyCipher').addEventListener('click',()=>{const t=textareaGenerated.value||'';if(!t) return;textareaCipher.value=t;navigator.clipboard?.writeText(t).catch(()=>{});});
-
   runAnalysis();
 })();
 </script>
+
+---
+
+## Teoria e guida
+
+### Panoramica
+Questo widget implementa un **generatore e analizzatore di cifrari di Cesare** utilizzando solo HTML/CSS/JavaScript lato client.  
+Funzionalità principali:
+- Generare cifrati con uno shift scelto.
+- Provare automaticamente tutti i 26 shift (analisi).
+- Valutare e ordinare i risultati con tecniche statistiche e linguistiche.
+- Personalizzare i pesi del punteggio combinato.
+- Visualizzare Top N o tutti i 26 risultati.
+
+### Tecniche usate
+- **Frequenze letterali**: confronto con modello italiano.
+- **Hamming-like rank score**: confronto ordinale tra distribuzioni di frequenza.
+- **Chi-quadro**: misura la distanza statistica tra distribuzione osservata ed attesa.
+- **WordScore**: percentuale di parole trovate in un piccolo dizionario italiano.
+- **BigramScore**: presenza di bigrammi frequenti in italiano.
+
+### Formula combinata
+
+combined = w_word * WordScore + w_ham * HamScore + w_chi * ChiScoreNorm + w_big * BigramScore
+
+
+I pesi sono normalizzati automaticamente.
+
+### Uso
+1. Apri il file HTML nel browser.
+2. Inserisci il testo da cifrare o incolla il ciphertext per l'analisi.
+3. Clicca `Try all shifts` per eseguire l'analisi automatica.
+4. Usa `Top N` e `Show all` per controllare quanti risultati visualizzare.
+5. Clicca `Select` su una riga per vedere il testo decifrato e i punteggi dettagliati.
