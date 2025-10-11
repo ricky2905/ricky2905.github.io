@@ -5,9 +5,6 @@
   <title>Datasets in Statistics and Cybersecurity | Riccardo D'Annibale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-/* ---------- MAIN STYLE (from provided template) ---------- */
-
-/* Main body */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #0f111a;  /* dark background */
@@ -18,12 +15,10 @@ body {
   margin: auto;
 }
 
-/* Green headings */
 h1, h2, h3, h4, h5, h6 {
-  color: #4CAF50;  /* green */
+  color: #4CAF50;  
 }
 
-/* Specific styles for h1-h3 */
 h1 {
   font-size: 2.8rem;
   border-bottom: 3px solid #4CAF50;
@@ -41,7 +36,6 @@ h3 {
   margin-top: 1.5rem;
 }
 
-/* Card */
 .card {
   background-color: #1a1c2b;
   border-left: 5px solid #4CAF50;
@@ -51,7 +45,6 @@ h3 {
   box-shadow: 0 4px 15px rgba(76,175,80,0.08);
 }
 
-/* Links */
 a {
   color: #4CAF50;
   text-decoration: none;
@@ -62,7 +55,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Separator */
 hr {
   border: none;
   height: 2px;
@@ -70,7 +62,6 @@ hr {
   margin: 2rem 0;
 }
 
-/* Dropdown */
 select {
   padding:0.5rem 1rem;
   border-radius:5px;
@@ -81,7 +72,6 @@ select {
   margin-top:0.5rem;
 }
 
-/* Top navigation */
 .topnav {
   display: flex;
   justify-content: flex-start;
@@ -97,7 +87,6 @@ select {
   color: #66bb6a;
 }
 
-/* Footer */
 footer {
   margin-top: 3rem;
   padding-top: 1rem;
@@ -107,7 +96,6 @@ footer {
   color: #999;
 }
 
-/* ---------- ADDITIONAL STYLES FOR CONTENT ---------- */
 
 table {
   border-collapse: collapse;
@@ -143,7 +131,6 @@ pre {
 }
 img { max-width: 100%; display: block; margin: 12px 0; border-radius: 4px; }
 
-/* Caesar tool styles */
 textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:6px}
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .small{font-size:13px;color:#cfd8cf}
@@ -156,17 +143,14 @@ button.small:hover{background:#1d2b20}
 label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
 thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
 
-/* Small helper to dim header when hidden */
 th.dimmed { opacity: 0.55; }
 
-/* Responsive */
 @media (max-width:600px){
   body { padding: 1rem; max-width: 100%; }
   h1 { font-size: 2rem; }
 }
   </style>
 
-  <!-- MathJax (render LaTeX) -->
   <script>
   window.MathJax = {
     tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] },
@@ -184,11 +168,7 @@ th.dimmed { opacity: 0.55; }
   </header>
 
   <main>
-    <!-- ===========================
-         Full content (translated to English and formulas added)
-         =========================== -->
 
-    <!-- Article: Datasets -->
     <article class="card">
       <h1>Datasets in Statistics and Cybersecurity</h1>
 
@@ -400,7 +380,6 @@ th.dimmed { opacity: 0.55; }
       </ul>
     </article>
 
-    <!-- Section: Using Distribution to Break Caesar -->
     <article class="card">
       <h2>Using Distribution to Break a Caesar Cipher</h2>
       <p>This section introduces a simple web-based tool and an explanation for working with the <strong>Caesar cipher (shift = 3)</strong>. The tool allows users to:</p>
@@ -445,9 +424,6 @@ th.dimmed { opacity: 0.55; }
       </ul>
     </article>
 
-    <!-- ****************
-         Caesar interactive tool (full)
-         **************** -->
     <section class="card" aria-labelledby="caesar-title">
       <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
       <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher.</div>
@@ -478,7 +454,6 @@ th.dimmed { opacity: 0.55; }
         <button id="sortComb">Sort by Combined</button>
         <label style="margin-left:8px" class="small">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label>
 
-        <!-- NEW: Toggle button to show all shifts -->
         <button id="toggleAllShifts" class="small" title="Show all shifts">Show all shifts</button>
       </div>
 
@@ -518,7 +493,6 @@ th.dimmed { opacity: 0.55; }
       <div id="chosen" class="result">---</div>
     </section>
 
-    <!-- Overview & explanation (rest of original content) -->
     <article class="card">
       <h1>Overview of the Caesar Cipher with Statistical Analysis</h1>
       <p>The Caesar cipher is a <strong>monoalphabetic substitution cipher</strong> that shifts each letter of the plaintext by a fixed number of positions.</p>
@@ -614,13 +588,8 @@ for(let shift = 1; shift < 26; shift++){
     <p>© 2025 Riccardo D'Annibale</p>
   </footer>
 
-  <!-- ===========================
-       JavaScript: full integrated Caesar tool
-       (includes all logic: accent map, frequencies, scoring,
-       rendering, "Show all shifts" toggle, and header visibility)
-       =========================== -->
   <script>
-/* --- Reference frequencies (Italian) --- */
+
 const referenceFreq = {
   'A':10.85,'B':1.05,'C':4.30,'D':3.39,'E':11.49,'F':1.01,'G':1.65,'H':1.43,
   'I':10.18,'J':0.01,'K':0.01,'L':5.70,'M':2.87,'N':7.02,'O':9.97,'P':2.96,
@@ -628,7 +597,6 @@ const referenceFreq = {
   'Y':0.06,'Z':0.85
 };
 
-/* accent map */
 const accentMap = {
   'à':'a','á':'a','â':'a','ã':'a','ä':'a','å':'a',
   'è':'e','é':'e','ê':'e','ë':'e','ì':'i','í':'i','î':'i','ï':'i',
@@ -639,7 +607,6 @@ const accentMap = {
 };
 function mapAccents(s){ return s.split('').map(ch => accentMap[ch] || ch).join(''); }
 
-/* common words */
 const commonWords = new Set([
   'di','e','il','la','che','a','in','un','per','con','non','una','sono','si','da','al','lo','ma','più',
   'come','su','o','se','anche','perché','quando','dove','questo','quella','queste','noi','voi','loro',
@@ -649,10 +616,8 @@ const commonWords = new Set([
   'the','and','is','in','to','of','that','it','on','for','with','as','are','this','be','by','was','or','from'
 ]);
 
-/* common bigrams */
 const commonBigrams = ['CH','GL','QU','SC','GN','TR','PR','BR','SP','RA','RE','RI','IN','AN','TO','TE','IO','IA','CO'];
 
-/* Caesar shift helper */
 function caesarShift(text, shift){
   return text.split('').map(ch => {
     const code = ch.charCodeAt(0);
@@ -662,7 +627,6 @@ function caesarShift(text, shift){
   }).join('');
 }
 
-/* letter frequencies */
 function letterFrequencies(text){
   const counts = {};
   for (let c=65;c<=90;c++) counts[String.fromCharCode(c)] = 0;
@@ -676,7 +640,6 @@ function letterFrequencies(text){
   return {counts, freqs, total};
 }
 
-/* rank by frequency */
 function rankByFrequency(freqs){
   return Object.keys(freqs).sort((a,b) => {
     if (freqs[b] === freqs[a]) return a.localeCompare(b);
@@ -684,14 +647,12 @@ function rankByFrequency(freqs){
   });
 }
 
-/* Hamming distance */
 function hammingRankDistance(orderA, orderB){
   let diff=0;
   for (let i=0;i<26;i++) if (orderA[i] !== orderB[i]) diff++;
   return diff;
 }
 
-/* chi² */
 function chiSquared(obsFreqs){
   let chi2=0;
   for (const L in referenceFreq){
@@ -702,7 +663,6 @@ function chiSquared(obsFreqs){
   return chi2;
 }
 
-/* wordScore */
 function wordScore(text){
   const tokens = text.toLowerCase().split(/[^a-zA-Z]+/).filter(Boolean);
   if (!tokens.length) return 0;
@@ -711,7 +671,6 @@ function wordScore(text){
   return hits / tokens.length;
 }
 
-/* bigramScore */
 function bigramScore(text){
   const s = text.toUpperCase().replace(/[^A-Z]/g,'');
   if (s.length < 2) return 0;
@@ -720,13 +679,11 @@ function bigramScore(text){
   return found / commonBigrams.length;
 }
 
-/* reference order */
 const referenceOrder = Object.keys(referenceFreq).sort((a,b) => {
   if (referenceFreq[b] === referenceFreq[a]) return a.localeCompare(b);
   return referenceFreq[b] - referenceFreq[a];
 });
 
-/* Helper to set header visibility for extra columns */
 function setHeaderVisibility(showExtra) {
   const ths = document.querySelectorAll('#results thead th');
   ths.forEach(th => {
@@ -746,7 +703,6 @@ function setHeaderVisibility(showExtra) {
   });
 }
 
-/* When DOM ready, wire up UI */
 document.addEventListener('DOMContentLoaded', () => {
   const runBtn = document.getElementById('run');
   const sortHamBtn = document.getElementById('sortHam');
@@ -790,7 +746,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* Toggle "Show all shifts" behavior */
   let __showingAll = false;
   let __prevTopN = null;
   toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
@@ -811,11 +766,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderResults(window._lastResults || [], 'combined');
   });
 
-  // initial run
   tryAll();
 });
 
-/* read weights */
 function readWeights(){
   const w_word = parseFloat(document.getElementById('w_word').value) || 0.45;
   const w_ham  = parseFloat(document.getElementById('w_ham').value)  || 0.25;
@@ -825,7 +778,6 @@ function readWeights(){
   return {w_word: w_word/sum, w_ham: w_ham/sum, w_chi: w_chi/sum, w_big: w_big/sum};
 }
 
-/* main: try all shifts */
 function tryAll(){
   try {
     const raw = document.getElementById('cipher').value || '';
@@ -868,7 +820,6 @@ function tryAll(){
   }
 }
 
-/* render table with top N and optional columns */
 function renderResults(results, mode){
   if (!results || !results.length) { console.warn('No results yet'); return; }
   const tbody = document.querySelector('#results tbody');
@@ -879,13 +830,11 @@ function renderResults(results, mode){
   else if (mode === 'chi') sorted.sort((a,b)=>a.chi2 - b.chi2 || b.combined - a.combined);
   else sorted.sort((a,b)=>b.combined - a.combined || a.ham - b.ham);
 
-  // Decide whether to show extra columns:
-  // showExtra if user explicitly checked "Show detailed columns" OR if showing all results (topN >= total)
+
   const userRequested = document.getElementById('toggleCols').checked;
   const showingAll = topN >= results.length;
   const showExtra = userRequested || showingAll;
 
-  // Update header visibility accordingly
   setHeaderVisibility(showExtra);
 
   sorted.forEach((r, idx) => {
@@ -904,7 +853,6 @@ function renderResults(results, mode){
     tbody.appendChild(tr);
   });
 
-  // If topN < results.length, append a "Show more" row (usability)
   if (topN < results.length) {
     const remaining = results.length - topN;
     const trMore = document.createElement('tr');
@@ -923,7 +871,6 @@ function renderResults(results, mode){
     });
   }
 
-  // Attach select handlers
   tbody.querySelectorAll('button[data-shift]').forEach(btn => btn.addEventListener('click', e => {
     const s = parseInt(e.currentTarget.getAttribute('data-shift'),10);
     const obj = results.find(r => r.shift === s);
@@ -931,7 +878,6 @@ function renderResults(results, mode){
   }));
 }
 
-/* show selected */
 function showSelected(obj){
   if (!obj) return;
   const out = document.getElementById('chosen');
