@@ -156,6 +156,9 @@ button.small:hover{background:#1d2b20}
 label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
 thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
 
+/* Small helper to dim header when hidden */
+th.dimmed { opacity: 0.55; }
+
 /* Responsive */
 @media (max-width:600px){
   body { padding: 1rem; max-width: 100%; }
@@ -242,7 +245,7 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
       <ul>
         <li><strong>Probability distributions</strong>: Normal, Poisson, Binomial — useful for modeling events like access attempts or attacks [4].</li>
         <li><strong>Outliers</strong>: extreme values that may indicate anomalies or intrusions [1][5].</li>
-        <li><strong>Patterns and correlations</strong>: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].</li>
+        <li><strong>Patterns and correlations</strong>: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].li></li>
       </ul>
 
       <hr/>
@@ -261,68 +264,6 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
         <li>Goodfellow, I., Bengio, Y., & Courville, A. (2016). <em>Deep Learning</em>. MIT Press.</li>
         <li>Tavallaee, M., et al. (2009). <em>A detailed analysis of the KDD CUP 99 data set</em>. IEEE Symposium on Computational Intelligence for Security and Defense Applications.</li>
       </ol>
-
-      <hr/>
-
-      <h2>Univariate and Bivariate Distribution on a Dataset</h2>
-      <p>Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions. For the univariate distribution, we consider the <strong>Age</strong> variable, while for the bivariate distribution we examine <strong>Age</strong> and <strong>Height</strong>.</p>
-
-      <img src="/assets/images/dati.png" alt="Esempio di dati tabellari" title="Esempio di dati tabellari"/>
-
-      <h3>Univariate Distribution on Age</h3>
-      <img src="/assets/images/Dist_univariata.png" alt="Distribuzione Univariata" title="Distribuzione Univariata"/>
-      <p><strong>SQL Code:</strong></p>
-      <img src="/assets/images/Dist_univariata_sql.png" alt="Distribuzione Univariata SQL" title="Distribuzione Univariata SQL"/>
-
-      <h3>Bivariate Distribution on Age and Height</h3>
-      <img src="/assets/images/Dist_bivariata.png" alt="Distribuzione Bivariata" title="Distribuzione Bivariata"/>
-      <p><strong>SQL Code:</strong></p>
-      <img src="/assets/images/Dist_bivariata_sql.png" alt="Distribuzione Bivariata SQL" title="Distribuzione Bivariata SQL"/>
-
-      <hr/>
-
-      <h2>Using Distribution to Break a Caesar Cipher</h2>
-      <p>This section introduces a simple web-based tool and an explanation for working with the <strong>Caesar cipher (shift = 3)</strong>. The tool allows users to:</p>
-      <ul>
-        <li>Encrypt text</li>
-        <li>Attempt decryption by trying all 25 possible shifts (brute-force)</li>
-        <li>Automatically estimate the correct shift using letter frequency analysis (chi-squared test)</li>
-      </ul>
-      <p>The frequency-based approach provides a statistical guess for the most likely shift (for longer texts), while brute-force remains reliable for shorter ones.</p>
-
-      <h2>Main Goals of the Tool</h2>
-      <h3>Caesar Cipher Generation</h3>
-      <ul>
-        <li>Encrypts plaintext with a user-selected shift.</li>
-        <li>Supports accent mapping before encryption.</li>
-      </ul>
-
-      <h3>Attempted Decryption of All Shifts</h3>
-      <ul>
-        <li>Performs brute-force over all 26 possible Caesar cipher shifts.</li>
-      </ul>
-
-      <h3>Scoring and Ranking of Candidates</h3>
-      <p>Calculates scores based on:</p>
-      <ul>
-        <li>Hamming distance (letter order)</li>
-        <li>Chi-squared statistic (χ²) for frequencies</li>
-        <li>Presence of common Italian words (wordScore)</li>
-        <li>Presence of common bigrams (bigramScore)</li>
-      </ul>
-
-      <h3>Results Display</h3>
-      <ul>
-        <li>Shows all candidate decryptions in a sortable table.</li>
-        <li>Highlights the top N candidates.</li>
-        <li>Allows selection of a candidate to view a preview and detailed scores.</li>
-      </ul>
-
-      <h3>User Utilities</h3>
-      <ul>
-        <li>Copy ciphertext to clipboard.</li>
-        <li>Automatically handle accents and capitalization.</li>
-      </ul>
     </article>
 
     <!-- Caesar interactive card -->
@@ -379,14 +320,14 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
       <table id="results" aria-live="polite">
         <thead>
           <tr>
-            <th>Shift</th>
-            <th>Combined</th>
-            <th class="hiddenCol">Word%</th>
-            <th class="hiddenCol">Hamming</th>
-            <th class="hiddenCol">Chi²</th>
-            <th class="hiddenCol">Bigram%</th>
-            <th>Preview</th>
-            <th></th>
+            <th data-col="shift">Shift</th>
+            <th data-col="combined">Combined</th>
+            <th data-col="word" class="hiddenCol">Word%</th>
+            <th data-col="ham" class="hiddenCol">Hamming</th>
+            <th data-col="chi" class="hiddenCol">Chi²</th>
+            <th data-col="bigram" class="hiddenCol">Bigram%</th>
+            <th data-col="preview">Preview</th>
+            <th data-col="action"></th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -556,57 +497,96 @@ const referenceOrder = Object.keys(referenceFreq).sort((a,b) => {
   return referenceFreq[b] - referenceFreq[a];
 });
 
-/* UI hooks */
-document.getElementById('run').addEventListener('click', tryAll);
-document.getElementById('sortHam').addEventListener('click', ()=>renderResults(window._lastResults || [], 'ham'));
-document.getElementById('sortChi').addEventListener('click', ()=>renderResults(window._lastResults || [], 'chi'));
-document.getElementById('sortComb').addEventListener('click', ()=>renderResults(window._lastResults || [], 'combined'));
+/* Helper to get header THs by data-col */
+function setHeaderVisibility(showExtra) {
+  const ths = document.querySelectorAll('#results thead th');
+  ths.forEach(th => {
+    const col = th.getAttribute('data-col');
+    if (!col) return;
+    if (['word','ham','chi','bigram'].includes(col)) {
+      if (showExtra) {
+        th.classList.remove('hiddenCol');
+        th.classList.remove('dimmed');
+      } else {
+        th.classList.add('hiddenCol');
+        th.classList.remove('dimmed');
+      }
+    } else {
+      // always visible, but dim if columns are hidden to show less emphasis
+      if (!showExtra) th.classList.add('dimmed'); else th.classList.remove('dimmed');
+    }
+  });
+}
 
-document.getElementById('genBtn').addEventListener('click', () => {
-  const pt = document.getElementById('plaintext').value || '';
-  const s = Math.max(0, Math.min(25, parseInt(document.getElementById('genShift').value || '0',10)));
-  const map = document.getElementById('genMapAcc').checked;
-  const input = map ? mapAccents(pt) : pt;
-  const c = caesarShift(input, s);
-  document.getElementById('generated').value = c;
-});
+/* UI hooks - wait for DOM */
+document.addEventListener('DOMContentLoaded', () => {
+  const runBtn = document.getElementById('run');
+  const sortHamBtn = document.getElementById('sortHam');
+  const sortChiBtn = document.getElementById('sortChi');
+  const sortCombBtn = document.getElementById('sortComb');
+  const genBtn = document.getElementById('genBtn');
+  const genAnalyzeBtn = document.getElementById('genAnalyzeBtn');
+  const copyCipherBtn = document.getElementById('copyCipher');
+  const toggleAllBtn = document.getElementById('toggleAllShifts');
+  const topNInput = document.getElementById('topN');
+  const toggleColsEl = document.getElementById('toggleCols');
 
-document.getElementById('genAnalyzeBtn').addEventListener('click', () => {
-  document.getElementById('genBtn').click();
-  const c = document.getElementById('generated').value || '';
-  document.getElementById('cipher').value = c;
+  runBtn.addEventListener('click', tryAll);
+  sortHamBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'ham'));
+  sortChiBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'chi'));
+  sortCombBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'combined'));
+
+  genBtn.addEventListener('click', () => {
+    const pt = document.getElementById('plaintext').value || '';
+    const s = Math.max(0, Math.min(25, parseInt(document.getElementById('genShift').value || '0',10)));
+    const map = document.getElementById('genMapAcc').checked;
+    const input = map ? mapAccents(pt) : pt;
+    const c = caesarShift(input, s);
+    document.getElementById('generated').value = c;
+  });
+
+  genAnalyzeBtn.addEventListener('click', () => {
+    genBtn.click();
+    const c = document.getElementById('generated').value || '';
+    document.getElementById('cipher').value = c;
+    tryAll();
+  });
+
+  copyCipherBtn.addEventListener('click', async () => {
+    try {
+      const text = document.getElementById('generated').value || document.getElementById('cipher').value || '';
+      await navigator.clipboard.writeText(text);
+      alert('Cipher copied to clipboard.');
+    } catch (e) {
+      alert('Cannot copy automatically. Copy manually.');
+    }
+  });
+
+  /* NEW: Toggle "Mostra tutti gli shift" behavior */
+  let __showingAll = false;
+  let __prevTopN = null;
+  toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
+    // Toggle state
+    if (!__showingAll) {
+      __prevTopN = parseInt(topNInput.value || '5', 10);
+      topNInput.value = 26;
+      toggleAllBtn.textContent = 'Mostra solo top';
+      __showingAll = true;
+    } else {
+      topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
+      toggleAllBtn.textContent = 'Mostra tutti gli shift';
+      __showingAll = false;
+    }
+    // Re-render table with current results
+    renderResults(window._lastResults || [], 'combined');
+  });
+
+  toggleColsEl && toggleColsEl.addEventListener('change', () => {
+    renderResults(window._lastResults || [], 'combined');
+  });
+
+  // initial run
   tryAll();
-});
-
-document.getElementById('copyCipher').addEventListener('click', async () => {
-  try {
-    const text = document.getElementById('generated').value || document.getElementById('cipher').value || '';
-    await navigator.clipboard.writeText(text);
-    alert('Cipher copied to clipboard.');
-  } catch (e) {
-    alert('Cannot copy automatically. Copy manually.');
-  }
-});
-
-/* NEW: Toggle "Mostra tutti gli shift" behavior */
-let __showingAll = false;
-let __prevTopN = null;
-const toggleAllBtn = document.getElementById('toggleAllShifts');
-const topNInput = document.getElementById('topN');
-toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
-  // Toggle state
-  if (!__showingAll) {
-    __prevTopN = parseInt(topNInput.value || '5', 10);
-    topNInput.value = 26;
-    toggleAllBtn.textContent = 'Mostra solo top';
-    __showingAll = true;
-  } else {
-    topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
-    toggleAllBtn.textContent = 'Mostra tutti gli shift';
-    __showingAll = false;
-  }
-  // Re-render table with current results
-  renderResults(window._lastResults || [], 'combined');
 });
 
 /* read weights */
@@ -664,7 +644,7 @@ function tryAll(){
 
 /* render table with top N and optional columns */
 function renderResults(results, mode){
-  if (!results || !results.length) { alert('Run "Try all shifts" first.'); return; }
+  if (!results || !results.length) { console.warn('No results yet'); return; }
   const tbody = document.querySelector('#results tbody');
   tbody.innerHTML = '';
   const topN = Math.max(1, Math.min(26, parseInt(document.getElementById('topN').value || '5',10)));
@@ -673,7 +653,14 @@ function renderResults(results, mode){
   else if (mode === 'chi') sorted.sort((a,b)=>a.chi2 - b.chi2 || b.combined - a.combined);
   else sorted.sort((a,b)=>b.combined - a.combined || a.ham - b.ham);
 
-  const showExtra = document.getElementById('toggleCols').checked;
+  // Decide whether to show extra columns:
+  // showExtra if user explicitly checked "Show detailed columns" OR if showing all results (topN >= total)
+  const userRequested = document.getElementById('toggleCols').checked;
+  const showingAll = topN >= results.length;
+  const showExtra = userRequested || showingAll;
+
+  // Update header visibility accordingly
+  setHeaderVisibility(showExtra);
 
   sorted.forEach((r, idx) => {
     if (idx >= topN) return;
@@ -691,25 +678,28 @@ function renderResults(results, mode){
     tbody.appendChild(tr);
   });
 
-  // If topN < results.length, append a small "Mostra altri" row (for usability)
+  // If topN < results.length, append a "Mostra altri" row (usability)
   if (topN < results.length) {
+    const remaining = results.length - topN;
     const trMore = document.createElement('tr');
     trMore.innerHTML = `
       <td colspan="8" style="text-align:center;">
-        <button id="showRemaining" class="small">Mostra ${results.length - topN} risultati rimanenti</button>
+        <button id="showRemaining" class="small">Mostra ${remaining} risultati rimanenti</button>
       </td>
     `;
     tbody.appendChild(trMore);
     document.getElementById('showRemaining').addEventListener('click', () => {
-      // set topN to total and update toggle button state
-      __prevTopN = parseInt(document.getElementById('topN').value || '5', 10);
-      document.getElementById('topN').value = results.length;
-      __showingAll = true;
-      toggleAllBtn && (toggleAllBtn.textContent = 'Mostra solo top');
-      renderResults(results, 'combined');
+      // set topN to total and update toggle button state if present
+      const topNInput = document.getElementById('topN');
+      const toggleAllBtn = document.getElementById('toggleAllShifts');
+      const prev = parseInt(topNInput.value || '5', 10);
+      topNInput.value = results.length;
+      if (toggleAllBtn) toggleAllBtn.textContent = 'Mostra solo top';
+      renderResults(results, mode);
     });
   }
 
+  // Attach select handlers
   tbody.querySelectorAll('button[data-shift]').forEach(btn => btn.addEventListener('click', e => {
     const s = parseInt(e.currentTarget.getAttribute('data-shift'),10);
     const obj = results.find(r => r.shift === s);
@@ -727,12 +717,6 @@ function showSelected(obj){
 
 function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-document.getElementById('toggleCols').addEventListener('change', () => {
-  renderResults(window._lastResults || [], 'combined');
-});
-
-/* initial run for demo */
-tryAll();
   </script>
 </body>
 </html>
