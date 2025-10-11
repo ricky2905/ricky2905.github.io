@@ -5,19 +5,113 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
 <!-- BEGIN WIDGET HTML -->
 <div id="cesare-widget">
   <style>
-    /* stile contenuto per integrazione in pagina Markdown */
-    #cesare-widget { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial; padding:12px; border:1px solid #eee; border-radius:8px; }
-    #cesare-widget textarea{ width:100%; font-family:monospace; font-size:13px; margin-bottom:8px; }
-    #cesare-widget .controls{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0; }
-    #cesare-widget table{ border-collapse:collapse; width:100%; margin-top:8px; font-size:13px }
-    #cesare-widget th, #cesare-widget td{ border:1px solid #ddd; padding:6px; text-align:left }
-    #cesare-widget th{ background:#fafafa }
-    #cesare-widget .result{ white-space:pre-wrap; background:#fff; border:1px solid #ddd; padding:10px; margin-top:8px; max-height:280px; overflow:auto }
-    #cesare-widget .top{ background:#e8ffe8 }
-    #cesare-widget .generator{ border:1px dashed #ccc; padding:8px; margin:8px 0; border-radius:6px }
-    #cesare-widget .small{ font-size:13px; color:#444 }
-    #cesare-widget input[type="number"]{ width:72px }
-    #cesare-widget button.small{ padding:6px 8px; font-size:13px }
+/* stile aggiornato: testo nero su sfondo verde (migliore contrasto) */
+#cesare-widget {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+  padding: 12px;
+  border: 1px solid #cfe6cfe0;
+  border-radius: 8px;
+  background-color: #e6f7e6; /* verde chiaro di sfondo */
+  color: #000;               /* testo in nero */
+}
+
+#cesare-widget h3, 
+#cesare-widget h4 {
+  color: #000;
+  margin-top: 0;
+}
+
+#cesare-widget textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 13px;
+  margin-bottom: 8px;
+  background-color: #f7fff7; /* leggermente chiaro rispetto al fondo */
+  color: #000;
+  border: 1px solid #cfe6cf;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+#cesare-widget .controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 8px 0;
+}
+
+#cesare-widget table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 13px;
+  background: #eaf9ea; /* tabella su verde chiaro */
+}
+
+#cesare-widget th,
+#cesare-widget td {
+  border: 1px solid #cfe6cf;
+  padding: 6px;
+  text-align: left;
+  color: #000;
+}
+
+#cesare-widget th {
+  background: #d0f0d0; /* intestazione leggermente più scura */
+  color: #000;
+  font-weight: 600;
+}
+
+#cesare-widget .result {
+  white-space: pre-wrap;
+  background: #ffffff; /* area testo selezionato bianca per leggibilità */
+  border: 1px solid #cfe6cf;
+  padding: 10px;
+  margin-top: 8px;
+  max-height: 280px;
+  overflow: auto;
+  color: #000;
+}
+
+#cesare-widget .top {
+  background: #bfe6bf !important; /* evidenzia riga top con verde più scuro */
+  color: #000 !important;
+}
+
+#cesare-widget .generator {
+  border: 1px dashed #bfe6bf;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 6px;
+  background: #eaf9ea;
+  color: #000;
+}
+
+#cesare-widget .small {
+  font-size: 13px;
+  color: #000;
+}
+
+#cesare-widget input[type="number"] {
+  width: 72px;
+  color: #000;
+}
+
+#cesare-widget button.small {
+  padding: 6px 8px;
+  font-size: 13px;
+  background: #d8f0d8;
+  border: 1px solid #bfe6bf;
+  color: #000;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#cesare-widget button.small:hover {
+  background: #c6e8c6;
+}
+
   </style>
 
   <h3>Cesare: genera cifrato → analizza</h3>
