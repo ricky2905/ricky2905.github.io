@@ -1,26 +1,27 @@
----
-
-#  Datasets in Statistics and Cybersecurity
+# Datasets in Statistics and Cybersecurity
 
 Datasets are fundamental for analyzing and modeling behaviors in cybersecurity. They form the basis for detecting anomalies, training predictive models, and evaluating intrusion detection systems [1].
+
+---
 
 ## Types of Datasets
 
 ### 1. **Structured**
-
-Data organized in tables with rows and columns, such as relational databases. Example: access logs, user tables [2].
+Data organized in tables with rows and columns, such as relational databases.  
+**Example:** access logs, user tables [2].
 
 ### 2. **Unstructured**
-
 Data without a fixed schema, such as text, images, or video. They require advanced processing techniques, like NLP or computer vision [3].
 
 ### 3. **Semi-Structured**
-
 Data with partial structure, such as JSON or XML files. They contain labels or metadata that facilitate analysis [2].
+
+---
 
 ## Example: Tabular Dataset from KDD Cup '99
 
-The **KDD Cup '99** dataset is widely used for intrusion detection. It contains simulated network traffic information with 41 variables and various attack labels [6]. Here is a simplified tabular representation:
+The **KDD Cup '99** dataset is widely used for intrusion detection. It contains simulated network traffic information with 41 variables and various attack labels [6].  
+Here is a simplified tabular representation:
 
 | Duration | Protocol | Service | SrcBytes | DstBytes | Label  |
 | -------- | -------- | ------- | -------- | -------- | ------ |
@@ -30,6 +31,8 @@ The **KDD Cup '99** dataset is widely used for intrusion detection. It contains 
 
 This structure allows the application of statistical and machine learning techniques to identify anomalous behaviors.
 
+---
+
 ## Dataset Management
 
 Proper dataset management is crucial for reliable and replicable results. Main steps include:
@@ -38,6 +41,8 @@ Proper dataset management is crucial for reliable and replicable results. Main s
 * **Normalization and standardization**: aligning variable scales to avoid bias in models [4].
 * **Anonymization and privacy**: protecting sensitive data, essential in cybersecurity [5].
 * **Feature selection**: choosing the most relevant features to improve model performance and reduce computational complexity [2].
+
+---
 
 ## Data Distribution Concepts
 
@@ -49,100 +54,96 @@ Proper dataset management is crucial for reliable and replicable results. Main s
 
 ### Types of Distribution
 
-* **Univariate**: examines one variable at a time, analyzing mean, median, mode, variance, skewness, and kurtosis [4].
-* **Bivariate**: examines the relationship between two variables, using scatter plots, contingency tables, and correlations [4].
-* **Multivariate**: involves multiple variables simultaneously, used in PCA, clustering, and complex predictive models [4].
+* **Univariate** — examines one variable at a time, analyzing mean, median, mode, variance, skewness, and kurtosis [4].  
+* **Bivariate** — examines the relationship between two variables, using scatter plots, contingency tables, and correlations [4].  
+* **Multivariate** — involves multiple variables simultaneously, used in PCA, clustering, and complex predictive models [4].
 
 ### Other Relevant Concepts
 
-* **Probability distributions**: Normal, Poisson, Binomial, useful for modeling events like access attempts or attacks [4].
-* **Outliers**: extreme values that may indicate anomalies or intrusions [1][5].
+* **Probability distributions**: Normal, Poisson, Binomial — useful for modeling events like access attempts or attacks [4].  
+* **Outliers**: extreme values that may indicate anomalies or intrusions [1][5].  
 * **Patterns and correlations**: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].
+
+---
 
 ## Final Considerations
 
-Proper analysis of datasets and distributions is essential in cybersecurity for identifying threats and optimizing defense systems. The combined use of structured, unstructured, and semi-structured datasets, along with rigorous data management, allows the development of robust and reliable statistical and machine learning models [1][6].
+Proper analysis of datasets and distributions is essential in cybersecurity for identifying threats and optimizing defense systems.  
+The combined use of structured, unstructured, and semi-structured datasets, along with rigorous data management, allows the development of robust and reliable statistical and machine learning models [1][6].
+
+---
 
 ## References
 
-[1] Provost, F., & Fawcett, T. (2013). *Data Science for Business*. O'Reilly Media.
-
-[2] Han, J., Pei, J., & Kamber, M. (2011). *Data Mining: Concepts and Techniques*. Elsevier.
-
-[3] Jurafsky, D., & Martin, J. H. (2020). *Speech and Language Processing*. Pearson.
-
-[4] Montgomery, D. C., & Runger, G. C. (2018). *Applied Statistics and Probability for Engineers*. Wiley.
-
-[5] Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep Learning*. MIT Press.
-
+[1] Provost, F., & Fawcett, T. (2013). *Data Science for Business*. O'Reilly Media.  
+[2] Han, J., Pei, J., & Kamber, M. (2011). *Data Mining: Concepts and Techniques*. Elsevier.  
+[3] Jurafsky, D., & Martin, J. H. (2020). *Speech and Language Processing*. Pearson.  
+[4] Montgomery, D. C., & Runger, G. C. (2018). *Applied Statistics and Probability for Engineers*. Wiley.  
+[5] Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep Learning*. MIT Press.  
 [6] Tavallaee, M., et al. (2009). *A detailed analysis of the KDD CUP 99 data set*. In *IEEE Symposium on Computational Intelligence for Security and Defense Applications*.
 
-## Univariate and bivariate distribution on a dataset
-Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions. For the univariate distribution, we consider the age variable, while for the bivariate distribution we examine age and Height.
+---
+
+## Univariate and Bivariate Distribution on a Dataset
+
+Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions.  
+For the univariate distribution, we consider the **Age** variable, while for the bivariate distribution we examine **Age** and **Height**.
 
 ![Dati](/assets/images/dati.png "Esempio di dati tabellari")
 
-Univariate distribution on Età
-
+### Univariate Distribution on Age
 ![Eta](/assets/images/Dist_univariata.png "Distribuzione Univariata")
 
-SQL code
-
+**SQL Code:**
 ![EtaSQL](/assets/images/Dist_univariata_sql.png "Distribuzione Univariata SQL")
 
-
-Bivariate distribution on Età, Altezza
-
+### Bivariate Distribution on Age and Height
 ![EtaAltezza](/assets/images/Dist_bivariata.png "Distribuzione Bivariata")
 
-SQL code
-
+**SQL Code:**
 ![EtaAltezzaSQL](/assets/images/Dist_bivariata_sql.png "Distribuzione Bivariata SQL")
+
+---
 
 ## Using Distribution to Break a Caesar Cipher
 
-This section introduces a simple web-based tool along with an explanation for working with the classic Caesar cipher (shift = 3). The tool allows users to: encrypt text, attempt decryption by trying all 25 possible shifts (brute-force), and automatically estimate the correct shift using letter frequency analysis (chi-squared test) compared to standard English letter frequencies. The implementation uses plain HTML and JavaScript, designed for educational purposes and hands-on experimentation. The frequency-based approach provides a statistical guess for the most likely shift but is reliable only for sufficiently long texts, while brute-force generates all possible plaintexts and remains the reliable method for shorter inputs.
+This section introduces a simple web-based tool and an explanation for working with the **Caesar cipher (shift = 3)**.  
+The tool allows users to:
 
-## Main Goals of the tool
+* Encrypt text
+* Attempt decryption by trying all 25 possible shifts (brute-force)
+* Automatically estimate the correct shift using letter frequency analysis (chi-squared test)
 
-Caesar Cipher Generation
+The frequency-based approach provides a statistical guess for the most likely shift (for longer texts), while brute-force remains reliable for shorter ones.
 
-Encrypts plaintext with a user-selected shift.
+---
 
-Supports accent mapping before encryption.
+## Main Goals of the Tool
 
-Attempted Decryption of All Shifts
+### Caesar Cipher Generation
+* Encrypts plaintext with a user-selected shift.
+* Supports accent mapping before encryption.
 
-Performs brute-force over all 26 possible Caesar cipher shifts.
+### Attempted Decryption of All Shifts
+* Performs brute-force over all 26 possible Caesar cipher shifts.
 
-Scoring and Ranking of Candidates
-
+### Scoring and Ranking of Candidates
 Calculates scores based on:
+* Hamming distance (letter order)
+* Chi-squared statistic (χ²) for frequencies
+* Presence of common Italian words (wordScore)
+* Presence of common bigrams (bigramScore)
 
-Hamming distance compared to the reference letter frequency order.
+### Results Display
+* Shows all candidate decryptions in a sortable table.
+* Highlights the top N candidates.
+* Allows selection of a candidate to view a preview and detailed scores.
 
-Chi-squared statistic (χ²) for letter frequencies.
+### User Utilities
+* Copy ciphertext to clipboard.
+* Automatically handle accents and capitalization.
 
-Presence of common Italian words (wordScore).
-
-Presence of common bigrams (bigramScore).
-
-Combines scores using configurable weights.
-
-Results Display
-
-Shows all candidate decryptions in a sortable table.
-
-Highlights the top N candidates.
-
-Allows selection of a candidate to view a preview and detailed scores.
-
-User Utilities
-
-Copies the ciphertext to the clipboard.
-
-Automatically handles accents and capitalization for analysis.
-
+---
 
 ```html
 <!doctype html>
@@ -483,19 +484,22 @@ tryAll();
 </body>
 </html>
 
-# Overview of the Caesar Cipher with Statistical Analysis
 
-The Caesar cipher is a **monoalphabetic substitution cipher** that shifts each letter of the plaintext by a fixed number of positions in the alphabet. For example, with a shift of 3:
-
-Plaintext: ABCDEFGHIJKLMNOPQRSTUVWXYZ
-Ciphertext: DEFGHIJKLMNOPQRSTUVWXYZABC
-
-
-Encryption replaces each letter with the one located *n* positions later in the alphabet, wrapping around at the end. Decryption reverses the process.
+```
 
 ---
 
-## Core Function (Encryption/Decryption)
+# Overview of the Caesar Cipher with Statistical Analysis
+
+The Caesar cipher is a **monoalphabetic substitution cipher** that shifts each letter of the plaintext by a fixed number of positions.  
+For example, with a shift of 3:
+
+```
+Plaintext:  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+Ciphertext: DEFGHIJKLMNOPQRSTUVWXYZABC
+```
+
+### Encryption/Decryption Function
 
 ```javascript
 function caesarShift(text, shift){
@@ -506,152 +510,45 @@ function caesarShift(text, shift){
     return ch;
   }).join('');
 }
+```
 
-### This function:
+### Brute-force Decryption
 
-    Loops through every character.
+Since there are only 25 possible shifts, the Caesar cipher can easily be broken:
 
-    Checks if it is a letter.
-
-    Converts it to ASCII code, applies the shift, and wraps using modular arithmetic (% 26).
-
-    Non-letter characters remain unchanged.
-
-## Brute-force Decryption
-
-Since there are only 25 possible shifts, the Caesar cipher can be easily broken with a brute-force attack.
-
-### Logic:
-
-    For every possible shift value s=1..25s=1..25, apply the reverse Caesar transformation.
-
-    Display all candidates so the user can visually identify meaningful text.
-
+```javascript
 for(let shift = 1; shift < 26; shift++){
   results.push({shift, text: caesarShift(ciphertext, shift)});
 }
+```
 
-Takeaway: The small keyspace makes Caesar cipher weak against exhaustive search.
-Statistical / Distribution-based Decryption
+### Statistical / Distribution-based Decryption
 
-The advanced part of the code uses letter and bigram frequency distributions to estimate the most probable shift automatically.
+The advanced part of the code uses **letter and bigram frequency distributions** to estimate the most probable shift automatically.
 
-    Compares observed letter frequencies of the ciphertext with reference Italian frequencies.
-
-    Computes multiple metrics for each candidate shift: Word%, Hamming, Chi², Bigram%.
-
-    Aggregates these into a combined score to rank candidates.
+---
 
 ## Metrics Explained
-1. Word%
 
-Measures the fraction of valid Italian words in the candidate text.
-\text{Word\%} = \frac{\text{# of common words in candidate}}{\text{# total words in candidate}}
+| Metric | Description | Weight |
+| ------- | ------------ | ------- |
+| **Word%** | Fraction of valid Italian words | 0.45 |
+| **Hamming** | Letter rank similarity | 0.25 |
+| **Chi²** | Statistical deviation from expected frequencies | 0.15 |
+| **Bigram%** | Common bigram presence | 0.15 |
 
-    Higher = more meaningful text.
-
-    Uses a mini-dictionary of frequent Italian words.
-
-2. Hamming Distance (Letter Rank Comparison)
-
-Compares the observed letter frequency order with reference Italian frequency order.
-H=∑i=126[Oi≠Ei]
-H=i=1∑26​[Oi​=Ei​]
-
-    OiOi​ = observed letter at rank ii
-
-    EiEi​ = expected letter at rank ii
-
-Normalized Hamming score:
-hamScore=26−H26
-hamScore=2626−H​
-
-    Higher → distribution closer to natural Italian letter usage.
-
-3. Chi-squared Statistic (χ2χ2)
-
-Measures how far the observed letter frequency OLOL​ deviates from expected ELEL​ (Italian frequency):
-χ2=∑L=AZ(OL−EL)2EL
-χ2=L=A∑Z​EL​(OL​−EL​)2​
-
-Normalized for the combined score:
-chiScoreNorm=χmax⁡−χχmax⁡−χmin⁡
-chiScoreNorm=χmax​−χmin​χmax​−χ​
-
-    Smaller χ2χ2 → candidate text matches expected distribution better.
-
-4. Bigram%
-
-Fraction of common Italian bigrams present in the candidate text.
-\text{Bigram\%} = \frac{\text{# of known bigrams found}}{\text{# total bigrams considered}}
-
-    Higher = text contains realistic Italian two-letter sequences.
-
-## Combined Score
-
-All four metrics are weighted and summed into a single score:
-Combined=wWord⋅Word%+wHam⋅hamScore+wChi⋅chiScoreNorm+wBigram⋅Bigram%
-Combined=wWord​⋅Word%+wHam​⋅hamScore+wChi​⋅chiScoreNorm+wBigram​⋅Bigram%
-
- ## Default weights:
-Metric	Weight
-Word%	0.45
-Hamming	0.25
-Chi²	0.15
-Bigram%	0.15
-
-Allows automatic ranking of candidate shifts, highlighting the most probable decryption.
-
-## Algorithm Steps (End-to-End)
-
-    Normalize input (map accents, ignore case).
-
-    For each shift s=0..25s=0..25:
-
-        Apply caesarShift.
-
-        Compute letter frequency distribution.
-
-        Compute Word%, Hamming, Chi², Bigram%.
-
-        Compute Combined score.
-
-    Sort candidates by Combined score.
-
-    Display top N candidates in a table.
-
-    User can select one to see full decrypted text.
-
-## Illustrative Example of a Table Row
-Shift	Combined	Word%	Hamming	Chi²	Bigram%	Preview
-7	0.856	60%	0.92	0.03	0.33	Xblzav l bu tlzz…
-
-    Shows a statistical evaluation of each candidate shift.
-
-    Only the top N rows are highlighted for clarity.
+---
 
 ## Cryptographic Insights
 
-    The Caesar cipher is weak due to:
+The Caesar cipher is weak because of its **small keyspace** (25 shifts) and **predictable frequency patterns**.  
+Statistical analysis quickly reveals the shift.
 
-        Small keyspace (25 shifts)
-
-        Predictable frequency patterns
-
-        Vulnerability to statistical analysis
-
-    This implementation demonstrates how distributions (single-letter and bigram frequencies) help recover the key without brute force.
+---
 
 ## Conclusion
 
-Your code illustrates three key principles in classical cryptography:
-
-    Simple substitution (Caesar cipher)
-
-    Brute-force key recovery
-
-    Frequency-based statistical decryption
-
-It bridges cryptography and statistical reasoning, showing how language distributions can reveal hidden information. The combined score metric elegantly synthesizes multiple statistical indicators to prioritize the most probable plaintext automatically.
+This implementation bridges **cryptography** and **statistics**, showing how data distributions can reveal hidden information.  
+The **combined score metric** elegantly integrates multiple statistical indicators to automatically prioritize the most probable plaintext.
 
 ![Script](/assets/images/script.png "Code")
