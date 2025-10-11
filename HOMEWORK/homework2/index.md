@@ -1,150 +1,267 @@
-# Fundamentals of Statistics for Cybersecurity
+What is a dataset
 
-## What is a Dataset?
+A dataset is a structured collection of data, usually organized so that each record (row) corresponds to a single observation and each column corresponds to a variable or attribute describing the observation. In research and analysis contexts a dataset provides the empirical basis for inference, modeling and visualization [1].
 
-A **dataset** is an organized collection of data, typically structured as a table with rows and columns. Each row represents an observation, and each column represents a variable of interest. In cybersecurity, a dataset could be a log of network events, where rows correspond to individual events and columns to attributes like timestamp, IP address, or type of threat.[1]
+Formal (concise) definition:
 
-## Statistical Distribution
+“A collection of data, usually represented in tabular form, where rows correspond to individual entities or observations and columns correspond to variables or attributes describing those entities.” [1]
 
-A **statistical distribution** describes how the values of a variable are spread across a dataset or population. For quantitative variables, this can be represented with histograms or probability distributions; for qualitative variables, frequency counts are used. In cybersecurity, we might examine the distribution of attack attempts by type or by time of day.[2]
+Key components
 
-| Attack Type         | Observed Frequency |
-|--------------------|------------------|
-| Malware            | 120              |
-| Phishing           | 80               |
-| DDoS               | 50               |
-| Known Vulnerabilities | 40            |
+Observations / records / instances — each row is one case (e.g., one log entry or one patient).
 
-## Chi-Square Test
+Variables / features — columns that can be quantitative (numeric) or qualitative (categorical).
 
-The **chi-square test** is a statistical test used to assess whether there is a significant association between categorical variables. The test statistic is calculated as:  
+Values — the individual cells in the table.
 
-\[
-\chi^2 = \sum_{i} \frac{(O_i - E_i)^2}{E_i}
-\]  
+Metadata — data about the data (field descriptions, units, coding schemes, provenance).
 
-where \(O_i\) is the observed frequency and \(E_i\) the expected frequency under the null hypothesis. In cybersecurity, it can be used to check if attack type is independent of geographic origin.[3]
+When documenting a dataset include a short data dictionary listing each field, its type and allowed values — this is essential for reproducible analysis and downstream statistical tests [6].
 
-## Univariate and Bivariate Analysis
+Dataset types & data quality
 
-- **Univariate analysis:** describes a single variable using measures like mean, median, standard deviation, and visualizations like histograms or boxplots. Example: analyzing packet response times in a network log.[4]  
-- **Bivariate analysis:** examines the relationship between two variables using correlation, contingency tables, or scatterplots. Example: correlation between failed login attempts and time of day.[4]
+By structure
 
-## Measures of Central Tendency and Dispersion
+Structured — relational tables, CSVs. (Example: firewall logs).
 
-The **mean** of a dataset \(x_1, \dots, x_n\) is:  
+Semi-structured — JSON, XML, log files with fields (common in telemetry).
 
-\[
-\bar{x} = \frac{x_1 + x_2 + \cdots + x_n}{n}
-\]  
+Unstructured — free text, images, audio.
 
-The **variance** and **standard deviation** describe how data deviate from the mean. In cybersecurity, these measures help identify abnormal behavior in logs.[5]
+By measurement
 
-## Outliers
+Quantitative — numeric variables (continuous or discrete).
 
-An **outlier** is a data point that significantly deviates from the rest of the dataset. Example: a sudden spike in network traffic may indicate a DDoS attack. Outliers can be detected using interquartile range rules or visually via boxplots.[6]
+Qualitative — categorical variables (nominal or ordinal).
 
-## Correlation
+Quality checklist (recommended)
 
-**Pearson correlation** measures the linear relationship between two quantitative variables:  
+total number of records n;
 
-\[
-r_{XY} = \frac{\operatorname{cov}(X,Y)}{\sigma_X \sigma_Y}
-\]  
+percent missing per field;
 
-Values near +1 indicate positive correlation, near -1 negative correlation, and near 0 no linear relationship. Example: correlation between number of alerts and network traffic.[7]
+data formats (timestamps in ISO 8601 recommended);
 
-## Linear Regression
+known filters / sampling used during collection;
 
-**Linear regression** models the relationship between a dependent variable and one or more independent variables:  
+unit tests or validation scripts for field ranges/regexes.
+Quality metadata is required to validate assumptions for many statistical tests (for example, contingency-table χ² requires adequate counts per cell) [6].
 
-\[
-Y = a + bX + \varepsilon
-\]  
+CSV example & aggregation
 
-It allows predicting future events, e.g., estimating the number of incidents based on network traffic or user activity.[8]
+Example logs_sample.csv (put a file like this in your repo to test):
+timestamp,src_ip,dst_ip,src_port,dst_port,protocol,action,threat_type,bytes,response_time
+2025-10-01T08:12:23Z,192.0.2.10,198.51.100.5,52344,443,TCP,ACCEPT,none,1240,23
+2025-10-01T08:12:27Z,203.0.113.9,198.51.100.5,33421,22,TCP,DROP,ssh-bruteforce,0,-
+2025-10-01T08:13:01Z,198.51.100.20,198.51.100.5,445,49152,TCP,DROP,ddos,0,-
 
-## Normality
+Aggregated view (example frequency table, useful for χ² and trend charts):
+|           Attack Type | Observed Frequency |
+| --------------------: | -----------------: |
+|               Malware |                120 |
+|              Phishing |                 80 |
+|                  DDoS |                 50 |
+| Known Vulnerabilities |                 40 |
 
-**Normality** indicates that data follow a normal (Gaussian) distribution, with mean \(\mu\) and variance \(\sigma^2\):  
+Use these aggregates to compute proportions, compare groups or run independence tests.
 
-\[
-f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
-\]  
+Distributions: core concepts
 
-Many parametric statistical tests assume normality. In cybersecurity, normality can help detect anomalies in network logs.[9]
+A distribution describes how values of a variable (or set of variables) are spread through the data. Understanding distributional shape is essential for inference, anomaly detection and model selection.
 
----
+Classification by dimensionality
 
-## References
+Univariate distribution — distribution of a single variable (histogram, PMF/PDF) (example: distribution of response times).
 
-1. A. Badman & M. Kosinski, *What is a dataset?*, IBM Think, 2020.  
-2. Wikipedia – Statistical Distribution. https://en.wikipedia.org/wiki/Statistical_distribution  
-3. K. Pearson, *Chi-Square Test*, Wikipedia, 2025.  
-4. ASSIRM, *Market Research Glossary – Univariate and Bivariate Analysis*, 2024.  
-5. Wikipedia – Mean and Standard Deviation. https://en.wikipedia.org/wiki/Mean  
-6. NIST/SEMATECH, *Outlier Definition*, 2019.  
-7. Wikipedia – Pearson Correlation Coefficient, 2021.  
-8. Wikipedia – Linear Regression, 2024.  
-9. Wikipedia – Normal Distribution, 2024.
+Bivariate distribution — joint distribution of two variables (contingency table for categorical pair; scatter/density for continuous pair).
+
+Multivariate distribution — joint distribution of three or more variables (used in regression, PCA, etc.).
+
+Common representations
+
+Frequency table / histogram — counts or counts per bin (empirical distribution).
+
+Probability distribution — assignment of probabilities (theoretical or estimated).
+
+Cumulative distribution (CDF) — probability below a threshold.
+
+Important quantities
+
+Frequency / Count and Relative frequency (empirical probability).
+
+Moments (mean, variance), skewness, kurtosis — describe central tendency and shape.
+
+Joint frequencies and marginals — for bivariate/categorical analysis.
+
+Many statistical decisions in security (thresholding for alerts, anomaly detection) depend on accurate estimation of these distributions and on correct pre-processing (cleaning, normalization) [1][6].
+
+SQL examples: univariate & bivariate distributions
+
+A simple relational workflow can compute distributions efficiently.
+
+Univariate distribution (SQL)
+SELECT
+  age,
+  COUNT(*) AS frequency
+FROM
+  People
+GROUP BY
+  age
+ORDER BY
+  age;
+
+Bivariate distribution (SQL)
+SELECT
+  age,
+  gender,
+  COUNT(*) AS frequency
+FROM
+  People
+GROUP BY
+  age, gender
+ORDER BY
+  age, gender;
 
 
+Use these results to build histograms, contingency tables, or heatmaps and then apply statistical tests (for example χ² for independence on the contingency table) [2][6].
 
+Using distributions to attack the Caesar cipher (statistical approach)
 
-# Cesare Widget: Generatore e Analizzatore di Cifrario
+This section adapts the demo you provided to the project: explanation + ready-to-copy JavaScript functions. The goal is educational: show Caesar encryption, brute-force decryption, and an automatic estimator that uses distribution comparison (χ²) against a language reference frequency table.
 
-Questo widget permette di cifrare e decifrare testi usando il **Cifrario di Cesare** direttamente nella pagina, con analisi automatica basata su frequenze italiane e punteggi combinati.
+Important caveat: frequency-based automatic decoding works reliably on sufficiently long plaintexts written in the same language used for the reference frequencies; for very short ciphertexts two approaches are common: (a) brute-force + manual inspection, (b) combine frequency metrics with word / n-gram scoring.
 
-![Cesare widget screenshot](/assets/images/script.png)
+Core JavaScript functions (demo)
 
----
+Below is a compact, well-documented JavaScript implementation you can reuse in your HTML widget. It includes: Caesar shift, brute-force listing, letter counting, χ² computation and automatic decode by χ².
 
-## Panoramica del Cifrario di Cesare
+// --- Reference frequencies (example: English A..Z) ---
+const freqEn = {
+  A:8.17,B:1.49,C:2.78,D:4.25,E:12.70,F:2.23,
+  G:2.02,H:6.09,I:6.97,J:0.15,K:0.77,L:4.03,
+  M:2.41,N:6.75,O:7.51,P:1.93,Q:0.10,R:5.99,
+  S:6.33,T:9.06,U:2.76,V:0.98,W:2.36,X:0.15,Y:1.97,Z:0.07
+};
 
-Il cifrario di Cesare è un **cifrario a sostituzione monoalfabetica** che sposta ogni lettera del testo in chiaro di un numero fisso di posizioni nell'alfabeto.
-
-Ad esempio, con uno shift di 3:
-
-Testo originale: ABCDEFGHIJKLMNOPQRSTUVWXYZ
-Testo cifrato: DEFGHIJKLMNOPQRSTUVWXYZABC
-
-
-- **Cifratura:** ogni lettera viene sostituita con quella che si trova `n` posizioni più avanti.  
-- **Decifratura:** il processo viene invertito spostando le lettere all’indietro di `n` posizioni.  
-
-I caratteri non alfabetici restano invariati.
-
----
-
-## Funzione Base di Cifratura
-
-```javascript
-function caesarEncrypt(text, shift, mapAccents = true) {
-  if(mapAccents) text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-  return text.replace(/[a-zA-Z]/g, c => {
-    let base = c >= 'a' ? 97 : 65;
-    return String.fromCharCode((c.charCodeAt(0) - base + shift) % 26 + base);
-  });
+// Caesar shift: shift can be positive or negative
+function caesarShift(str, shift) {
+  let out = '';
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (ch >= 'A' && ch <= 'Z') {
+      const base = 65;
+      out += String.fromCharCode(((ch.charCodeAt(0) - base + shift + 26) % 26) + base);
+    } else if (ch >= 'a' && ch <= 'z') {
+      const base = 97;
+      out += String.fromCharCode(((ch.charCodeAt(0) - base + shift + 26) % 26) + base);
+    } else {
+      out += ch;
+    }
+  }
+  return out;
 }
 
-    Controlla ogni carattere per determinare se è una lettera.
+// Brute-force: try all shifts 1..25
+function bruteForceDecode(ciphertext) {
+  const results = [];
+  for (let shift = 1; shift < 26; shift++) {
+    results.push({ shift, plaintext: caesarShift(ciphertext, -shift) });
+  }
+  return results;
+}
 
-    Applica lo shift modulare % 26.
+// Helpers for distribution analysis: A..Z only
+function onlyLettersUpper(s) {
+  return s.toUpperCase().replace(/[^A-Z]/g, '');
+}
+function letterCounts(s) {
+  const counts = Array(26).fill(0);
+  const clean = onlyLettersUpper(s);
+  for (const ch of clean) counts[ch.charCodeAt(0) - 65]++;
+  return { counts, total: clean.length };
+}
+function freqPercent(counts, total) {
+  return counts.map(c => total ? (c * 100 / total) : 0);
+}
 
-    Mantiene invariati numeri, spazi e simboli.
+// Chi-squared between observed percentage array and expected percentage array
+function chiSquared(obsPerc, expectedPerc) {
+  let chi = 0;
+  for (let i = 0; i < 26; i++) {
+    const O = obsPerc[i], E = expectedPerc[i];
+    if (E > 0) chi += ((O - E) * (O - E)) / E;
+  }
+  return chi;
+}
 
-Analisi Brute-force e Statistica
+// Automatic decode by chi-squared (returns best shift and decoded text)
+function autoDecodeByChi2(ciphertext, freqReference = freqEn) {
+  const { counts, total } = letterCounts(ciphertext);
+  if (total === 0) return { text: '', shift: 0, chi: null }; // nothing to analyze
 
-    Brute-force: prova tutti i 25 shift possibili.
+  const obsPerc = freqPercent(counts, total);
+  const expectedArr = Object.keys(freqReference).map(k => freqReference[k]);
 
-    Analisi statistica: confronta la frequenza delle lettere con quella italiana per stimare automaticamente il miglior shift.
+  let bestShift = 0, bestChi = Infinity;
+  for (let shift = 0; shift < 26; shift++) {
+    const rotated = obsPerc.map((v, i) => obsPerc[(i + shift) % 26]);
+    const chi = chiSquared(rotated, expectedArr);
+    if (chi < bestChi) { bestChi = chi; bestShift = shift; }
+  }
+  return { text: caesarShift(ciphertext, -bestShift), shift: bestShift, chi: bestChi };
+}
 
-    Punteggio combinato: valuta WordScore, Hamming Score, Chi² e Bigram Score per classificare i risultati.
 
-Widget Interattivo
-<!-- Cesare widget completo --> <div id="cesare-widget"> <style> #cesare-widget { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial; padding:12px; border:1px solid #cfe6cfe0; border-radius:8px; background:#e6f7e6; color:#000; } #cesare-widget h3,h4 { margin-top:0; } #cesare-widget textarea { width:100%; font-family:monospace; font-size:13px; margin-bottom:8px; background:#f7fff7; border:1px solid #cfe6cf; padding:8px; box-sizing:border-box; color:#000; } #cesare-widget .controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0; } #cesare-widget table { border-collapse:collapse; width:100%; margin-top:8px; font-size:13px; background:#eaf9ea; } #cesare-widget th, td { border:1px solid #cfe6cf; padding:6px; text-align:left; color:#000; } #cesare-widget th { background:#d0f0d0; font-weight:600; } #cesare-widget .result { white-space:pre-wrap; background:#fff; border:1px solid #cfe6cf; padding:10px; margin-top:8px; max-height:280px; overflow:auto; color:#000; } #cesare-widget .top { background:#bfe6bf !important; color:#000 !important; } #cesare-widget .generator { border:1px dashed #bfe6bf; padding:8px; margin:8px 0; border-radius:6px; background:#eaf9ea; color:#000; } #cesare-widget .small { font-size:13px; color:#000; } #cesare-widget input[type=number] { width:72px; color:#000; } #cesare-widget button.small { padding:6px 8px; font-size:13px; background:#d8f0d8; border:1px solid #bfe6bf; color:#000; cursor:pointer; border-radius:4px; } #cesare-widget button.small:hover { background:#c6e8c6; } #cesare-widget .expandBtn { margin-left:8px; background:#fff9d9; border:1px solid #f0e6b8; } </style> <h3>Cesare: generate cipher → analyze</h3> <div class="small">Inserisci il testo, scegli lo shift e clicca <strong>Generate</strong> oppure <strong>Generate and Analyze</strong>.</div> <div class="generator"> <div class="small"><strong>Generator</strong></div> <textarea id="plaintext">My password is Hello.123!</textarea> <div class="controls"> <label>Shift <input id="genShift" type="number" min="0" max="25" value="7"></label> <label><input id="genMapAcc" type="checkbox" checked> Map accents</label> <button id="genBtn" class="small">Generate</button> <button id="genAnalyzeBtn" class="small">Generate and Analyze</button> <button id="copyCipher" class="small">Copy Cipher</button> </div> <textarea id="generated" readonly style="height:72px"></textarea> </div>
 
-<label><strong>Ciphertext (for analysis)</strong></label>
-<textarea id="cipher">Xblzav l bu tlzzhnnpv kp wyvch. Jvuaplul whyvsl jvtbup l xbhsjol ipnyhtth apwpjv.</textarea> <div class="controls"> <label><input type="checkbox" id="mapAccents" checked> Map accents</label> <label><input type="checkbox" id="ignoreCase" checked> Ignore case</label> <button id="run" class="small">Try all shifts</button> <button id="sortHam" class="small">Sort by Hamming</button> <button id="sortChi" class="small">Sort by Chi²</button> <button id="sortComb" class="small">Sort by Combined</button> <label class="small" style="margin-left:8px">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label> <button id="toggleExpand" class="small expandBtn">Show all</button> </div> <table id="results"><thead><tr> <th>Shift</th><th>combined</th><th>word%</th><th>ham</th><th>chi²</th><th>bigram%</th><th>preview</th><th></th> </tr></thead><tbody></tbody></table> <h4>Selected text</h4> <div id="chosen" class="result">---</div> <script> // Utility functions function caesarEncrypt(text, shift, mapAccents=true){ if(mapAccents) text=text.normalize('NFD').replace(/[\u0300-\u036f]/g,''); return text.replace(/[a-zA-Z]/g,c=>{ let base=c>='a'?97:65; return String.fromCharCode((c.charCodeAt(0)-base+shift)%26+base); }); } function caesarDecrypt(text, shift, mapAccents=true){ return caesarEncrypt(text,(26-shift)%26,mapAccents); } // Scoring helpers const freqIt = [11.74,0.92,4.5,3.73,11.79,1.11,1.64,1.51,6.88,0.009,0.05,6.51,2.51,6.88,9.83,0.51,0.02,6.37,4.98,5.62,3.01,2.1,0.04,0.03,1.17,0.02]; const wordsIt = ['ciao','testo','hello','password','esempio','prova']; // small sample dictionary function onlyLetters(s){ return s.toUpperCase().replace(/[^A-Z]/g,''); } function letterCounts(s){ const counts=Array(26).fill(0); const clean=onlyLetters(s); for(const ch of clean) counts[ch.charCodeAt(0)-65]++; return {counts,total:clean.length}; } function freqPercent(counts,total){ return counts.map(c=>total?c*100/total:0); } function chiSquared(obs,expected){ let chi=0; for(let i=0;i<26;i++){ let O=obs[i],E=expected[i]; if(E>0) chi+=((O-E)*(O-E))/E; } return chi; } function wordScore(text){ const words=text.toLowerCase().split(/\W+/).filter(Boolean); if(!words.length) return 0; let count=words.filter(w=>wordsIt.includes(w)).length; return count/words.length*100; } // DOM elements const plaintext=document.getElementById('plaintext'); const genShift=document.getElementById('genShift'); const genMapAcc=document.getElementById('genMapAcc'); const generated=document.getElementById('generated'); const genBtn=document.getElementById('genBtn'); const genAnalyzeBtn=document.getElementById('genAnalyzeBtn'); const copyCipher=document.getElementById('copyCipher'); const cipher=document.getElementById('cipher'); const runBtn=document.getElementById('run'); const resultsTable=document.getElementById('results').querySelector('tbody'); const topNInput=document.getElementById('topN'); // Event listeners genBtn.addEventListener('click',()=>{ generated.value=caesarEncrypt(plaintext.value,parseInt(genShift.value),genMapAcc.checked); }); genAnalyzeBtn.addEventListener('click',()=>{ generated.value=caesarEncrypt(plaintext.value,parseInt(genShift.value),genMapAcc.checked); cipher.value=generated.value; runBtn.click(); }); copyCipher.addEventListener('click',()=>{ generated.select(); document.execCommand('copy'); alert('Cipher copied!'); }); runBtn.addEventListener('click',()=>{ const text=cipher.value, mapAcc=document.getElementById('mapAccents').checked; const topN=parseInt(topNInput.value); const res=[]; for(let shift=0;shift<26;shift++){ const dec=caesarDecrypt(text,shift,mapAcc); const {counts,total}=letterCounts(dec); const obs=freqPercent(counts,total); const chi=chiSquared(obs,freqIt); const wScore=wordScore(dec); const combined=0.45*wScore+0.25*(100-chi)+0.15*chi+0.15*0; // simplified res.push({shift,combined,wScore,chi,preview:dec.slice(0,30)+'...'}); } res.sort((a,b)=>b.combined-a.combined); resultsTable.innerHTML=''; for(let i=0;i<26;i++){ const r=res[i]; const tr=document.createElement('tr'); if(i<topN) tr.classList.add('top'); tr.innerHTML=`<td>${r.shift}</td><td>${r.combined.toFixed(2)}</td><td>${r.wScore.toFixed(1)}</td><td>-</td><td>${r.chi.toFixed(2)}</td><td>-</td><td>${r.preview}</td><td><button class="small">Select</button></td>`; tr.querySelector('button').addEventListener('click',()=>{ document.getElementById('chosen').textContent=res[i].preview; }); resultsTable.appendChild(tr); } }); </script> </div> ```
+Use bruteForceDecode to present all candidates, and autoDecodeByChi2 to suggest the most likely key (statistical guess).
 
-![Cesare widget screenshot](/assets/images/script.png)
+Chi-squared automatic decoding — algorithm explained (step-by-step)
+
+Preprocess: remove non-letter characters and compute raw counts for A..Z; convert counts into percentages O_i (observed percents).
+
+Reference: pick a language reference frequency E_i (for example freqEn for English). The quality of the reference matters: if the plaintext is Italian but you use English frequencies the method will fail [5].
+
+Rotation / candidate shifts: for each candidate shift s rotate the observed distribution O by s positions — rotation simulates in-place decryption with that shift.
+
+Compute χ² for each rotation:
+
+χ2=∑i=126(Oi−Ei)2Ei.
+χ
+2
+=
+i=1
+∑
+26
+	​
+
+E
+i
+	​
+
+(O
+i
+	​
+
+−E
+i
+	​
+
+)
+2
+	​
+
+.
+
+Lower χ² means the rotated observed distribution matches the reference more closely. [2]
+
+Select the shift with minimum χ² as the statistical estimate.
+
+Fallback: on short texts or texts with heavy punctuation/structured tokens, prefer brute-force + human inspection, or use additional heuristics (word lists, bigrams, language models) to disambiguate.
+
+This is a classical frequency-attack approach: brute-force always enumerates all possibilities; χ² gives a principled way to rank them statistically [2][3][4].
+
+
+
+References (thesis style — numbered)
+
+Dataset (Wikipedia) — general definition and examples. https://en.wikipedia.org/wiki/Dataset
