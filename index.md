@@ -26,6 +26,7 @@ Here you will find **homework, projects, articles, and insights** on cybersecuri
 Select Homework:
 
 - [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
+- [Homework 2 – Definition of a Dataset and algorithm](/HOMEWORK/homework2/)
 
 ---
 
