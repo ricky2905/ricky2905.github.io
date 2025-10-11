@@ -1,8 +1,4 @@
-# Cesare — Generatore & Analizzatore (Hamming + parole + bigrammi + chi²)
-
-Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il cifrato verrà automaticamente copiato nella sezione di analisi dove puoi provare tutti gli shift, ordinare per Hamming/Chi²/Combined e selezionare i migliori candidati.
-
-<!-- BEGIN WIDGET HTML -->
+<!-- Cesare widget aggiornato: mostra solo Top N e bottone per estendere la tabella -->
 <div id="cesare-widget">
   <style>
 /* stile aggiornato: testo nero su sfondo verde (migliore contrasto) */
@@ -112,6 +108,12 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
   background: #c6e8c6;
 }
 
+#cesare-widget .expandBtn {
+  margin-left: 8px;
+  background: #fff9d9;
+  border: 1px solid #f0e6b8;
+}
+
   </style>
 
   <h3>Cesare: genera cifrato → analizza</h3>
@@ -141,6 +143,8 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
     <button id="sortChi" class="small">Ordina per Chi²</button>
     <button id="sortComb" class="small">Ordina per Combined</button>
     <label style="margin-left:8px" class="small">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label>
+    <!-- bottone per estendere / comprimere la tabella -->
+    <button id="toggleExpand" class="small expandBtn" aria-pressed="false">Mostra tutto</button>
   </div>
 
   <details style="margin-top:8px">
@@ -230,6 +234,15 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
   document.getElementById('sortChi').addEventListener('click', ()=> renderResults(window._lastResults||[], 'chi'));
   document.getElementById('sortComb').addEventListener('click', ()=> renderResults(window._lastResults||[], 'combined'));
 
+  // toggle expand button
+  const toggleBtn = document.getElementById('toggleExpand');
+  toggleBtn.addEventListener('click', ()=>{
+    window._showAll = !window._showAll;
+    toggleBtn.textContent = window._showAll ? 'Mostra solo Top' : 'Mostra tutto';
+    toggleBtn.setAttribute('aria-pressed', String(window._showAll));
+    renderResults(window._lastResults||[], window._lastSortMode||'combined');
+  });
+
   function readWeights(){
     const w_word = parseFloat(document.getElementById('w_word').value) || 0.45;
     const w_ham  = parseFloat(document.getElementById('w_ham').value)  || 0.25;
@@ -265,6 +278,8 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
       const weights = readWeights();
       results.forEach(r => r.combined = weights.w_word*r.wordScore + weights.w_ham*r.hamScore + weights.w_chi*r.chiScoreNorm + weights.w_big*r.bigramScore);
       window._lastResults = results;
+      // salva modalità di ordinamento per ri-render dopo toggle
+      window._lastSortMode = 'combined';
       renderResults(results, 'combined');
       document.getElementById('summary').textContent = `Generati 26 candidati. Ordinati per "combined".`;
     } catch(e){ console.error(e); alert('Errore: vedi console.'); }
@@ -272,6 +287,7 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
 
   function renderResults(results, mode){
     if (!results || !results.length) return alert('Esegui prima "Prova tutti gli shift".');
+    window._lastSortMode = mode;
     const tbody = document.querySelector('#cesare-widget table tbody');
     tbody.innerHTML = '';
     const topN = Math.max(1, Math.min(26, parseInt(document.getElementById('topN').value || '5',10)));
@@ -279,13 +295,40 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
     if (mode === 'ham') sorted.sort((a,b)=>a.ham - b.ham || b.combined - a.combined);
     else if (mode === 'chi') sorted.sort((a,b)=>a.chi2 - b.chi2 || b.combined - a.combined);
     else sorted.sort((a,b)=>b.combined - a.combined || a.ham - b.ham);
-    sorted.forEach((r, idx) => {
+
+    // se showAll è falso, mostriamo solo topN; altrimenti tutti
+    const showAll = !!window._showAll;
+    const toRender = showAll ? sorted : sorted.slice(0, topN);
+
+    // aggiungiamo righe effettive
+    toRender.forEach((r, idx) => {
       const tr = document.createElement('tr');
-      if (idx < topN) tr.classList.add('top');
+      // manteniamo l'evidenziazione delle righe top (relative alla vista completa)
+      if (idx < topN && !showAll) tr.classList.add('top');
+      // se stiamo mostrando tutto, evidenziamo le prime topN globali
+      if (showAll){
+        const globalIndex = sorted.indexOf(r);
+        if (globalIndex < topN) tr.classList.add('top');
+      }
       tr.innerHTML = `<td>${r.shift}</td><td>${r.combined.toFixed(4)}</td><td>${(r.wordScore*100).toFixed(1)}%</td><td>${r.ham} (${r.hamScore.toFixed(3)})</td><td>${r.chi2.toFixed(2)}</td><td>${(r.bigramScore*100).toFixed(1)}%</td><td><code>${escapeHtml(r.shifted.slice(0,140))}${r.shifted.length>140?'…':''}</code></td><td><button data-shift="${r.shift}">Seleziona</button></td>`;
       tbody.appendChild(tr);
     });
-    tbody.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', e=> {
+
+    // se non stiamo mostrando tutto e ci sono altre righe, aggiungiamo una riga di 'espandi'
+    if (!showAll && sorted.length > toRender.length){
+      const remaining = sorted.length - toRender.length;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="8" style="text-align:center"><button id="expandInline" class="small">Mostra altri ${remaining} risultati</button></td>`;
+      tbody.appendChild(tr);
+      document.getElementById('expandInline').addEventListener('click', ()=>{
+        // attiva il toggle (mostra tutto) e ri-render
+        window._showAll = true; toggleBtn.textContent = 'Mostra solo Top'; toggleBtn.setAttribute('aria-pressed','true');
+        renderResults(results, mode);
+      });
+    }
+
+    // bind bottoni selezione
+    tbody.querySelectorAll('button[data-shift]').forEach(btn=>btn.addEventListener('click', e=> {
       const s = parseInt(e.currentTarget.getAttribute('data-shift'),10);
       const obj = results.find(r=>r.shift===s);
       showSelected(obj);
@@ -301,9 +344,12 @@ Inserisci un testo in chiaro, scegli lo *shift* e genera il testo cifrato. Il ci
 
   function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+  /* inizializza stato */
+  window._showAll = false;
+  window._lastResults = null;
+  window._lastSortMode = 'combined';
+
   /* run iniziale */
   tryAll();
   </script>
 </div>
-<!-- END WIDGET HTML -->
-
