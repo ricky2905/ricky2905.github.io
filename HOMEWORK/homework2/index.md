@@ -120,7 +120,7 @@
 
   <div class="generator" aria-label="Caesar generator">
     <div class="small"><strong>Generator</strong></div>
-    <textarea id="plaintext">This is a sample message: try changing the shift and see the result.</textarea>
+    <textarea id="plaintext">La mia password è Ciao.123!</textarea>
     <div class="controls">
       <label>Shift <input id="genShift" type="number" min="0" max="25" value="7"></label>
       <label><input id="genMapAcc" type="checkbox" checked> Map accents before encrypting</label>
@@ -176,9 +176,9 @@
 
 ---
 
-# 🔍 Code & Theoretical Explanation
+# Code & Theoretical Explanation
 
-## 1️⃣ Overview
+## Overview
 This widget implements a **Caesar cipher generator and analyzer**, written entirely in **HTML, CSS, and JavaScript**.  
 It allows you to:
 - Encrypt text using a chosen shift.  
@@ -187,7 +187,7 @@ It allows you to:
 
 ---
 
-## 2️⃣ Caesar Cipher Theory
+## Caesar Cipher Theory
 The Caesar cipher shifts letters by a fixed amount.  
 Example (shift = 3):  
 `A → D`, `B → E`, `C → F`, etc.  
@@ -196,7 +196,7 @@ It’s a simple cipher — good for educational cryptography demonstrations.
 
 ---
 
-## 3️⃣ Analytical Techniques
+## Analytical Techniques
 
 **a) Letter frequency analysis**  
 Counts how often each letter (A–Z) appears and compares to an Italian frequency model.
@@ -220,7 +220,7 @@ Checks for presence of common letter pairs (CH, QU, TR, etc.).
 
 ---
 
-## 4️⃣ Combined Score Formula
+## Combined Score Formula
 
 combined =
 (w_word × WordScore) +
@@ -233,7 +233,7 @@ User can adjust the weights dynamically.
 
 ---
 
-## 5️⃣ Interface
+## Interface
 - **Top N results** visible by default.  
 - “Show all” toggles all 26 shifts.  
 - Click **Select** to show detailed info.  
@@ -242,7 +242,7 @@ User can adjust the weights dynamically.
 
 ---
 
-## 6️⃣ Comparison Table
+## Comparison Table
 
 | Method        | Advantages              | Limitations                | Ideal Use |
 |----------------|-------------------------|-----------------------------|------------|
@@ -253,7 +253,7 @@ User can adjust the weights dynamically.
 
 ---
 
-## 7️⃣ Conclusion
+## Conclusion
 This widget demonstrates a **hybrid approach** combining:
 - Frequency analysis  
 - Word recognition  
@@ -263,7 +263,7 @@ All implemented in **client-side JavaScript** — a complete cryptanalysis tool 
 
 ---
 
-## 📸 Illustration
+## Illustration
 Add an image of the script here (replace with your own path):
 
 ```markdown
