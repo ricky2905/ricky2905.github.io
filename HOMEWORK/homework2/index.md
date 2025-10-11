@@ -120,7 +120,7 @@
 
   <div class="generator" aria-label="Caesar generator">
     <div class="small"><strong>Generator</strong></div>
-    <textarea id="plaintext">La mia password è Ciao.123!</textarea>
+    <textarea id="plaintext">My password is Hello.123!</textarea>
     <div class="controls">
       <label>Shift <input id="genShift" type="number" min="0" max="25" value="7"></label>
       <label><input id="genMapAcc" type="checkbox" checked> Map accents before encrypting</label>
