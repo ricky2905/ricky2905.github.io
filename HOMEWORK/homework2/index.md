@@ -261,7 +261,8 @@ It’s both an **educational tool** and a practical example of automated frequen
 
 ### 📸 Illustration
 *(Add an image or screenshot of the widget below, for example:)*  
-![cesare-widget](script.png)
+![Cesare widget screenshot](/assets/images/script.png)
+
 
 ---
 
