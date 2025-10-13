@@ -7,7 +7,7 @@
   <style>
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0f111a;  /* dark background */
+  background-color: #0f111a;
   color: #e0e0e0;
   line-height: 1.8;
   padding: 2rem;
@@ -16,7 +16,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #4CAF50;  
+  color: #4CAF50;
 }
 
 h1 {
@@ -26,15 +26,8 @@ h1 {
   margin: 0 0 1rem 0;
 }
 
-h2 {
-  font-size: 2rem;
-  margin-top: 2rem;
-}
-
-h3 {
-  font-size: 1.5rem;
-  margin-top: 1.5rem;
-}
+h2 { font-size: 2rem; margin-top: 2rem; }
+h3 { font-size: 1.5rem; margin-top: 1.5rem; }
 
 .card {
   background-color: #1a1c2b;
@@ -45,90 +38,25 @@ h3 {
   box-shadow: 0 4px 15px rgba(76,175,80,0.08);
 }
 
-a {
-  color: #4CAF50;
-  text-decoration: none;
-}
+a { color: #4CAF50; text-decoration: none; }
+a:hover { color: #66bb6a; text-decoration: underline; }
 
-a:hover {
-  color: #66bb6a;
-  text-decoration: underline;
-}
+hr { border: none; height: 2px; background-color: #4CAF50; margin: 2rem 0; }
 
-hr {
-  border: none;
-  height: 2px;
-  background-color: #4CAF50;
-  margin: 2rem 0;
-}
+select { padding:0.5rem 1rem; border-radius:5px; font-size:1rem; background-color: #222236; color: #e0e0e0; border: 1px solid #4CAF50; margin-top:0.5rem; }
 
-select {
-  padding:0.5rem 1rem;
-  border-radius:5px;
-  font-size:1rem;
-  background-color: #222236;
-  color: #e0e0e0;
-  border: 1px solid #4CAF50;
-  margin-top:0.5rem;
-}
+.topnav { display: flex; justify-content: flex-start; gap: 1rem; margin-bottom: 2rem; }
+.topnav a { font-weight: bold; }
+.topnav a:hover { color: #66bb6a; }
 
-.topnav {
-  display: flex;
-  justify-content: flex-start;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #4CAF50; text-align: center; font-size: 0.9rem; color: #999; }
 
-.topnav a {
-  font-weight: bold;
-}
+table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
+th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
+th { background: rgba(76,175,80,0.06); color: #dfffe0; }
 
-.topnav a:hover {
-  color: #66bb6a;
-}
-
-footer {
-  margin-top: 3rem;
-  padding-top: 1rem;
-  border-top: 1px solid #4CAF50;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #999;
-}
-
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 8px;
-  background: #0f111a;
-}
-th, td {
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 8px;
-  text-align: left;
-  font-size: 0.95rem;
-  color: #e7e7e7;
-}
-th {
-  background: rgba(76,175,80,0.06);
-  color: #dfffe0;
-}
-code {
-  background: rgba(255,255,255,0.03);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #e8f5e9;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
-}
-pre {
-  background: #0b0c10;
-  color: #dfeee0;
-  padding: 12px;
-  border-radius: 6px;
-  overflow-x: auto;
-  border: 1px solid rgba(255,255,255,0.03);
-}
+code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
+pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
 img { max-width: 100%; display: block; margin: 12px 0; border-radius: 4px; }
 
 textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:6px}
@@ -142,7 +70,6 @@ button.small:hover{background:#1d2b20}
 .hiddenCol{display:none;}
 label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
 thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
-
 th.dimmed { opacity: 0.55; }
 
 .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
@@ -156,14 +83,9 @@ th.dimmed { opacity: 0.55; }
   </style>
 
   <script>
-  window.MathJax = {
-    tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] },
-    svg: { fontCache: 'global' }
-  };
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
@@ -220,7 +142,7 @@ th.dimmed { opacity: 0.55; }
       <ul>
         <li><strong>Data cleaning</strong>: removing missing, duplicate, or erroneous values.</li>
         <li><strong>Normalization and standardization</strong>: aligning variable scales to avoid bias in models [4].</li>
-        <li><strong>Anonymization and privacy</strong>: protecting sensitive data, essential in cybersecurity [5].li></li>
+        <li><strong>Anonymization and privacy</strong>: protecting sensitive data, essential in cybersecurity [5].</li>
         <li><strong>Feature selection</strong>: choosing the most relevant features to improve model performance and reduce computational complexity [2].</li>
       </ul>
 
@@ -245,7 +167,7 @@ th.dimmed { opacity: 0.55; }
       <ul>
         <li><strong>Probability distributions</strong>: Normal, Poisson, Binomial — useful for modeling events like access attempts or attacks [4].</li>
         <li><strong>Outliers</strong>: extreme values that may indicate anomalies or intrusions [1][5].</li>
-        <li><strong>Patterns and correlations</strong>: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].li></li>
+        <li><strong>Patterns and correlations</strong>: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].</li>
       </ul>
 
       <hr/>
@@ -431,7 +353,7 @@ th.dimmed { opacity: 0.55; }
 
     <section class="card" aria-labelledby="caesar-title">
       <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
-      <div class="small">Inserisci plaintext, scegli uno shift e genera il cipher. Poi puoi analizzare il cipher e visualizzare i grafici delle occorrenze.</div>
+      <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher and update the two letter-frequency charts manualmente.</div>
 
       <div class="generator">
         <div class="small"><strong>Caesar Cipher Generator</strong></div>
@@ -497,13 +419,12 @@ th.dimmed { opacity: 0.55; }
       <h3>Selected Text</h3>
       <div id="chosen" class="result">---</div>
 
-      <!-- New: Charts for letter occurrences -->
       <h3 style="margin-top:16px">Grafici: occorrenze lettere (Plaintext & Ciphertext)</h3>
-      <div class="small">I grafici mostrano la distribuzione percentuale delle lettere A–Z per il testo in chiaro e per il testo cifrato. Premi "Aggiorna grafici" dopo aver modificato i campi.</div>
+      <div class="small">Premi <strong>Aggiorna grafici</strong> per calcolare le frequenze A–Z per i due testi. Nessun aggiornamento automatico in background.</div>
 
       <div class="controls" style="margin-top:8px">
         <button id="updateCharts" class="small">Aggiorna grafici</button>
-        <button id="downloadCsv" class="small">Scarica CSV (lett.,countPlain,countCipher)</button>
+        <button id="downloadCsv" class="small">Scarica CSV (lettera,percentPlain,percentCipher)</button>
       </div>
 
       <div class="chartRow" style="margin-top:12px">
@@ -574,8 +495,8 @@ for(let shift = 1; shift < 26; shift++){
     <p>© 2025 Riccardo D'Annibale</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-
 const referenceFreq = {
   'A':10.85,'B':1.05,'C':4.30,'D':3.39,'E':11.49,'F':1.01,'G':1.65,'H':1.43,
   'I':10.18,'J':0.01,'K':0.01,'L':5.70,'M':2.87,'N':7.02,'O':9.97,'P':2.96,
@@ -598,7 +519,6 @@ const commonWords = new Set([
   'come','su','o','se','anche','perché','quando','dove','questo','quella','queste','noi','voi','loro',
   'mia','mio','tua','tuo','suo','nostro','l','ha','hai','ho','era','stato','stata','cioè',
   'ora','bene','male','molto','poco','grande','piccolo','anno','giorno','giorni',
-  // add some common English words to make scoring flexible across EN/IT
   'the','and','is','in','to','of','that','it','on','for','with','as','are','this','be','by','was','or','from'
 ]);
 
@@ -689,9 +609,10 @@ function setHeaderVisibility(showExtra) {
   });
 }
 
-// Chart instances
 let chartPlain = null;
 let chartCipher = null;
+
+const LETTERS = Array.from({length:26}, (_,i) => String.fromCharCode(65+i));
 
 function createOrUpdateCharts(){
   const plaintext = document.getElementById('plaintext').value || '';
@@ -703,7 +624,7 @@ function createOrUpdateCharts(){
   const pt = letterFrequencies(ptText);
   const ct = letterFrequencies(ctText);
 
-  const labels = Object.keys(pt.counts);
+  const labels = LETTERS;
   const dataPlain = labels.map(l => Number(pt.freqs[l].toFixed(2)));
   const dataCipher = labels.map(l => Number(ct.freqs[l].toFixed(2)));
 
@@ -712,38 +633,28 @@ function createOrUpdateCharts(){
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        x: { ticks: { color: '#dfeee0' } },
-        y: { beginAtZero: true, ticks: { callback: v => v + '%', color: '#dfeee0' } }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ctx.parsed.y + '%' } }
-      }
+      scales: { x: { ticks: { color: '#dfeee0' } }, y: { beginAtZero: true, ticks: { callback: v => v + '%', color: '#dfeee0' } } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + '%' } } }
     }
   };
 
   // Plaintext chart
   const ctxP = document.getElementById('chartPlain').getContext('2d');
   if (chartPlain) { chartPlain.data.labels = labels; chartPlain.data.datasets[0].data = dataPlain; chartPlain.update(); }
-  else {
-    chartPlain = new Chart(ctxP, Object.assign({data: {labels, datasets:[{label:'Plaintext %', data: dataPlain, backgroundColor: undefined}] }}, commonOptions));
-  }
+  else { chartPlain = new Chart(ctxP, Object.assign({data: {labels, datasets:[{label:'Plaintext %', data: dataPlain}] }}, commonOptions)); }
 
   // Ciphertext chart
   const ctxC = document.getElementById('chartCipher').getContext('2d');
   if (chartCipher) { chartCipher.data.labels = labels; chartCipher.data.datasets[0].data = dataCipher; chartCipher.update(); }
-  else {
-    chartCipher = new Chart(ctxC, Object.assign({data: {labels, datasets:[{label:'Ciphertext %', data: dataCipher, backgroundColor: undefined}] }}, commonOptions));
-  }
+  else { chartCipher = new Chart(ctxC, Object.assign({data: {labels, datasets:[{label:'Ciphertext %', data: dataCipher}] }}, commonOptions)); }
 
   return {labels, dataPlain, dataCipher, totalPlain: pt.total, totalCipher: ct.total};
 }
 
 function downloadCSV(){
   const res = createOrUpdateCharts();
-  const rows = [['Letter','Count% Plain','Count% Cipher']];
-  res.labels.forEach((L, i) => rows.push([L, res.dataPlain[i], res.dataCipher[i]]));
+  const rows = [['Letter','PercentPlain','PercentCipher']];
+  res.labels.forEach((L, i) => rows.push([L, res.dataPlain[i].toFixed(2), res.dataCipher[i].toFixed(2)]));
   const csv = rows.map(r => r.join(',')).join('\n');
   const blob = new Blob([csv], {type: 'text/csv'});
   const url = URL.createObjectURL(blob);
@@ -783,9 +694,7 @@ function tryAll(){
 
     const chiVals = results.map(r=>r.chiScore);
     const chiMin = Math.min(...chiVals), chiMax = Math.max(...chiVals);
-    results.forEach(r => {
-      r.chiScoreNorm = (chiMax === chiMin) ? 0 : ((r.chiScore - chiMin) / (chiMax - chiMin));
-    });
+    results.forEach(r => { r.chiScoreNorm = (chiMax === chiMin) ? 0 : ((r.chiScore - chiMin) / (chiMax - chiMin)); });
 
     const weights = readWeights();
     results.forEach(r => {
@@ -796,8 +705,7 @@ function tryAll(){
     renderResults(results, 'combined');
     document.getElementById('summary').textContent = `Generated 26 candidates. Sorted by "Combined" (adjust weights if needed).`;
 
-    // update charts for the (current) selected candidate: use current cipher textarea
-    createOrUpdateCharts();
+    // Do NOT auto-update charts here to avoid unexpected loops. Charts update only when user clicks "Aggiorna grafici".
   } catch (err) {
     console.error(err);
     alert('Error: see console (F12) for details.');
@@ -813,7 +721,6 @@ function renderResults(results, mode){
   if (mode === 'ham') sorted.sort((a,b)=>a.ham - b.ham || b.combined - a.combined);
   else if (mode === 'chi') sorted.sort((a,b)=>a.chi2 - b.chi2 || b.combined - a.combined);
   else sorted.sort((a,b)=>b.combined - a.combined || a.ham - b.ham);
-
 
   const userRequested = document.getElementById('toggleCols').checked;
   const showingAll = topN >= results.length;
@@ -871,8 +778,6 @@ function showSelected(obj){
 
 function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-
-// DOM
 document.addEventListener('DOMContentLoaded', () => {
   const runBtn = document.getElementById('run');
   const sortHamBtn = document.getElementById('sortHam');
@@ -899,8 +804,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = map ? mapAccents(pt) : pt;
     const c = caesarShift(input, s);
     document.getElementById('generated').value = c;
-    // also update cipher textarea? keep separate but helpful to sync
-    // document.getElementById('cipher').value = c;
   });
 
   genAnalyzeBtn.addEventListener('click', () => {
@@ -940,15 +843,13 @@ document.addEventListener('DOMContentLoaded', () => {
     renderResults(window._lastResults || [], 'combined');
   });
 
-  updateChartsBtn && updateChartsBtn.addEventListener('click', () => { createOrUpdateCharts(); alert('Grafici aggiornati'); });
+  updateChartsBtn && updateChartsBtn.addEventListener('click', () => {
+    createOrUpdateCharts();
+    alert('Grafici aggiornati');
+  });
   downloadCsvBtn && downloadCsvBtn.addEventListener('click', downloadCSV);
 
-  // initialize charts once
-  createOrUpdateCharts();
-
-  tryAll();
 });
-
   </script>
 </body>
 </html>
