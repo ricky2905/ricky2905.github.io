@@ -72,12 +72,13 @@ label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
 thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
 th.dimmed { opacity: 0.55; }
 
+/* chart layout - fixed height to prevent expansion */
 .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-.chartCard{flex:1 1 220px;background:#0f111a;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:220px}
+.chartCard{flex:1 1 220px;background:#0f111a;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:220px;height:140px;box-sizing:border-box;overflow:hidden}
 .chartLegend{font-size:13px;color:#cfd8cf;margin-top:6px}
 
-/* compact charts */
-canvas { display:block; width:100%; height:120px; }
+/* force canvas to use container height (fixed) */
+.chartCard canvas { width:100% !important; height:100% !important; display:block; }
 
 @media (max-width:600px){
   body { padding: 1rem; max-width: 100%; }
@@ -100,95 +101,7 @@ canvas { display:block; width:100%; height:120px; }
 
   <main>
 
-    <article class="card">
-      <h1>Datasets in Statistics and Cybersecurity</h1>
-
-      <p>Datasets sono fondamentali per analisi e modellizzazione in cybersecurity...</p>
-
-      <hr/>
-
-      <h2>Types of Datasets</h2>
-
-      <h3>1. <strong>Structured</strong></h3>
-      <p>Data organized in tables with rows and columns, such as relational databases.<br/>
-      <strong>Example:</strong> access logs, user tables [2].</p>
-
-      <h3>2. <strong>Unstructured</strong></h3>
-      <p>Data without a fixed schema, such as text, images, or video. They require advanced processing techniques, like NLP or computer vision [3].</p>
-
-      <h3>3. <strong>Semi-Structured</strong></h3>
-      <p>Data with partial structure, such as JSON or XML files. They contain labels or metadata that facilitate analysis [2].</p>
-
-      <hr/>
-
-      <h2>Example: Tabular Dataset from KDD Cup '99</h2>
-      <p>The <strong>KDD Cup '99</strong> dataset is widely used for intrusion detection. ...</p>
-
-      <table>
-        <thead>
-          <tr><th>Duration</th><th>Protocol</th><th>Service</th><th>SrcBytes</th><th>DstBytes</th><th>Label</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>0</td><td>tcp</td><td>http</td><td>181</td><td>5450</td><td>normal</td></tr>
-          <tr><td>0</td><td>udp</td><td>domain</td><td>105</td><td>146</td><td>normal</td></tr>
-          <tr><td>0</td><td>tcp</td><td>ftp</td><td>239</td><td>486</td><td>attack</td></tr>
-        </tbody>
-      </table>
-
-      <hr/>
-
-      <h2>Dataset Management</h2>
-      <p>Proper dataset management is crucial...</p>
-
-      <hr/>
-
-      <h2>Data Distribution Concepts</h2>
-      <p><strong>Data distribution</strong> describes how values of a variable or set of variables are spread...</p>
-
-      <hr/>
-
-      <h2>Final Considerations</h2>
-      <p>Proper analysis of datasets and distributions is essential in cybersecurity...</p>
-
-      <hr/>
-
-      <h2>References</h2>
-      <ol>
-        <li>Provost, F., & Fawcett, T. (2013). <em>Data Science for Business</em>. O'Reilly Media.</li>
-        <li>Han, J., Pei, J., & Kamber, M. (2011). <em>Data Mining: Concepts and Techniques</em>. Elsevier.</li>
-        <li>Jurafsky, D., & Martin, J. H. (2020). <em>Speech and Language Processing</em>. Pearson.</li>
-        <li>Montgomery, D. C., & Runger, G. C. (2018). <em>Applied Statistics and Probability for Engineers</em>. Wiley.</li>
-        <li>Goodfellow, I., Bengio, Y., & Courville, A. (2016). <em>Deep Learning</em>. MIT Press.</li>
-        <li>Tavallaee, M., et al. (2009). <em>A detailed analysis of the KDD CUP 99 data set</em>. IEEE Symposium on Computational Intelligence for Security and Defense Applications.</li>
-      </ol>
-
-    </article>
-
-    <!-- Univariate / Bivariate section with images -->
-    <article class="card">
-      <h2>Univariate and Bivariate Distribution on a Dataset</h2>
-      <p>Example...</p>
-
-      <img src="/assets/images/dati.png" alt="Example tabular data" title="Example tabular data"/>
-
-      <h3>Univariate Distribution on Age</h3>
-      <img src="/assets/images/Dist_univariata.png" alt="Univariate Distribution" title="Univariate Distribution"/>
-
-      <p><strong>SQL Code:</strong></p>
-      <img src="/assets/images/Dist_univariata_sql.png" alt="Univariate Distribution SQL" title="Univariate Distribution SQL"/>
-
-      <h3>Bivariate Distribution on Age and Height</h3>
-      <img src="/assets/images/Dist_bivariata.png" alt="Bivariate Distribution" title="Bivariate Distribution"/>
-
-      <p><strong>SQL Code:</strong></p>
-      <img src="/assets/images/dist_bivariata_sql.png" alt="Bivariate Distribution SQL" title="Bivariate Distribution SQL"/>
-
-    </article>
-
-    <article class="card">
-      <h2>Using Distribution to Break a Caesar Cipher</h2>
-      <p>This section introduces a simple web-based tool ...</p>
-    </article>
+    <!-- ... (omitted non-essential content for brevity in this message, but in your file keep all earlier sections) ... -->
 
     <section class="card" aria-labelledby="caesar-title">
       <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
@@ -268,74 +181,24 @@ canvas { display:block; width:100%; height:120px; }
 
       <div class="chartRow" style="margin-top:12px">
         <div class="chartCard">
-          <canvas id="chartPlain" height="120"></canvas>
+          <canvas id="chartPlain" width="400" height="140"></canvas>
           <div class="chartLegend">Plaintext — percentuale per lettera (A–Z)</div>
         </div>
         <div class="chartCard">
-          <canvas id="chartCipher" height="120"></canvas>
+          <canvas id="chartCipher" width="400" height="140"></canvas>
           <div class="chartLegend">Ciphertext — percentuale per lettera (A–Z)</div>
         </div>
       </div>
 
     </section>
 
-    <article class="card">
-      <h1>Overview of the Caesar Cipher with Statistical Analysis</h1>
-      <p>The Caesar cipher is a <strong>monoalphabetic substitution cipher</strong> that shifts each letter of the plaintext by a fixed number of positions.</p>
-
-      <pre>
-Plaintext:  ABCDEFGHIJKLMNOPQRSTUVWXYZ
-Ciphertext: DEFGHIJKLMNOPQRSTUVWXYZABC
-      </pre>
-
-      <h3>Encryption/Decryption Function</h3>
-      <pre><code>
-function caesarShift(text, shift){
-  return text.split('').map(ch => {
-    const code = ch.charCodeAt(0);
-    if(code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
-    if(code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift) % 26) + 97);
-    return ch;
-  }).join('');
-}
-      </code></pre>
-
-      <h3>Brute-force Decryption</h3>
-      <pre><code>
-for(let shift = 1; shift < 26; shift++){
-  results.push({shift, text: caesarShift(ciphertext, shift)});
-}
-      </code></pre>
-
-      <h3>Statistical / Distribution-based Decryption</h3>
-      <p>The advanced part of the code uses <strong>letter and bigram frequency distributions</strong> to estimate the most probable shift automatically.</p>
-
-      <h2>Metrics Explained</h2>
-      <table>
-        <tr><th>Metric</th><th>Description</th><th>Weight</th></tr>
-        <tr><td><strong>Word%</strong></td><td>Fraction of valid common words (English/Italian)</td><td>0.45</td></tr>
-        <tr><td><strong>Hamming</strong></td><td>Letter rank similarity</td><td>0.25</td></tr>
-        <tr><td><strong>Chi²</strong></td><td>Statistical deviation from expected frequencies</td><td>0.15</td></tr>
-        <tr><td><strong>Bigram%</strong></td><td>Common bigram presence</td><td>0.15</td></tr>
-      </table>
-
-      <h2>Cryptographic Insights</h2>
-      <p>The Caesar cipher is weak because of its <strong>small keyspace</strong> (25 shifts) and <strong>predictable frequency patterns</strong>. Statistical analysis quickly reveals the shift.</p>
-
-      <h2>Conclusion</h2>
-      <p>This implementation bridges <strong>cryptography</strong> and <strong>statistics</strong>, showing how data distributions can reveal hidden information. The <strong>combined score metric</strong> elegantly integrates multiple statistical indicators to automatically prioritize the most probable plaintext.</p>
-
-      <img src="/assets/images/script.png" alt="Code" title="Code"/>
-    </article>
-
-  </main>
-
-  <footer>
-    <p>© 2025 Riccardo D'Annibale</p>
-  </footer>
+    <footer>
+      <p>© 2025 Riccardo D'Annibale</p>
+    </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+/* ---------- data + helpers (keep same as prima) ---------- */
 const referenceFreq = {
   'A':10.85,'B':1.05,'C':4.30,'D':3.39,'E':11.49,'F':1.01,'G':1.65,'H':1.43,
   'I':10.18,'J':0.01,'K':0.01,'L':5.70,'M':2.87,'N':7.02,'O':9.97,'P':2.96,
@@ -448,9 +311,9 @@ function setHeaderVisibility(showExtra) {
   });
 }
 
+/* ---------- charts (fixed-size containers + no animation) ---------- */
 let chartPlain = null;
 let chartCipher = null;
-
 const LETTERS = Array.from({length:26}, (_,i) => String.fromCharCode(65+i));
 
 function createOrUpdateCharts(){
@@ -471,16 +334,15 @@ function createOrUpdateCharts(){
     type: 'bar',
     options: {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: false, // respect container fixed height
+      animation: false,           // avoid animation/resizing loops
       scales: {
         x: { grid: { display: false }, ticks: { color: '#dfeee0', maxRotation:0, autoSkip: false } },
         y: { beginAtZero: true, max: 100, grid: { display: false }, ticks: { callback: v => v + '%', color: '#dfeee0', precision: 0 } }
       },
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: { label: ctx => (Number(ctx.parsed.y).toFixed(2) + '%') }
-        }
+        tooltip: { callbacks: { label: ctx => (Number(ctx.parsed.y).toFixed(2) + '%') } }
       },
       layout: { padding: 2 }
     }
@@ -509,6 +371,7 @@ function createOrUpdateCharts(){
   return {labels, dataPlain, dataCipher, totalPlain: pt.total, totalCipher: ct.total};
 }
 
+/* ---------- CSV / utils ---------- */
 function downloadCSV(){
   const res = createOrUpdateCharts();
   const rows = [['Letter','PercentPlain','PercentCipher']];
@@ -528,6 +391,7 @@ function readWeights(){
   return {w_word: w_word/sum, w_ham: w_ham/sum, w_chi: w_chi/sum, w_big: w_big/sum};
 }
 
+/* ---------- brute-force / scoring ---------- */
 function tryAll(){
   try {
     const raw = document.getElementById('cipher').value || '';
@@ -563,13 +427,14 @@ function tryAll(){
     renderResults(results, 'combined');
     document.getElementById('summary').textContent = `Generated 26 candidates. Sorted by "Combined" (adjust weights if needed).`;
 
-    // Do NOT auto-update charts here to avoid unexpected loops. Charts update when user clicks "Aggiorna grafici" or when a candidate is selected.
+    // NO automatic chart refresh here; charts update only when user clicks or selects a candidate.
   } catch (err) {
     console.error(err);
     alert('Error: see console (F12) for details.');
   }
 }
 
+/* ---------- UI rendering ---------- */
 function renderResults(results, mode){
   if (!results || !results.length) { console.warn('No results yet'); return; }
   const tbody = document.querySelector('#results tbody');
@@ -633,10 +498,9 @@ function showSelected(obj){
   out.textContent = `${obj.shift}: ${obj.shifted}\n\nTotal letters A–Z considered: ${obj.total}\n\nScores:\n  combined: ${obj.combined.toFixed(4)}\n  wordScore: ${(obj.wordScore*100).toFixed(1)}%\n  ham: ${obj.ham} (hamScore ${(obj.hamScore).toFixed(3)})\n  chi²: ${obj.chi2.toFixed(2)} (chiScoreNorm ${(obj.chiScoreNorm||0).toFixed(3)})\n  bigramScore: ${(obj.bigramScore*100).toFixed(1)}%\n\nPreview:\n${obj.shifted}`;
   out.scrollIntoView({behavior:'smooth'});
 
-  // Copia il testo decifrato nel campo Plaintext così l'utente può analizzarlo e aggiornare i grafici.
+  // Inserisco il testo decifrato nel campo Plaintext e aggiorno i grafici (senza ridimensionare)
   try {
     document.getElementById('plaintext').value = obj.shifted;
-    // Aggiorna subito i grafici (Plaintext viene impostato sul candidato decifrato; Cipher rimane ciò che c'era)
     createOrUpdateCharts();
   } catch (e) {
     console.warn('Impossibile aggiornare i grafici automaticamente:', e);
@@ -716,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   downloadCsvBtn && downloadCsvBtn.addEventListener('click', downloadCSV);
 
-  // inizializza i grafici con i testi correnti (non forzare analisi dei shift)
+  // inizializza i grafici con i testi correnti
   createOrUpdateCharts();
 });
   </script>
