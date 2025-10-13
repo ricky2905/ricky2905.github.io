@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="utf-8">
   <title>Datasets in Statistics and Cybersecurity | Riccardo D'Annibale</title>
@@ -145,6 +145,10 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
 
 th.dimmed { opacity: 0.55; }
 
+.chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.chartCard{flex:1 1 320px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+.chartLegend{font-size:13px;color:#cfd8cf;margin-top:6px}
+
 @media (max-width:600px){
   body { padding: 1rem; max-width: 100%; }
   h1 { font-size: 2rem; }
@@ -158,6 +162,8 @@ th.dimmed { opacity: 0.55; }
   };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
@@ -214,7 +220,7 @@ th.dimmed { opacity: 0.55; }
       <ul>
         <li><strong>Data cleaning</strong>: removing missing, duplicate, or erroneous values.</li>
         <li><strong>Normalization and standardization</strong>: aligning variable scales to avoid bias in models [4].</li>
-        <li><strong>Anonymization and privacy</strong>: protecting sensitive data, essential in cybersecurity [5].</li>
+        <li><strong>Anonymization and privacy</strong>: protecting sensitive data, essential in cybersecurity [5].li></li>
         <li><strong>Feature selection</strong>: choosing the most relevant features to improve model performance and reduce computational complexity [2].</li>
       </ul>
 
@@ -425,7 +431,7 @@ th.dimmed { opacity: 0.55; }
 
     <section class="card" aria-labelledby="caesar-title">
       <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
-      <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher.</div>
+      <div class="small">Inserisci plaintext, scegli uno shift e genera il cipher. Poi puoi analizzare il cipher e visualizzare i grafici delle occorrenze.</div>
 
       <div class="generator">
         <div class="small"><strong>Caesar Cipher Generator</strong></div>
@@ -490,6 +496,27 @@ th.dimmed { opacity: 0.55; }
 
       <h3>Selected Text</h3>
       <div id="chosen" class="result">---</div>
+
+      <!-- New: Charts for letter occurrences -->
+      <h3 style="margin-top:16px">Grafici: occorrenze lettere (Plaintext & Ciphertext)</h3>
+      <div class="small">I grafici mostrano la distribuzione percentuale delle lettere A–Z per il testo in chiaro e per il testo cifrato. Premi "Aggiorna grafici" dopo aver modificato i campi.</div>
+
+      <div class="controls" style="margin-top:8px">
+        <button id="updateCharts" class="small">Aggiorna grafici</button>
+        <button id="downloadCsv" class="small">Scarica CSV (lett.,countPlain,countCipher)</button>
+      </div>
+
+      <div class="chartRow" style="margin-top:12px">
+        <div class="chartCard">
+          <canvas id="chartPlain" height="150"></canvas>
+          <div class="chartLegend">Plaintext — percentuale per lettera (A–Z)</div>
+        </div>
+        <div class="chartCard">
+          <canvas id="chartCipher" height="150"></canvas>
+          <div class="chartLegend">Ciphertext — percentuale per lettera (A–Z)</div>
+        </div>
+      </div>
+
     </section>
 
     <article class="card">
@@ -662,71 +689,66 @@ function setHeaderVisibility(showExtra) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const runBtn = document.getElementById('run');
-  const sortHamBtn = document.getElementById('sortHam');
-  const sortChiBtn = document.getElementById('sortChi');
-  const sortCombBtn = document.getElementById('sortComb');
-  const genBtn = document.getElementById('genBtn');
-  const genAnalyzeBtn = document.getElementById('genAnalyzeBtn');
-  const copyCipherBtn = document.getElementById('copyCipher');
-  const toggleAllBtn = document.getElementById('toggleAllShifts');
-  const topNInput = document.getElementById('topN');
-  const toggleColsEl = document.getElementById('toggleCols');
+// Chart instances
+let chartPlain = null;
+let chartCipher = null;
 
-  runBtn.addEventListener('click', tryAll);
-  sortHamBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'ham'));
-  sortChiBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'chi'));
-  sortCombBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'combined'));
+function createOrUpdateCharts(){
+  const plaintext = document.getElementById('plaintext').value || '';
+  const cipher = document.getElementById('cipher').value || document.getElementById('generated').value || '';
+  const map = document.getElementById('mapAccents').checked;
+  const ptText = map ? mapAccents(plaintext) : plaintext;
+  const ctText = map ? mapAccents(cipher) : cipher;
 
-  genBtn.addEventListener('click', () => {
-    const pt = document.getElementById('plaintext').value || '';
-    const s = Math.max(0, Math.min(25, parseInt(document.getElementById('genShift').value || '0',10)));
-    const map = document.getElementById('genMapAcc').checked;
-    const input = map ? mapAccents(pt) : pt;
-    const c = caesarShift(input, s);
-    document.getElementById('generated').value = c;
-  });
+  const pt = letterFrequencies(ptText);
+  const ct = letterFrequencies(ctText);
 
-  genAnalyzeBtn.addEventListener('click', () => {
-    genBtn.click();
-    const c = document.getElementById('generated').value || '';
-    document.getElementById('cipher').value = c;
-    tryAll();
-  });
+  const labels = Object.keys(pt.counts);
+  const dataPlain = labels.map(l => Number(pt.freqs[l].toFixed(2)));
+  const dataCipher = labels.map(l => Number(ct.freqs[l].toFixed(2)));
 
-  copyCipherBtn.addEventListener('click', async () => {
-    try {
-      const text = document.getElementById('generated').value || document.getElementById('cipher').value || '';
-      await navigator.clipboard.writeText(text);
-      alert('Cipher copied to clipboard.');
-    } catch (e) {
-      alert('Cannot copy automatically. Copy manually.');
+  const commonOptions = {
+    type: 'bar',
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: '#dfeee0' } },
+        y: { beginAtZero: true, ticks: { callback: v => v + '%', color: '#dfeee0' } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y + '%' } }
+      }
     }
-  });
+  };
 
-  let __showingAll = false;
-  let __prevTopN = null;
-  toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
-    if (!__showingAll) {
-      __prevTopN = parseInt(topNInput.value || '5', 10);
-      topNInput.value = 26;
-      toggleAllBtn.textContent = 'Show top only';
-      __showingAll = true;
-    } else {
-      topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
-      toggleAllBtn.textContent = 'Show all shifts';
-      __showingAll = false;
-    }
-    renderResults(window._lastResults || [], 'combined');
-  });
+  // Plaintext chart
+  const ctxP = document.getElementById('chartPlain').getContext('2d');
+  if (chartPlain) { chartPlain.data.labels = labels; chartPlain.data.datasets[0].data = dataPlain; chartPlain.update(); }
+  else {
+    chartPlain = new Chart(ctxP, Object.assign({data: {labels, datasets:[{label:'Plaintext %', data: dataPlain, backgroundColor: undefined}] }}, commonOptions));
+  }
 
-  toggleColsEl && toggleColsEl.addEventListener('change', () => {
-    renderResults(window._lastResults || [], 'combined');
-  });
+  // Ciphertext chart
+  const ctxC = document.getElementById('chartCipher').getContext('2d');
+  if (chartCipher) { chartCipher.data.labels = labels; chartCipher.data.datasets[0].data = dataCipher; chartCipher.update(); }
+  else {
+    chartCipher = new Chart(ctxC, Object.assign({data: {labels, datasets:[{label:'Ciphertext %', data: dataCipher, backgroundColor: undefined}] }}, commonOptions));
+  }
 
-  tryAll();
-});
+  return {labels, dataPlain, dataCipher, totalPlain: pt.total, totalCipher: ct.total};
+}
+
+function downloadCSV(){
+  const res = createOrUpdateCharts();
+  const rows = [['Letter','Count% Plain','Count% Cipher']];
+  res.labels.forEach((L, i) => rows.push([L, res.dataPlain[i], res.dataCipher[i]]));
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'letter_freqs.csv'; a.click(); URL.revokeObjectURL(url);
+}
 
 function readWeights(){
   const w_word = parseFloat(document.getElementById('w_word').value) || 0.45;
@@ -773,6 +795,9 @@ function tryAll(){
     window._lastResults = results;
     renderResults(results, 'combined');
     document.getElementById('summary').textContent = `Generated 26 candidates. Sorted by "Combined" (adjust weights if needed).`;
+
+    // update charts for the (current) selected candidate: use current cipher textarea
+    createOrUpdateCharts();
   } catch (err) {
     console.error(err);
     alert('Error: see console (F12) for details.');
@@ -845,6 +870,85 @@ function showSelected(obj){
 }
 
 function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+
+// DOM
+document.addEventListener('DOMContentLoaded', () => {
+  const runBtn = document.getElementById('run');
+  const sortHamBtn = document.getElementById('sortHam');
+  const sortChiBtn = document.getElementById('sortChi');
+  const sortCombBtn = document.getElementById('sortComb');
+  const genBtn = document.getElementById('genBtn');
+  const genAnalyzeBtn = document.getElementById('genAnalyzeBtn');
+  const copyCipherBtn = document.getElementById('copyCipher');
+  const toggleAllBtn = document.getElementById('toggleAllShifts');
+  const topNInput = document.getElementById('topN');
+  const toggleColsEl = document.getElementById('toggleCols');
+  const updateChartsBtn = document.getElementById('updateCharts');
+  const downloadCsvBtn = document.getElementById('downloadCsv');
+
+  runBtn.addEventListener('click', tryAll);
+  sortHamBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'ham'));
+  sortChiBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'chi'));
+  sortCombBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'combined'));
+
+  genBtn.addEventListener('click', () => {
+    const pt = document.getElementById('plaintext').value || '';
+    const s = Math.max(0, Math.min(25, parseInt(document.getElementById('genShift').value || '0',10)));
+    const map = document.getElementById('genMapAcc').checked;
+    const input = map ? mapAccents(pt) : pt;
+    const c = caesarShift(input, s);
+    document.getElementById('generated').value = c;
+    // also update cipher textarea? keep separate but helpful to sync
+    // document.getElementById('cipher').value = c;
+  });
+
+  genAnalyzeBtn.addEventListener('click', () => {
+    genBtn.click();
+    const c = document.getElementById('generated').value || '';
+    document.getElementById('cipher').value = c;
+    tryAll();
+  });
+
+  copyCipherBtn.addEventListener('click', async () => {
+    try {
+      const text = document.getElementById('generated').value || document.getElementById('cipher').value || '';
+      await navigator.clipboard.writeText(text);
+      alert('Cipher copied to clipboard.');
+    } catch (e) {
+      alert('Cannot copy automatically. Copy manually.');
+    }
+  });
+
+  let __showingAll = false;
+  let __prevTopN = null;
+  toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
+    if (!__showingAll) {
+      __prevTopN = parseInt(topNInput.value || '5', 10);
+      topNInput.value = 26;
+      toggleAllBtn.textContent = 'Show top only';
+      __showingAll = true;
+    } else {
+      topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
+      toggleAllBtn.textContent = 'Show all shifts';
+      __showingAll = false;
+    }
+    renderResults(window._lastResults || [], 'combined');
+  });
+
+  toggleColsEl && toggleColsEl.addEventListener('change', () => {
+    renderResults(window._lastResults || [], 'combined');
+  });
+
+  updateChartsBtn && updateChartsBtn.addEventListener('click', () => { createOrUpdateCharts(); alert('Grafici aggiornati'); });
+  downloadCsvBtn && downloadCsvBtn.addEventListener('click', downloadCSV);
+
+  // initialize charts once
+  createOrUpdateCharts();
+
+  tryAll();
+});
+
   </script>
 </body>
 </html>
