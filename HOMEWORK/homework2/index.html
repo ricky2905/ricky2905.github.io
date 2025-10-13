@@ -73,8 +73,11 @@ thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
 th.dimmed { opacity: 0.55; }
 
 .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-.chartCard{flex:1 1 320px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+.chartCard{flex:1 1 220px;background:#0f111a;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:220px}
 .chartLegend{font-size:13px;color:#cfd8cf;margin-top:6px}
+
+/* compact charts */
+canvas { display:block; width:100%; height:120px; }
 
 @media (max-width:600px){
   body { padding: 1rem; max-width: 100%; }
@@ -100,7 +103,7 @@ th.dimmed { opacity: 0.55; }
     <article class="card">
       <h1>Datasets in Statistics and Cybersecurity</h1>
 
-      <p>Datasets are fundamental for analyzing and modeling behaviors in cybersecurity. They form the basis for detecting anomalies, training predictive models, and evaluating intrusion detection systems [1].</p>
+      <p>Datasets sono fondamentali per analisi e modellizzazione in cybersecurity...</p>
 
       <hr/>
 
@@ -119,8 +122,7 @@ th.dimmed { opacity: 0.55; }
       <hr/>
 
       <h2>Example: Tabular Dataset from KDD Cup '99</h2>
-      <p>The <strong>KDD Cup '99</strong> dataset is widely used for intrusion detection. It contains simulated network traffic information with 41 variables and various attack labels [6].<br/>
-      Here is a simplified tabular representation:</p>
+      <p>The <strong>KDD Cup '99</strong> dataset is widely used for intrusion detection. ...</p>
 
       <table>
         <thead>
@@ -133,120 +135,20 @@ th.dimmed { opacity: 0.55; }
         </tbody>
       </table>
 
-      <p>This structure allows the application of statistical and machine learning techniques to identify anomalous behaviors.</p>
-
       <hr/>
 
       <h2>Dataset Management</h2>
-      <p>Proper dataset management is crucial for reliable and replicable results. Main steps include:</p>
-      <ul>
-        <li><strong>Data cleaning</strong>: removing missing, duplicate, or erroneous values.</li>
-        <li><strong>Normalization and standardization</strong>: aligning variable scales to avoid bias in models [4].</li>
-        <li><strong>Anonymization and privacy</strong>: protecting sensitive data, essential in cybersecurity [5].</li>
-        <li><strong>Feature selection</strong>: choosing the most relevant features to improve model performance and reduce computational complexity [2].</li>
-      </ul>
+      <p>Proper dataset management is crucial...</p>
 
       <hr/>
 
       <h2>Data Distribution Concepts</h2>
-      <p><strong>Data distribution</strong> describes how values of a variable or set of variables are spread. Understanding distribution is essential to:</p>
-      <ul>
-        <li>Choose appropriate statistical tests</li>
-        <li>Identify outliers and anomalies</li>
-        <li>Improve predictive modeling [4]</li>
-      </ul>
-
-      <h3>Types of Distribution</h3>
-      <ul>
-        <li><strong>Univariate</strong> — examines one variable at a time, analyzing mean, median, mode, variance, skewness, and kurtosis [4].</li>
-        <li><strong>Bivariate</strong> — examines the relationship between two variables, using scatter plots, contingency tables, and correlations [4].</li>
-        <li><strong>Multivariate</strong> — involves multiple variables simultaneously, used in PCA, clustering, and complex predictive models [4].</li>
-      </ul>
-
-      <h3>Other Relevant Concepts</h3>
-      <ul>
-        <li><strong>Probability distributions</strong>: Normal, Poisson, Binomial — useful for modeling events like access attempts or attacks [4].</li>
-        <li><strong>Outliers</strong>: extreme values that may indicate anomalies or intrusions [1][5].</li>
-        <li><strong>Patterns and correlations</strong>: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].</li>
-      </ul>
-
-      <hr/>
-
-      <h2>Mathematical Formulas for Distributions</h2>
-
-      <h3>Measures of location and dispersion</h3>
-      <ul>
-        <li><strong>Population mean</strong>:
-          \[
-            \mu = \frac{1}{N}\sum_{i=1}^N x_i
-          \]
-        </li>
-        <li><strong>Sample mean</strong>:
-          \[
-            \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i
-          \]
-        </li>
-        <li><strong>Population variance</strong>:
-          \[
-            \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i-\mu)^2
-          \]
-        </li>
-        <li><strong>Sample variance (unbiased)</strong>:
-          \[
-            s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2
-          \]
-        </li>
-        <li><strong>Standard deviation</strong>:
-          \[
-            \sigma=\sqrt{\sigma^2},\qquad s=\sqrt{s^2}
-          \]
-        </li>
-      </ul>
-
-      <h3>Common probability distributions</h3>
-      <ul>
-        <li><strong>Normal distribution (pdf)</strong>:
-          \[
-            f(x)=\frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
-          \]
-        </li>
-        <li><strong>Binomial distribution (pmf)</strong>:
-          \[
-            P(X=k)=\binom{n}{k} p^k (1-p)^{\,n-k},\qquad k=0,\dots,n
-          \]
-        </li>
-        <li><strong>Poisson distribution (pmf)</strong>:
-          \[
-            P(X=k)=\frac{\lambda^k e^{-\lambda}}{k!},\qquad k=0,1,2,\dots
-          \]
-        </li>
-      </ul>
-
-      <h3>Moments and shape</h3>
-      <ul>
-        <li><strong>Skewness (sample)</strong>:
-          \[
-            \text{skew}=\frac{\frac{1}{n}\sum_{i}(x_i-\bar{x})^3}{\left(\frac{1}{n}\sum_{i}(x_i-\bar{x})^2\right)^{3/2}}
-          \]
-        </li>
-        <li><strong>Excess kurtosis (sample)</strong>:
-          \[
-            \text{kurtosis}=\frac{\frac{1}{n}\sum_{i}(x_i-\bar{x})^4}{\left(\frac{1}{n}\sum_{i}(x_i-\bar{x})^2\right)^{2}} - 3
-          \]
-        </li>
-      </ul>
-
-      <h3>Chi-squared statistic</h3>
-      <p>Used to compare observed vs expected frequencies (also used in your scoring implementation):</p>
-      \[
-        \chi^2=\sum_{i}\frac{(O_i-E_i)^2}{E_i},
-      \]
-      <p>where \(O_i\) are observed counts and \(E_i\) are expected counts.</p>
+      <p><strong>Data distribution</strong> describes how values of a variable or set of variables are spread...</p>
 
       <hr/>
 
       <h2>Final Considerations</h2>
-      <p>Proper analysis of datasets and distributions is essential in cybersecurity for identifying threats and optimizing defense systems. The combined use of structured, unstructured, and semi-structured datasets, along with rigorous data management, allows the development of robust and reliable statistical and machine learning models [1][6].</p>
+      <p>Proper analysis of datasets and distributions is essential in cybersecurity...</p>
 
       <hr/>
 
@@ -265,7 +167,7 @@ th.dimmed { opacity: 0.55; }
     <!-- Univariate / Bivariate section with images -->
     <article class="card">
       <h2>Univariate and Bivariate Distribution on a Dataset</h2>
-      <p>Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions. For the univariate distribution, we consider the <strong>Age</strong> variable, while for the bivariate distribution we examine <strong>Age</strong> and <strong>Height</strong>.</p>
+      <p>Example...</p>
 
       <img src="/assets/images/dati.png" alt="Example tabular data" title="Example tabular data"/>
 
@@ -281,79 +183,16 @@ th.dimmed { opacity: 0.55; }
       <p><strong>SQL Code:</strong></p>
       <img src="/assets/images/dist_bivariata_sql.png" alt="Bivariate Distribution SQL" title="Bivariate Distribution SQL"/>
 
-      <h3>Formulas for univariate / bivariate analysis</h3>
-      <p>Useful formulas for the displayed analyses:</p>
-      <ul>
-        <li><strong>Expected value of a discrete variable</strong>:
-          \[
-            E[X]=\sum_i x_i p_i
-          \]
-        </li>
-        <li><strong>Variance (alternative form)</strong>:
-          \[
-            \mathrm{Var}(X)=E[X^2]-(E[X])^2
-          \]
-        </li>
-        <li><strong>Covariance (sample)</strong>:
-          \[
-            \mathrm{Cov}(X,Y)=\frac{1}{n}\sum_{i=1}^n (x_i-\bar{x})(y_i-\bar{y})
-          \]
-        </li>
-        <li><strong>Pearson correlation coefficient</strong>:
-          \[
-            \rho_{X,Y}=\frac{\mathrm{Cov}(X,Y)}{\sigma_X \sigma_Y}
-          \]
-        </li>
-      </ul>
     </article>
 
     <article class="card">
       <h2>Using Distribution to Break a Caesar Cipher</h2>
-      <p>This section introduces a simple web-based tool and an explanation for working with the <strong>Caesar cipher (shift = 3)</strong>. The tool allows users to:</p>
-      <ul>
-        <li>Encrypt text</li>
-        <li>Attempt decryption by trying all 25 possible shifts (brute-force)</li>
-        <li>Automatically estimate the correct shift using letter frequency analysis (chi-squared test)</li>
-      </ul>
-      <p>The frequency-based approach provides a statistical guess for the most likely shift (for longer texts), while brute-force remains reliable for shorter ones.</p>
-
-      <h3>Main Goals of the Tool</h3>
-      <h4>Caesar Cipher Generation</h4>
-      <ul>
-        <li>Encrypts plaintext with a user-selected shift.</li>
-        <li>Supports accent mapping before encryption.</li>
-      </ul>
-      <h4>Attempted Decryption of All Shifts</h4>
-      <ul>
-        <li>Performs brute-force over all 26 possible Caesar cipher shifts.</li>
-      </ul>
-
-      <h4>Scoring and Ranking of Candidates</h4>
-      <p>Calculates scores based on:</p>
-      <ul>
-        <li>Hamming distance (letter order)</li>
-        <li>Chi-squared statistic (χ²) for frequencies</li>
-        <li>Presence of common English/Italian words (wordScore)</li>
-        <li>Presence of common bigrams (bigramScore)</li>
-      </ul>
-
-      <h4>Results Display</h4>
-      <ul>
-        <li>Shows all candidate decryptions in a sortable table.</li>
-        <li>Highlights the top N candidates.</li>
-        <li>Allows selection of a candidate to view a preview and detailed scores.</li>
-      </ul>
-
-      <h4>User Utilities</h4>
-      <ul>
-        <li>Copy ciphertext to clipboard.</li>
-        <li>Automatically handle accents and capitalization.</li>
-      </ul>
+      <p>This section introduces a simple web-based tool ...</p>
     </article>
 
     <section class="card" aria-labelledby="caesar-title">
       <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
-      <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher and update the two letter-frequency charts manualmente.</div>
+      <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher e aggiornare i due grafici manualmente.</div>
 
       <div class="generator">
         <div class="small"><strong>Caesar Cipher Generator</strong></div>
@@ -420,7 +259,7 @@ th.dimmed { opacity: 0.55; }
       <div id="chosen" class="result">---</div>
 
       <h3 style="margin-top:16px">Grafici: occorrenze lettere (Plaintext & Ciphertext)</h3>
-      <div class="small">Premi <strong>Aggiorna grafici</strong> per calcolare le frequenze A–Z per i due testi. Nessun aggiornamento automatico in background.</div>
+      <div class="small">Premi <strong>Aggiorna grafici</strong> per calcolare le frequenze A–Z per i due testi. Nessun aggiornamento automatico in background (a meno che non si selezioni un candidato, che aggiorna i grafici con il testo selezionato).</div>
 
       <div class="controls" style="margin-top:8px">
         <button id="updateCharts" class="small">Aggiorna grafici</button>
@@ -429,11 +268,11 @@ th.dimmed { opacity: 0.55; }
 
       <div class="chartRow" style="margin-top:12px">
         <div class="chartCard">
-          <canvas id="chartPlain" height="150"></canvas>
+          <canvas id="chartPlain" height="120"></canvas>
           <div class="chartLegend">Plaintext — percentuale per lettera (A–Z)</div>
         </div>
         <div class="chartCard">
-          <canvas id="chartCipher" height="150"></canvas>
+          <canvas id="chartCipher" height="120"></canvas>
           <div class="chartLegend">Ciphertext — percentuale per lettera (A–Z)</div>
         </div>
       </div>
@@ -633,20 +472,39 @@ function createOrUpdateCharts(){
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: { x: { ticks: { color: '#dfeee0' } }, y: { beginAtZero: true, ticks: { callback: v => v + '%', color: '#dfeee0' } } },
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + '%' } } }
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#dfeee0', maxRotation:0, autoSkip: false } },
+        y: { beginAtZero: true, max: 100, grid: { display: false }, ticks: { callback: v => v + '%', color: '#dfeee0', precision: 0 } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => (Number(ctx.parsed.y).toFixed(2) + '%') }
+        }
+      },
+      layout: { padding: 2 }
     }
   };
 
   // Plaintext chart
   const ctxP = document.getElementById('chartPlain').getContext('2d');
-  if (chartPlain) { chartPlain.data.labels = labels; chartPlain.data.datasets[0].data = dataPlain; chartPlain.update(); }
-  else { chartPlain = new Chart(ctxP, Object.assign({data: {labels, datasets:[{label:'Plaintext %', data: dataPlain}] }}, commonOptions)); }
+  if (chartPlain) {
+    chartPlain.data.labels = labels;
+    chartPlain.data.datasets[0].data = dataPlain;
+    chartPlain.update();
+  } else {
+    chartPlain = new Chart(ctxP, Object.assign({data: {labels, datasets:[{label:'Plaintext %', data: dataPlain}] }}, commonOptions));
+  }
 
   // Ciphertext chart
   const ctxC = document.getElementById('chartCipher').getContext('2d');
-  if (chartCipher) { chartCipher.data.labels = labels; chartCipher.data.datasets[0].data = dataCipher; chartCipher.update(); }
-  else { chartCipher = new Chart(ctxC, Object.assign({data: {labels, datasets:[{label:'Ciphertext %', data: dataCipher}] }}, commonOptions)); }
+  if (chartCipher) {
+    chartCipher.data.labels = labels;
+    chartCipher.data.datasets[0].data = dataCipher;
+    chartCipher.update();
+  } else {
+    chartCipher = new Chart(ctxC, Object.assign({data: {labels, datasets:[{label:'Ciphertext %', data: dataCipher}] }}, commonOptions));
+  }
 
   return {labels, dataPlain, dataCipher, totalPlain: pt.total, totalCipher: ct.total};
 }
@@ -705,7 +563,7 @@ function tryAll(){
     renderResults(results, 'combined');
     document.getElementById('summary').textContent = `Generated 26 candidates. Sorted by "Combined" (adjust weights if needed).`;
 
-    // Do NOT auto-update charts here to avoid unexpected loops. Charts update only when user clicks "Aggiorna grafici".
+    // Do NOT auto-update charts here to avoid unexpected loops. Charts update when user clicks "Aggiorna grafici" or when a candidate is selected.
   } catch (err) {
     console.error(err);
     alert('Error: see console (F12) for details.');
@@ -774,6 +632,15 @@ function showSelected(obj){
   const out = document.getElementById('chosen');
   out.textContent = `${obj.shift}: ${obj.shifted}\n\nTotal letters A–Z considered: ${obj.total}\n\nScores:\n  combined: ${obj.combined.toFixed(4)}\n  wordScore: ${(obj.wordScore*100).toFixed(1)}%\n  ham: ${obj.ham} (hamScore ${(obj.hamScore).toFixed(3)})\n  chi²: ${obj.chi2.toFixed(2)} (chiScoreNorm ${(obj.chiScoreNorm||0).toFixed(3)})\n  bigramScore: ${(obj.bigramScore*100).toFixed(1)}%\n\nPreview:\n${obj.shifted}`;
   out.scrollIntoView({behavior:'smooth'});
+
+  // Copia il testo decifrato nel campo Plaintext così l'utente può analizzarlo e aggiornare i grafici.
+  try {
+    document.getElementById('plaintext').value = obj.shifted;
+    // Aggiorna subito i grafici (Plaintext viene impostato sul candidato decifrato; Cipher rimane ciò che c'era)
+    createOrUpdateCharts();
+  } catch (e) {
+    console.warn('Impossibile aggiornare i grafici automaticamente:', e);
+  }
 }
 
 function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -849,6 +716,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   downloadCsvBtn && downloadCsvBtn.addEventListener('click', downloadCSV);
 
+  // inizializza i grafici con i testi correnti (non forzare analisi dei shift)
+  createOrUpdateCharts();
 });
   </script>
 </body>
