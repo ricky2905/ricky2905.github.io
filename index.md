@@ -27,6 +27,8 @@ Select Homework:
 
 - [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
 - [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/index.html)
+- [Homework 3 - ](/HOMEWORK/homework3/index.html)
+- [Homework 4 - ](/HOMEWORK/homework4/index.html)
 
 ---
 
