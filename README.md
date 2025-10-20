@@ -23,9 +23,12 @@ The page explains the key roles of datasets—structured, unstructured, and semi
 It also features a practical example using the KDD Cup '99 dataset and includes a web tool for the Caesar cipher, enabling generation, brute-force decryption, and frequency/chi-squared analysis with charts and CSV download, plus code and SQL query examples.
 
 ### Homework 3 
-**Title** **
-
+**Title:** *RSA (toy) — Letter-level encryption and statistical recovery*  
+Toy implementation of textbook RSA for letters and an interactive demo showing how frequency analysis and heuristic search can recover plaintext in small message spaces.
 
 ### Homework 4
-**TItle** **
+**Title:** *Law of Large Numbers — Simulation and Visualization*  
+Interactive simulations and theoretical notes illustrating the Weak/Strong Law of Large Numbers, empirical convergence of sample frequencies, and comparison with theoretical variance.
+
+---
 
