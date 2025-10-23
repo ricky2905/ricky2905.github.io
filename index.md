@@ -27,8 +27,8 @@ Select Homework:
 
 - [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
 - [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/index.html)
-- [Homework 3 - ](/HOMEWORK/homework3/index.html)
-- [Homework 4 - ](/HOMEWORK/homework4/index.html)
+- [Homework 3 - RSA (toy) — Letter-level encryption and statistical recovery](/HOMEWORK/homework3/index.html)
+- [Homework 4 - Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
 
 ---
 
