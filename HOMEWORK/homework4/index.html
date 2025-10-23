@@ -1,1 +1,348 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Law of Large Numbers — Simulation and Explanation | Riccardo D'Annibale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf; --glass: rgba(255,255,255,0.03); }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background-color:var(--bg);color:#e0e0e0;line-height:1.8;padding:2rem;max-width:1100px;margin:auto}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    .topnav a:hover{color:#66bb6a}
+    h1,h2,h3{color:var(--accent)}
+    h1{font-size:2.2rem;border-bottom:3px solid var(--accent);padding-bottom:0.3rem;margin:0 0 1rem}
+    .card{background-color:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:#dfffe0}
+    input, textarea, select{width:100%;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0b0c10;color:#e6f4e6;font-size:14px}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
+    .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .mainChart{flex:1 1 620px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:320px;height:360px;box-sizing:border-box;overflow:hidden}
+    .sideChart{width:300px;min-width:220px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);height:360px;box-sizing:border-box}
+    .mainChart canvas{width:100%;height:100%;display:block}
+    .sideChart canvas{width:100%;height:100%;display:block}
+    table{border-collapse:collapse;width:100%;margin-top:8px}
+    th,td{border:1px solid rgba(255,255,255,0.06);padding:8px;text-align:left;color:#e7e7e7}
+    th{background:rgba(76,175,80,0.06);color:#dfffe0}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
+    button{padding:8px 12px;border-radius:6px;background:var(--accent);border:0;color:#072;font-weight:700;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:700}
+    .muted{color:var(--muted)}
+    @media(max-width:720px){ .controls{flex-direction:column} .mainChart,.sideChart{height:260px} }
+    .mjx-chtml { color: #e0e0e0 !important; font-size:1.12rem !important; line-height:1.28 !important; }
+    .display-equation { background: rgba(255,255,255,0.02); padding:12px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); margin:12px 0; font-size:1.12rem; }
+    .mjx-chtml svg { fill: currentColor !important; }
+    .math-inline { font-style:normal; color:inherit; font-size:1.02rem; }
+    p { max-width: 90ch; text-align:justify; }
+    p.lead { color:#e9f6e9; font-size:1.02rem; }
+  </style>
+
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex', 'output/chtml', 'ui/menu'] },
+      tex: {
+        packages: {'[+]': ['ams','amsmath','amssymb']},
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']]
+      },
+      chtml: { scale: 1.25 },
+      startup: { typeset: true }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <header class="topnav">
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+  </header>
+
+  <main>
+
+    <article class="card">
+      <h1>The Law of Large Numbers</h1>
+      <p class="lead">If you repeat an experiment many times, the average of the results tends to stabilize. This simple observation underpins much of statistics and numerical methods.</p>
+    </article>
+
+    <article class="card">
+      <h2>First: the formula we will use</h2>
+
+      <p>Consider a collection of independent and identically distributed observations \(X_1,X_2,\dots\) with finite expectation \(\mu=E[X_1]\). The quantity we observe is the sample mean</p>
+
+      <div class="display-equation">\[
+        \overline{X}_n \;=\; \frac{1}{n}\sum_{i=1}^n X_i.
+      \]</div>
+
+      <p>The intuitive question is: what happens to \(\overline{X}_n\) as \(n\) grows? The answer: it tends to \(\mu\) according to various notions of convergence. The two most common are convergence in probability (WLLN) and almost sure convergence (SLLN).</p>
+    </article>
+
+    <article class="card">
+      <h2>Why the mean stabilizes (intuition and Chebyshev)</h2>
+
+      <p>Assume the variance \(\sigma^2=Var(X_1)\) exists. The variance of the sum \(\sum_{i=1}^n X_i\) grows linearly with \(n\). Normalizing by \(n^2\) gives the variance of the mean:</p>
+
+      <div class="display-equation">\[
+        Var(\overline{X}_n)=\frac{n\sigma^2}{n^2}=\frac{\sigma^2}{n},
+      \]</div>
+
+      <p>which goes to zero as \(n\to\infty\). Chebyshev's inequality turns this into a probabilistic statement: for every \(\varepsilon>0\),</p>
+
+      <div class="display-equation">\[
+        P\big(|\overline{X}_n-\mu|>\varepsilon\big) \le \frac{Var(\overline{X}_n)}{\varepsilon^2} = \frac{\sigma^2}{n\varepsilon^2} \xrightarrow[n\to\infty]{} 0.
+      \]</div>
+
+      <p>This is the weak law of large numbers: for large \(n\) the probability of a significant deviation becomes small. It's a quantitative guideline: to make the probability of an error larger than \(\varepsilon\) small, choose \(n\) so that \(\sigma^2/(n\varepsilon^2)\) is small.</p>
+    </article>
+
+    <article class="card">
+      <h2>Why the strong version is deeper (Borel–Cantelli and truncation)</h2>
+
+      <p>The WLLN does not assert that for each individual sequence of outcomes the mean converges; it only says the probability that the mean is far from \(\mu\) goes to zero. The SLLN strengthens the conclusion: with probability 1 the sequence of sample means converges to \(\mu\). Proving the SLLN requires controlling distribution tails: rare but very large values can spoil convergence unless controlled.</p>
+
+      <p>The standard method is truncation: define truncated variables \(X_i^{(M)} = X_i\mathbf{1}_{\{|X_i|\le M\}}\). Truncated versions have controlled tails and one applies strong results to them; then use the Borel–Cantelli lemma to show that events \(|X_i|>M\) occur only finitely many times almost surely as \(M\to\infty\). Combining these steps yields the SLLN for the original variables.</p>
+
+      <p>The simple Borel–Cantelli lemma: if \(\sum_n P(A_n)<\infty\) then the probability that infinitely many of the events \(A_n\) occur is 0. This connects sums of probabilities with almost-sure behavior.</p>
+    </article>
+
+    <article class="card">
+      <h2>How fast does convergence happen? the role of the CLT</h2>
+
+      <p>Knowing convergence is useful, but knowing the scale of fluctuations is often more important in practice. The Central Limit Theorem (CLT) states that if \(Var(X_1)=\sigma^2<\infty\), then</p>
+
+      <div class="display-equation">\[
+        \sqrt{n}\,(\overline{X}_n-\mu)\xrightarrow{d} N(0,\sigma^2).
+      \]</div>
+
+      <p>This implies typical deviations of \(\overline{X}_n\) around \(\mu\) are of order \(1/\sqrt{n}\). For large \(n\), \(\overline{X}_n\) is approximately normal with mean \(\mu\) and variance \(\sigma^2/n\). Confidence intervals are therefore justified by the CLT.</p>
+
+      <p>Quantitative results (Berry–Esseen) provide an \(O(1/\sqrt{n})\) bound on the approximation error, with constants depending on third moments of the \(X_i\).</p>
+    </article>
+
+    <article class="card">
+      <h2>Concentration: non-asymptotic inequalities</h2>
+
+      <p>Non-asymptotic bounds giving exponentially small probabilities of large deviations are often useful. For bounded or sub-Gaussian variables there are inequalities like Hoeffding and Bernstein.</p>
+
+      <div class="display-equation">\[
+        P\big(|\overline{X}_n-\mu|\ge\varepsilon\big) \le 2\exp(-2n\varepsilon^2) \quad\text{(Hoeffding, for variables in [0,1])}
+      \]</div>
+
+      <p>Compared to Chebyshev these bounds are much stronger: the probability of large deviations decays exponentially in \(n\), not just as \(1/n\).</p>
+    </article>
+
+    <article class="card">
+      <h2>Practical example: Bernoulli and demo interpretation</h2>
+
+      <p>For a simple didactic case let \(X_i\) be Bernoulli with parameter \(p\): \(X_i\in\{0,1\}\), \(P(X_i=1)=p\). Then \(\mu=p\) and variance \(p(1-p)\). The variance of the mean is:</p>
+
+      <div class="display-equation">\[
+        Var(\overline{X}_n)=\frac{p(1-p)}{n}.
+      \]</div>
+
+      <p>The typical standard deviation is \(\sqrt{p(1-p)/n}\). In the demo, increasing \(n\) makes individual trajectories \(f_i(t)\) approach the horizontal line at \(p\) and the histogram of \(f_i(n)\) becomes more concentrated around \(p\). Increasing \(m\) (number of trajectories) with fixed \(n\) makes the histogram less noisy and better approximated.</p>
+
+      <p>An approximate 95% confidence interval for the final frequency is</p>
+
+      <div class="display-equation">\[
+        p \pm 1.96\sqrt{\frac{p(1-p)}{n}}.
+      \]</div>
+
+      <p>For p near 0 or 1 and for small n this approximation can be poor; in those cases use exact methods (Clopper–Pearson) or transformations.</p>
+    </article>
+
+    <article class="card">
+      <h2>Practical takeaways</h2>
+
+      <p>The LLN explains why repeating measurements and computing averages is effective. In labs or Monte Carlo simulations:</p>
+      <ul>
+        <li>To get a standard error ≤ δ choose \(n\ge \sigma^2/\delta^2\).</li>
+        <li>Reducing error by a factor 2 requires quadrupling observations (scaling \(1/\sqrt{n}\)).</li>
+        <li>Check tail behavior: if variance is infinite (heavy tails) classical LLN forms may not apply; stable sums or transformations may be needed.</li>
+      </ul>
+
+      <p>Now try the interactive simulation below to verify these points.</p>
+    </article>
+
+    <article class="card" id="demo">
+      <h2>Interactive simulation — trajectories and histogram</h2>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1"><label for="mTraj">m — number of trajectories</label><input id="mTraj" type="number" value="200" min="1" max="50000"></div>
+        <div style="flex:1"><label for="nTrials">n — number of trials per trajectory</label><input id="nTrials" type="number" value="1000" min="1" max="2000000"></div>
+        <div style="flex:1"><label for="pProb">p — success probability</label><input id="pProb" type="number" step="0.01" value="0.3" min="0" max="1"></div>
+      </div>
+
+      <div class="controls">
+        <button id="runSim">Run simulation</button>
+        <button id="clearBtn" class="secondary">Clear charts</button>
+        <button id="exportCSV" class="secondary">Export CSV</button>
+        <label class="small">Show first k trajectories</label>
+        <input id="kShow" type="number" value="20" min="1" style="width:80px">
+        <div id="status" class="small muted" style="margin-left:8px">Ready</div>
+      </div>
+
+      <div class="chartRow" style="margin-top:12px">
+        <div class="mainChart">
+          <canvas id="trajCanvas" aria-label="Trajectories f_i(t)"></canvas>
+          <div class="small">Trajectories \(f_i(t)\) — dashed line = \(p\)</div>
+        </div>
+
+        <div class="sideChart">
+          <canvas id="histCanvas" aria-label="Histogram of f_i(n)"></canvas>
+          <div class="small">Histogram of final frequencies \(f_i(n)\)</div>
+        </div>
+      </div>
+
+      <pre id="report" class="code">Results will appear here after the simulation.</pre>
+    </article>
+
+    <article class="card">
+      <h2>Quick references</h2>
+      <ol>
+        <li>W. Feller — <em>An Introduction to Probability Theory and Its Applications</em>.</li>
+        <li>P. Billingsley — <em>Probability and Measure</em>.</li>
+        <li>R. Durrett — <em>Probability: Theory and Examples</em>.</li>
+        <li>Hoeffding (1963), Berry (1941), Esseen (1942) — for concentration and CLT rates.</li>
+      </ol>
+    </article>
+
+  </main>
+
+  <footer class="small" style="margin-top:18px">© 2025 Riccardo D'Annibale</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise().catch(e => console.error('MathJax typeset error', e));
+      }
+    });
+  </script>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    let trajChart=null, histChart=null, lastResult=null;
+
+    function initCharts(){
+      if(trajChart) trajChart.destroy();
+      if(histChart) histChart.destroy();
+
+      const ctxT = $('trajCanvas').getContext('2d');
+      trajChart = new Chart(ctxT, {
+        type:'line',
+        data:{ labels:[], datasets:[] },
+        options:{
+          responsive:true, maintainAspectRatio:false, animation:false,
+          elements:{ line:{ tension:0.12 }, point:{ radius:0 } },
+          scales:{ x:{ title:{display:true,text:'t (number of trials)'} }, y:{ min:0, max:1, title:{display:true,text:'f(t)'} } },
+          plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false} }
+        }
+      });
+
+      const ctxH = $('histCanvas').getContext('2d');
+      histChart = new Chart(ctxH, {
+        type:'bar',
+        data:{ labels:[], datasets:[{ label:'count', data:[] }] },
+        options:{
+          responsive:true, maintainAspectRatio:false, animation:false,
+          scales:{ y:{ beginAtZero:true, title:{display:true,text:'count'} } },
+          plugins:{ legend:{display:false} }
+        }
+      });
+    }
+    initCharts();
+
+    const palette = ['#4CAF50','#66bb6a','#8BC34A','#CDDC39','#FFC107','#FF9800','#FF5722','#E91E63','#9C27B0','#3F51B5'];
+
+    $('runSim').addEventListener('click', ()=>{
+      try{
+        const m = Math.max(1, Math.min(50000, Number($('mTraj').value)||200));
+        const n = Math.max(1, Math.min(2000000, Number($('nTrials').value)||1000));
+        let p = Number($('pProb').value); if(isNaN(p)) p=0.5; p = Math.max(0,Math.min(1,p));
+        const kShow = Math.max(1, Math.min(m, Number($('kShow').value)||20));
+        $('status').textContent = 'Running simulation...';
+
+        if(m*n > 20000000){
+          if(!confirm(`Warning: m*n = ${m*n} (many operations). Proceeding may be slow.`)){ $('status').textContent='Cancelled'; return; }
+        }
+
+        const trajectories = Array.from({length: Math.min(kShow,m)}, ()=> new Float32Array(n));
+        const finalFs = new Float32Array(m);
+
+        for(let i=0;i<m;i++){
+          let succ = 0;
+          for(let t=0;t<n;t++){
+            if(Math.random() < p) succ++;
+            if(i < trajectories.length) trajectories[i][t] = succ / (t+1);
+          }
+          finalFs[i] = succ / n;
+        }
+
+        const labels = Array.from({length:n}, (_,i)=>i+1);
+        trajChart.data.labels = labels;
+        trajChart.data.datasets = [];
+        for(let i=0;i<trajectories.length;i++){
+          trajChart.data.datasets.push({
+            label:`traj ${i+1}`, data: Array.from(trajectories[i]),
+            borderColor: palette[i % palette.length], borderWidth:1.2, pointRadius:0, fill:false
+          });
+        }
+        trajChart.data.datasets.push({
+          label:'p (theoretical)', data: Array.from({length:n}, ()=>p),
+          borderColor:'#ffffff', borderDash:[6,6], borderWidth:1, pointRadius:0, fill:false
+        });
+        trajChart.update();
+
+        const bins = Math.min(60, Math.max(10, Math.ceil(Math.sqrt(m))));
+        const counts = new Array(bins).fill(0);
+        for(let i=0;i<m;i++){
+          let idx = Math.floor(finalFs[i]*bins); if(idx<0) idx=0; if(idx>=bins) idx=bins-1; counts[idx]++;
+        }
+        const binLabels = counts.map((_,i)=>`${(i/bins).toFixed(2)}–${((i+1)/bins).toFixed(2)}`);
+        histChart.data.labels = binLabels; histChart.data.datasets[0].data = counts; histChart.update();
+
+        const meanEmp = Array.from(finalFs).reduce((a,b)=>a+b,0)/m;
+        let ss=0; for(let i=0;i<m;i++){ const d = finalFs[i]-meanEmp; ss += d*d; }
+        const varEmp = (m>1) ? ss/(m-1) : 0;
+        const varTheo = p*(1-p)/n;
+        const sdTheo = Math.sqrt(varTheo);
+        const cl1 = Math.max(0, p - 1.96*sdTheo);
+        const cl2 = Math.min(1, p + 1.96*sdTheo);
+
+        $('report').textContent = `Simulation completed — m=${m}, n=${n}, p=${p.toFixed(4)}
+Empirical mean (f_i(n)) = ${meanEmp.toFixed(6)}
+Empirical variance (f_i(n)) = ${varEmp.toExponential(6)}
+Theoretical variance p(1-p)/n = ${varTheo.toExponential(6)}
+Theoretical sd (single f(n)) = ${sdTheo.toFixed(6)}
+Approx 95% CLT interval: p ± 1.96*sd ≈ [${cl1.toFixed(6)}, ${cl2.toFixed(6)}]
+
+Observations:
+- Increasing n reduces variance roughly as ~1/n.
+- Increasing m makes the histogram less noisy and more regular.`;
+
+        $('status').textContent = 'Ready';
+        lastResult = { m, n, p, finalFs: Array.from(finalFs) };
+      }catch(err){ $('status').textContent = 'Error: ' + String(err); }
+    });
+
+    $('clearBtn').addEventListener('click', ()=>{ initCharts(); $('report').textContent='Charts cleared.'; $('status').textContent='Ready'; lastResult=null; });
+
+    $('exportCSV').addEventListener('click', ()=>{
+      if(!lastResult){ alert('Run the simulation first to export.'); return; }
+      const { m,n,p,finalFs } = lastResult;
+      let csv = 'trajectory_index,f_final\n';
+      for(let i=0;i<finalFs.length;i++) csv += `${i+1},${finalFs[i]}\n`;
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `lln_m${m}_n${n}_p${p.toFixed(2)}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    window.addEventListener('resize', ()=>{ if(trajChart) trajChart.resize(); if(histChart) histChart.resize(); });
+  </script>
+</body>
+</html>
