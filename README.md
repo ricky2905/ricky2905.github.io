@@ -43,7 +43,8 @@ A page summarizing the main measures of location—including arithmetic mean, me
 
 ### Homework 6
 
-**Title:** * *
+**Title:** *The Law of Large Numbers - Mean and Variance Simulator*
+Interactive page to input numeric data, compute sample mean and unbiased variance, display cumulative mean and histogram. Demonstrates the Law of Large Numbers visually and practically.
 
 
 ---
