@@ -1,1 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Mean and Variance Simulator — Interactive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0f111a;
+      --panel:#141622;
+      --accent:#4CAF50;
+      --muted:#9fb89f;
+      --glass: rgba(255,255,255,0.03);
+      --card-border: rgba(76,175,80,0.08);
+      --text:#e6f4e6;
+      --mono:#dfeee0;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background-color:var(--bg);color:var(--text);line-height:1.6;padding:2rem;max-width:1100px;margin:auto}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem;align-items:center}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    .topnav a:hover{color:#66bb6a}
+    h1,h2,h3{color:var(--accent);margin:0}
+    h1{font-size:1.9rem;border-bottom:3px solid var(--accent);padding-bottom:0.3rem;margin-bottom:0.75rem}
+    .card{background-color:var(--panel);border-left:5px solid var(--accent);border-radius:10px;padding:1.25rem;margin:1rem 0;box-shadow:0 8px 30px rgba(0,0,0,0.5);border:1px solid var(--card-border)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:var(--text)}
+    input, textarea, select, button.secondary{
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background:#0b0c10;color:var(--text);font-size:14px;
+    }
+    textarea{resize:vertical}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .controls > * { flex: 1 1 auto; min-width:140px; }
+    .btn {
+      padding:10px 14px;border-radius:8px;background:var(--accent);border:0;color:#072;font-weight:800;cursor:pointer;
+      box-shadow: 0 6px 18px rgba(76,175,80,0.07);
+    }
+    .btn.ghost { background: transparent; color: var(--muted); border:1px solid rgba(255,255,255,0.04); font-weight:700; box-shadow:none; }
+    .muted{color:var(--muted)}
+    .layout { display:grid; grid-template-columns: 1fr 360px; gap:16px; align-items:start; }
+    @media(max-width:980px){ .layout{grid-template-columns:1fr} }
 
+    /* fixed-size chart containers */
+    .chart {
+      background:#0b0c10;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      min-height:260px;
+      max-height:260px;
+      height:260px;
+      box-sizing:border-box;
+      overflow:auto;
+    }
+    .chart canvas {
+      display:block;
+      width:100% !important;
+      height:100% !important;
+    }
+    .values-list { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; color:var(--mono); background: rgba(255,255,255,0.02); padding:8px; border-radius:6px; margin-top:8px; }
+    .code{background:#0b0c10;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);color:var(--mono);overflow:auto}
+    .display-equation{background: rgba(255,255,255,0.02); padding:10px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); margin:8px 0; font-size:1rem; color:var(--mono)}
+    footer{opacity:0.7;font-size:13px;margin-top:18px}
+  </style>
+
+  <!-- MathJax for equations -->
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/chtml'] },
+      tex: { inlineMath: [['\\(','\\)'], ['$', '$']] },
+      chtml: { scale: 1 }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <header class="topnav">
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+  </header>
+
+  <main>
+
+    <!-- --- Explanation (before the simulator) --- -->
+    <article class="card" aria-labelledby="explain-title">
+      <h1 id="explain-title">Explanation: what the simulator computes</h1>
+      <p class="small muted">This tool computes the main statistics of location and spread from a sequence of real numbers. It provides:</p>
+      <ul>
+        <li><strong>Sample mean</strong> \(\bar x = \frac{1}{n}\sum_{i=1}^n x_i\)</li>
+        <li><strong>Sample variance (unbiased)</strong> \(s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2\), for \(n\ge2\)</li>
+        <li>Cumulative mean plot (running mean) to observe stabilization</li>
+        <li>Histogram of values to visualize the distribution</li>
+      </ul>
+
+      <div class="display-equation">\(\displaystyle \bar x = \frac{1}{n}\sum_{i=1}^n x_i\)</div>
+      <div class="display-equation">\(\displaystyle s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2\)</div>
+
+    </article>
+
+    <!-- --- How to use (before the simulator) --- -->
+    <article class="card" aria-labelledby="howto-title">
+      <h2 id="howto-title">How to use</h2>
+      <ol>
+        <li><strong>Vector mode</strong>: click <em>Enter Vector</em>, paste numbers separated by commas and press <em>Calculate (vector)</em>. Charts and results will update.</li>
+        <li><strong>Step-by-step mode</strong>: click <em>Enter Values</em>, type a number and press <em>Add value</em>. You can reset entered values with <em>Reset values</em>.</li>
+        <li>Use <em>Export CSV</em> to download the current values (only after entering data).</li>
+        <li><strong>Reset All</strong> clears vector, values and charts.</li>
+        <li>For n=1 the variance is shown as "N/A (needs n≥2)".</li>
+      </ol>
+    </article>
+
+    <!-- --- Simulator (central) --- -->
+    <section class="card layout" aria-labelledby="sim-title">
+      <div>
+        <h2 id="sim-title">Simulator — Input and Controls</h2>
+
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn" id="btnWhole">Enter Vector</button>
+          <button class="btn ghost" id="btnStep">Enter Values</button>
+          <button class="btn ghost" id="btnResetAll">Reset All</button>
+        </div>
+
+        <div id="wholePanel" style="margin-top:12px;">
+          <label for="vectorInput">Enter all numbers separated by commas</label>
+          <textarea id="vectorInput" rows="3" placeholder="e.g. 1, 2, 3.5, 4"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" id="calcVector">Calculate (vector)</button>
+            <button class="btn ghost" id="clearVector">Clear</button>
+          </div>
+        </div>
+
+        <div id="stepPanel" style="margin-top:12px; display:none;">
+          <label for="singleValue">Single value</label>
+          <input id="singleValue" type="number" inputmode="decimal" placeholder="Enter a number and press Add" />
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" id="addValue">Add value</button>
+            <button class="btn ghost" id="resetValues">Reset values</button>
+            <button class="btn ghost" id="exportCSV">Export CSV</button>
+          </div>
+          <div class="values-list" id="valuesList">Current data: []</div>
+        </div>
+
+        <div style="margin-top:12px" class="code" id="resultBox">
+          <strong>Results:</strong>
+          <div id="results" style="margin-top:8px;color:var(--mono)">No calculation performed yet.</div>
+        </div>
+      </div>
+
+      <aside>
+        <h3>Charts</h3>
+        <div class="chart" style="margin-top:8px">
+          <canvas id="cumMeanChart" aria-label="Cumulative mean chart"></canvas>
+          <div class="small muted" style="margin-top:6px">Cumulative mean vs index</div>
+        </div>
+
+        <div class="chart" style="margin-top:12px">
+          <canvas id="histChart" aria-label="Histogram of values"></canvas>
+          <div class="small muted" style="margin-top:6px">Histogram of values</div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- --- Final description of the simulation (end) --- -->
+    <article class="card" aria-labelledby="desc-title">
+      <h2 id="desc-title">Final description of the simulation</h2>
+      <p class="small muted">This simulation helps exploring how the sample mean and variance behave as data change. The <strong>cumulative mean</strong> is useful to see whether the mean stabilizes when more observations are added (related to the Law of Large Numbers). The <strong>histogram</strong> shows the empirical shape of the entered values' distribution.</p>
+
+      <p class="small muted">Fields and outputs:</p>
+      <ul>
+        <li><strong>n</strong>: current number of observations.</li>
+        <li><strong>Mean</strong>: arithmetic mean of the observations.</li>
+        <li><strong>Sample variance</strong>: unbiased estimate of dispersion, uses n−1.</li>
+      </ul>
+    </article>
+
+  </main>
+
+  <footer class="small muted">© 2025 Riccardo D'Annibale</footer>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    let values = [];
+    let cumChart = null, histChart = null, lastExport = null;
+
+    function initCharts(){
+      if(cumChart) cumChart.destroy();
+      if(histChart) histChart.destroy();
+
+      const ctx1 = $('cumMeanChart').getContext('2d');
+      cumChart = new Chart(ctx1, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Cumulative mean', data: [], borderWidth: 1.6, pointRadius: 0, tension: 0.15 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, animation: false,
+          scales: { x: { title: { display: true, text: 'Index (k)' } }, y: { title: { display: true, text: 'Cumulative mean' } } },
+          plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }
+        }
+      });
+
+      const ctx2 = $('histChart').getContext('2d');
+      histChart = new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'Count', data: [] }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, animation: false,
+          scales: { y: { beginAtZero: true, title: { display: true, text: 'count' } } },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+    initCharts();
+
+    function mean(arr){ if(!arr.length) return NaN; return arr.reduce((a,b)=>a+b,0)/arr.length; }
+    function sampleVariance(arr){
+      const n = arr.length; if(n < 2) return NaN;
+      const m = mean(arr); let ss = 0; for(let x of arr) ss += (x - m)*(x - m); return ss / (n - 1);
+    }
+
+    function updateUI(){
+      $('valuesList').textContent = `Current data: [${values.join(', ')}]`;
+      if(values.length === 0){
+        $('results').innerHTML = `<em>No data available.</em>`;
+        updateCharts([], []);
+        lastExport = null;
+        return;
+      }
+      const m = mean(values);
+      const s2 = sampleVariance(values);
+      const n = values.length;
+      const mStr = Number.isFinite(m) ? m.toFixed(6) : 'N/A';
+      const vStr = Number.isFinite(s2) ? s2.toExponential(6) : 'N/A (needs n≥2)';
+      $('results').innerHTML = `<div><strong>n</strong>: ${n}</div><div><strong>Mean</strong>: ${mStr}</div><div><strong>Sample variance</strong>: ${vStr}</div>`;
+
+      const cumMeans = [];
+      let cum = 0;
+      for(let i=0;i<values.length;i++){ cum += values[i]; cumMeans.push(cum / (i+1)); }
+
+      const bins = Math.min(40, Math.max(6, Math.ceil(Math.sqrt(values.length))));
+      const minV = Math.min(...values);
+      const maxV = Math.max(...values);
+      const range = (maxV - minV) || 1;
+      const counts = new Array(bins).fill(0);
+      for(let x of values){
+        let idx = Math.floor(((x - minV) / range) * bins);
+        if(idx < 0) idx = 0; if(idx >= bins) idx = bins - 1; counts[idx]++;
+      }
+      const labels = counts.map((_,i) => {
+        const a = (minV + (i/ bins) * range);
+        const b = (minV + ((i+1)/ bins) * range);
+        return `${a.toFixed(2)}–${b.toFixed(2)}`;
+      });
+
+      updateCharts(cumMeans, { labels, counts });
+      lastExport = { values: values.slice(), mean: m, variance: s2 };
+    }
+
+    function updateCharts(cumMeans, hist){
+      cumChart.data.labels = cumMeans.map((_,i) => i+1);
+      cumChart.data.datasets[0].data = cumMeans;
+      cumChart.update();
+
+      if(hist && hist.labels.length){
+        histChart.data.labels = hist.labels;
+        histChart.data.datasets[0].data = hist.counts;
+      } else {
+        histChart.data.labels = [];
+        histChart.data.datasets[0].data = [];
+      }
+      histChart.update();
+    }
+
+    // Event bindings
+    $('btnWhole').addEventListener('click', ()=>{ $('wholePanel').style.display = 'block'; $('stepPanel').style.display = 'none'; $('btnWhole').classList.remove('ghost'); $('btnStep').classList.add('ghost'); });
+    $('btnStep').addEventListener('click', ()=>{ $('wholePanel').style.display = 'none'; $('stepPanel').style.display = 'block'; $('btnStep').classList.remove('ghost'); $('btnWhole').classList.add('ghost'); });
+
+    $('clearVector').addEventListener('click', ()=>{ $('vectorInput').value = ''; });
+    $('calcVector').addEventListener('click', ()=>{
+      const raw = $('vectorInput').value.trim();
+      if(!raw){ alert('Please enter some numbers separated by commas.'); return; }
+      const arr = raw.split(',').map(s => s.trim()).map(s => s === '' ? NaN : Number(s.replace(',', '.'))).filter(x => !Number.isNaN(x));
+      if(arr.length === 0){ alert('No valid numbers found. Check syntax (use commas to separate).'); return; }
+      values = arr.slice(); updateUI();
+    });
+
+    $('addValue').addEventListener('click', ()=>{
+      const v = $('singleValue').value;
+      if(v === '') { alert('Please enter a number before adding.'); return; }
+      const num = Number(String(v).replace(',', '.'));
+      if(Number.isNaN(num)){ alert('Invalid value.'); return; }
+      values.push(num); $('singleValue').value = ''; updateUI();
+    });
+
+    $('resetValues').addEventListener('click', ()=>{ values = []; updateUI(); });
+    $('btnResetAll').addEventListener('click', ()=>{ if(!confirm('Reset the simulator and delete all data?')) return; values = []; $('vectorInput').value = ''; $('singleValue').value = ''; updateUI(); });
+
+    $('exportCSV').addEventListener('click', ()=>{
+      if(!lastExport || !lastExport.values || lastExport.values.length === 0){ alert('Run at least one input / calculation before exporting.'); return; }
+      let csv = 'index,value\n';
+      for(let i=0;i<lastExport.values.length;i++){ csv += `${i+1},${lastExport.values[i]}\n`; }
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      const now = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.download = `values_export_${now}.csv`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // Initial UI
+    updateUI();
+    document.addEventListener('DOMContentLoaded', ()=>{ if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{}); });
+    window.addEventListener('resize', ()=>{ if(cumChart) cumChart.resize(); if(histChart) histChart.resize(); });
+  </script>
+</body>
+</html>
