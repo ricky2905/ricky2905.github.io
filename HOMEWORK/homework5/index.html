@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Measures of Location — Deep Survey and Practical Guidance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf; --glass: rgba(255,255,255,0.03); }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background-color:var(--bg);color:#e0e0e0;line-height:1.8;padding:2rem;max-width:1100px;margin:auto}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    .topnav a:hover{color:#66bb6a}
+    h1,h2,h3{color:var(--accent)}
+    h1{font-size:2.2rem;border-bottom:3px solid var(--accent);padding-bottom:0.3rem;margin:0 0 1rem}
+    .card{background-color:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:#dfffe0}
+    input, textarea, select{width:100%;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0b0c10;color:#e6f4e6;font-size:14px}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
+    .display-equation { background: rgba(255,255,255,0.02); padding:12px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); margin:12px 0; font-size:1.02rem; }
+    .muted{color:var(--muted)}
+    p { max-width: 90ch; text-align:justify; }
+    p.lead { color:#e9f6e9; font-size:1.02rem; }
+    table{border-collapse:collapse;width:100%;margin-top:8px}
+    th,td{border:1px solid rgba(255,255,255,0.06);padding:8px;text-align:left;color:#e7e7e7}
+    th{background:rgba(76,175,80,0.06);color:#dfffe0}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
+    .mjx-chtml { color: #e0e0e0 !important; font-size:1.12rem !important; line-height:1.28 !important; }
+  </style>
+
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex', 'output/chtml', 'ui/menu'] },
+      tex: {
+        packages: {'[+]': ['ams','amsmath','amssymb']},
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']]
+      },
+      chtml: { scale: 1.15 },
+      startup: { typeset: true }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="topnav">
+    <a href="#">Home</a>
+    <a href="#references">References</a>
+  </header>
+
+  <main>
+
+    <article class="card">
+      <h1>Measures of Location — Survey, Theory, and Practical Use</h1>
+      <p class="lead">This document collects the principal definitions of averages (measures of location), explains their mathematical underpinnings and statistical properties, and highlights the situations in which each measure is appropriate. Emphasis is placed on robustness, efficiency, and the interpretation required for applied analysis.</p>
+    </article>
+
+    <article class="card">
+      <h2>Abstract</h2>
+      <p>Measures of location are single-number summaries intended to represent the central tendency of data. Different definitions emphasize different aspects: arithmetic mean optimizes squared-error criteria, median optimizes absolute deviations, geometric and harmonic means are tailored for multiplicative relationships and rates, and trimmed/Winsorized or M-estimators are used to gain robustness against contamination. We describe formulas, statistical properties (bias, variance, breakdown point, influence function), and give concrete guidance for use.</p>
+    </article>
+
+    <article class="card">
+      <h2>1. The arithmetic mean</h2>
+
+      <p><strong>Definition.</strong> For observations \(x_1,\dots,x_n\):</p>
+      <div class="display-equation"> \[
+        \bar{x} \;=\; \frac{1}{n}\sum_{i=1}^n x_i.
+      \]</div>
+
+      <p><strong>Statistical role and optimality.</strong> The arithmetic mean minimizes the sum of squared residuals:</p>
+      <div class="display-equation"> \[
+        \bar{x} = \arg\min_m \sum_{i=1}^n (x_i-m)^2.
+      \]</div>
+      <p>Under the canonical Gaussian model (i.i.d. normal errors) the sample mean is the maximum likelihood estimator (MLE) of the location parameter and is asymptotically efficient (it reaches the Cramér–Rao lower bound).</p>
+
+      <p><strong>Practical remarks.</strong> The mean is additive (useful for totals and averages of sums), has simple sampling theory (CLT, standard error \(\hat\sigma/\sqrt{n}\)), and is easy to compute. Its Achilles’ heel is sensitivity to outliers: a single extreme value can strongly influence \(\bar{x}\). In heavy-tailed populations (e.g. Pareto with small tail index) the variance may be large or infinite and the sample mean becomes unreliable.</p>
+    </article>
+
+    <article class="card">
+      <h2>2. The median</h2>
+
+      <p><strong>Definition.</strong> Sort the data \(x_{(1)}\le\dots\le x_{(n)}\). The median \(\tilde{x}\) is the center point: if \(n\) is odd \(\tilde{x}=x_{((n+1)/2)}\); if even \(\tilde{x}=(x_{(n/2)}+x_{(n/2+1)})/2\).</p>
+
+      <p><strong>Loss interpretation.</strong> The median minimizes the sum of absolute deviations:</p>
+      <div class="display-equation"> \[
+        \tilde{x} = \arg\min_m \sum_{i=1}^n |x_i - m|.
+      \]</div>
+
+      <p><strong>Robustness and influence.</strong> The median has high robustness: its breakdown point is 50% (i.e., up to roughly half the data may be arbitrarily contaminated before the estimator can be forced to arbitrary values). Its influence function is bounded, meaning a single extreme observation cannot exert unbounded influence. As a trade-off, the median is less statistically efficient than the mean under normality (higher asymptotic variance).</p>
+
+      <p><strong>When to use.</strong> Prefer the median for strongly skewed data, heavy-tailed distributions, or when outliers are likely measurement errors. Also appropriate for ordinal data where distances are not meaningful but ordering is.</p>
+    </article>
+
+    <article class="card">
+      <h2>3. The mode</h2>
+
+      <p><strong>Definition.</strong> The mode is the most frequent value; for continuous variables it is defined as the location of the highest point of the density (the modal value).</p>
+
+      <p><strong>Use cases.</strong> The mode is the natural central measure for categorical data (nominal scales). For multimodal continuous distributions, the mode(s) reveal structure (subpopulations) that neither mean nor median capture.</p>
+    </article>
+
+    <article class="card">
+      <h2>4. Geometric mean</h2>
+
+      <div class="display-equation"> \[
+        G \;=\; \left(\prod_{i=1}^n x_i\right)^{1/n} \;=\; \exp\!\Big(\frac{1}{n}\sum_{i=1}^n \ln x_i\Big),\quad x_i>0.
+      \]</div>
+
+      <p><strong>Interpretation.</strong> The geometric mean is the arithmetic mean of log-transformed data mapped back via exponentiation. It represents the typical multiplicative factor per observation and is the correct aggregate for compounded growth (e.g. returns, population growth).</p>
+
+      <p><strong>Practical notes.</strong> Use it for rates and indices; it downweights very large values relative to the arithmetic mean. Requires positive data (or appropriate offsetting/transformation for zeros or negatives).</p>
+    </article>
+
+    <article class="card">
+      <h2>5. Harmonic mean</h2>
+
+      <div class="display-equation"> \[
+        H \;=\; \left(\frac{1}{n}\sum_{i=1}^n \frac{1}{x_i}\right)^{-1},\quad x_i>0.
+      \]</div>
+
+      <p><strong>Interpretation and canonical example.</strong> The harmonic mean is the correct averaging method for quantities like speeds when the quantity averaged is a rate measured per fixed denominator (e.g., average speed over equal distances). Example: if two equal-distance legs are traveled at speeds \(v_1\) and \(v_2\), the overall average speed is \(H(v_1,v_2)\).</p>
+
+      <p><strong>Limitations.</strong> It is very sensitive to small values (near zero), which can drive the harmonic mean down drastically. Avoid when zeros may occur.</p>
+    </article>
+
+    <article class="card">
+      <h2>6. Root-mean-square (RMS)</h2>
+
+      <div class="display-equation"> \[
+        \mathrm{RMS} \;=\; \sqrt{\frac{1}{n}\sum_{i=1}^n x_i^2}.
+      \]</div>
+
+      <p><strong>Use.</strong> RMS is natural for energy or power quantities (e.g. electrical current/voltage effective value), and for summarizing error magnitudes because it penalizes large deviations more than small ones (quadratic penalty).</p>
+    </article>
+
+    <article class="card">
+      <h2>7. Power means (generalized means)</h2>
+
+      <div class="display-equation"> \[
+        M_r(\mathbf{x}) \;=\; \Big(\frac{1}{n}\sum_{i=1}^n x_i^r\Big)^{1/r},\quad r\in\mathbb{R}.
+      \]</div>
+
+      <p>This single-parameter family includes the arithmetic, geometric (limit as \(r\to0\)), harmonic (\(r=-1\)), and RMS (\(r=2\)). The family has a monotonicity property: if \(r<s\) then \(M_r(\mathbf{x})\le M_s(\mathbf{x})\) (Power Mean Inequality). Varying \(r\) lets you tune how much the measure emphasizes large vs. small values.</p>
+
+      <p><strong>Practical viewpoint.</strong> Choosing \(r\) is an explicit way to control sensitivity to tails: positive large \(r\) emphasize maxima, negative \(r\) emphasize minima.</p>
+    </article>
+
+    <article class="card">
+      <h2>8. Lehmer and contraharmonic means</h2>
+
+      <div class="display-equation"> \[
+        L_p(\mathbf{x}) \;=\; \frac{\sum_{i=1}^n x_i^p}{\sum_{i=1}^n x_i^{p-1}}.
+      \]</div>
+
+      <p>For \(p=2\) this yields the contraharmonic mean. These means are useful in image processing (nonlinear filters) and when a specific weighting of high vs. low values is desired. They are monotone in \(p\) and interpolate between different types of emphasis on large values.</p>
+    </article>
+
+    <article class="card">
+      <h2>9. Trimmed mean and Winsorized mean</h2>
+
+      <p><strong>Trimmed mean.</strong> Remove the smallest and largest \(\alpha\%\) of observations and compute the arithmetic mean of the remainder. Trimming reduces the impact of outliers while preserving a sample-mean-like estimator.</p>
+
+      <p><strong>Winsorized mean.</strong> Replace extreme observations by the nearest non-trimmed percentile (e.g. replace the smallest 5% with the 5th percentile value) and then take the mean. Winsorizing preserves sample size and tends to reduce variance relative to trimming.</p>
+
+      <p>Both approaches provide a straightforward robustification of the mean and are used in applied settings (economic indices, robust reporting).</p>
+    </article>
+
+    <article class="card">
+      <h2>10. M-estimators (robust location estimators)</h2>
+
+      <p>M-estimators generalize maximum likelihood by minimizing a sum of a chosen loss function \(\rho\):</p>
+      <div class="display-equation"> \[
+        \hat\theta = \arg\min_\theta \sum_{i=1}^n \rho\!\big(x_i-\theta\big).
+      \]</div>
+
+      <p>Taking derivative leads to the estimating equation with function \(\psi=\rho'\):</p>
+      <div class="display-equation"> \[
+        \sum_{i=1}^n \psi\!\Big(\frac{x_i-\hat\theta}{s}\Big) = 0,
+      \]</div>
+      <p>where \(s\) is a scale estimate (e.g. MAD). Examples: Huber's \(\psi\) is linear near zero and constant in the tails — it yields an estimator that is nearly as efficient as the mean under Gaussian noise but much more robust to large outliers.</p>
+
+      <p><strong>Influence function and breakdown.</strong> Analysis of M-estimators uses the influence function (how an infinitesimal contamination at point \(x\) changes the estimator) and breakdown point (the contamination fraction needed to make the estimator arbitrary). Carefully chosen \(\psi\) yield bounded influence and improved breakdown properties relative to the arithmetic mean.</p>
+    </article>
+
+    <article class="card">
+      <h2>11. Robustness metrics explained</h2>
+
+      <p><strong>Breakdown point.</strong> The smallest fraction of data contamination that can drive an estimator outside any bound. The sample mean has breakdown point \(1/n\) (practically zero for large n), whereas the median has breakdown point ≈0.5.</p>
+
+      <p><strong>Influence function (IF).</strong> For an estimator \(T(F)\) defined on distribution \(F\), the IF at point \(x\) is</p>
+      <div class="display-equation"> \[
+        \mathrm{IF}(x;T,F) \;=\; \lim_{\varepsilon\downarrow 0} \frac{T((1-\varepsilon)F + \varepsilon\delta_x) - T(F)}{\varepsilon},
+      \]</div>
+      <p>which quantifies the infinitesimal effect of adding a point at \(x\). Bounded IF → robust estimator.</p>
+
+      <p>These theoretical tools guide the selection of a location estimator depending on the expected contamination and the importance of efficiency under an assumed model.</p>
+    </article>
+
+    <article class="card">
+      <h2>12. Comparative summary and selection guidelines</h2>
+
+      <table>
+        <thead><tr><th>Measure</th><th>Key strengths</th><th>When to avoid</th></tr></thead>
+        <tbody>
+          <tr><td>Arithmetic mean</td><td>Efficient under Gaussian model; additive</td><td>Outliers, heavy tails</td></tr>
+          <tr><td>Median</td><td>High robustness; good for skewed data</td><td>Less efficient for small samples under Gaussian</td></tr>
+          <tr><td>Mode</td><td>Best for categorical data; reveals modes</td><td>Not a good central summary for continuous multimodal data</td></tr>
+          <tr><td>Geometric mean</td><td>Correct for multiplicative growth; stable under log-transform</td><td>Nonpositive values</td></tr>
+          <tr><td>Harmonic mean</td><td>Appropriate for averaging rates per unit</td><td>Very sensitive to values near zero</td></tr>
+          <tr><td>Trimmed/Winsorized</td><td>Simple, robust compromise</td><td>Choice of trim proportion is ad hoc</td></tr>
+          <tr><td>M-estimators</td><td>Flexible robust estimators; tuned for performance</td><td>Require parameter/tuning choice</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Practical heuristics.</strong></p>
+      <ul>
+        <li>If data appear symmetric and free of gross errors → arithmetic mean.</li>
+        <li>If data are skewed or outliers plausible → median, trimmed mean, or robust M-estimator.</li>
+        <li>For multiplicative effects (returns, growth factors) → geometric mean.</li>
+        <li>For rates over equal denominators (e.g. speed over same distance) → harmonic mean.</li>
+        <li>For energy-like summaries or RMS errors → root-mean-square.</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>13. Short worked examples</h2>
+
+      <h3>Example 1 — outlier effect</h3>
+      <p>Data: 10, 12, 11, 13, 100.</p>
+      <p>Arithmetic mean: \(\bar{x}=(10+12+11+13+100)/5 = 29.2\). Median: 12. The mean is inflated by the single outlier 100; median reflects central cluster.</p>
+
+      <h3>Example 2 — rates (harmonic)</h3>
+      <p>Two equal-distance legs with speeds 60 km/h and 40 km/h. Average speed:</p>
+      <div class="display-equation"> \[
+        H = \frac{2}{\frac{1}{60}+\frac{1}{40}} = 48\ \text{km/h}.
+      \]</div>
+
+      <h3>Example 3 — compounded returns (geometric)</h3>
+      <p>Annual returns: +10%, +20%, +30% → geometric mean per year:</p>
+      <div class="display-equation"> \[
+        G = \big(1.10 \cdot 1.20 \cdot 1.30\big)^{1/3} - 1 \approx 19.8\%.
+      \]</div>
+    </article>
+
+    <article class="card" id="references">
+      <h2>References and suggested reading</h2>
+      <ol>
+        <li>P. J. Huber, <em>Robust Statistics</em>, Wiley — classic development of M-estimators and robustness concepts.</li>
+        <li>J. W. Tukey, <em>Exploratory Data Analysis</em>, Addison-Wesley — practical robust summaries and EDA techniques.</li>
+        <li>G. H. Hardy, J. E. Littlewood, G. Pólya, <em>Inequalities</em> — power mean inequality and related results.</li>
+        <li>M. H. DeGroot & M. J. Schervish, <em>Probability and Statistics</em> — sampling theory, CLT, properties of estimators.</li>
+        <li>R. A. Maronna, R. D. Martin, V. J. Yohai, <em>Robust Statistics: Theory and Methods</em> — modern treatment of robust estimators and influence functions.</li>
+      </ol>
+    </article>
+
+  </main>
+
+  <footer class="small" style="margin-top:18px">© 2025 Riccardo D'Annibale</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise().catch(e => console.error('MathJax typeset error', e));
+      }
+    });
+  </script>
+</body>
+</html>
