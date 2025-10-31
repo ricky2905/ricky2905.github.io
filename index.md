@@ -30,7 +30,7 @@ Select Homework:
 - [Homework 3 - RSA (toy) — Letter-level encryption and statistical recovery](/HOMEWORK/homework3/index.html)
 - [Homework 4 - Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
 - [Homework 5 - Measures of Location — Deep Survey and Practical Guidance](/HOMEWORK/homework5/index.html)
-- [Homework 6 - 
+- [Homework 6 - The Law of Large Numbers - Mean and Variance Simulator](/HOMEWORK/homework6/index.html)
 - [Homework 7 - 
 
 ---
