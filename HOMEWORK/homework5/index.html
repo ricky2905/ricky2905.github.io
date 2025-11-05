@@ -1,343 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Measures of Location and Dispersion — In-depth Survey and Practical Guidance</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <title>Homework 5 — Measures of Location and Dispersion | Riccardo D'Annibale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#1976D2; --muted:#cfd8cf; --text:#e6f6ff }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
-    .container{max-width:1100px;margin:0 auto;padding:2rem}
-    a{color:var(--accent)}
-    .topnav{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem}
-    .card{background:var(--panel);border-left:5px solid var(--accent);padding:1.25rem;border-radius:8px;margin:1rem 0;box-shadow:0 8px 24px rgba(0,0,0,0.6)}
-    h1,h2,h3{color:var(--accent);margin:0}
-    h1{font-size:2rem;padding-bottom:0.35rem;border-bottom:3px solid rgba(25,118,210,0.12);margin-bottom:1rem}
-    p{max-width:90ch;text-align:justify}
-    .lead{color:#eaf6ff;font-size:1.02rem}
-    .display-equation{background:rgba(255,255,255,0.02);padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
-    table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{padding:8px;border:1px solid rgba(255,255,255,0.06);text-align:left}
-    th{background:rgba(25,118,210,0.06)}
-    pre{background:#0b0c10;padding:12px;border-radius:6px;overflow:auto;color:#dfeffb}
-    code{font-family:monospace;background:rgba(255,255,255,0.02);padding:2px 6px;border-radius:4px}
-    ul{max-width:90ch}
-    footer{color:var(--muted);text-align:center;margin-top:18px}
-    .muted{color:var(--muted)}
-    @media (max-width:640px){.topnav{font-size:0.95rem}}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f111a;
+  color: #e0e0e0;
+  line-height: 1.8;
+  padding: 2rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #4CAF50;
+}
+
+h1 {
+  font-size: 2.8rem;
+  border-bottom: 3px solid #4CAF50;
+  padding-bottom: 0.3rem;
+  margin: 0 0 1rem 0;
+}
+
+h2 { font-size: 2rem; margin-top: 2rem; }
+h3 { font-size: 1.5rem; margin-top: 1.5rem; }
+
+.card {
+  background-color: #1a1c2b;
+  border-left: 5px solid #4CAF50;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 15px rgba(76,175,80,0.08);
+}
+
+a { color: #4CAF50; text-decoration: none; }
+a:hover { color: #66bb6a; text-decoration: underline; }
+
+hr { border: none; height: 2px; background-color: #4CAF50; margin: 2rem 0; }
+
+select { padding:0.5rem 1rem; border-radius:5px; font-size:1rem; background-color: #222236; color: #e0e0e0; border: 1px solid #4CAF50; margin-top:0.5rem; }
+
+.topnav { display: flex; justify-content: flex-start; gap: 1rem; margin-bottom: 2rem; }
+.topnav a { font-weight: bold; }
+.topnav a:hover { color: #66bb6a; }
+
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #4CAF50; text-align: center; font-size: 0.9rem; color: #999; }
+
+table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
+th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
+th { background: rgba(76,175,80,0.06); color: #dfffe0; }
+
+code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
+pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
+img { max-width: 100%; display: block; margin: 12px 0; border-radius: 4px; }
+
+textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:6px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.small{font-size:13px;color:#cfd8cf}
+input[type="number"]{width:72px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:6px;border-radius:4px}
+button.small{padding:6px 10px;font-size:13px;border-radius:6px;background:#142218;color:#e8f5e9;border:1px solid rgba(76,175,80,0.12);cursor:pointer}
+button.small:hover{background:#1d2b20}
+.generator{border:1px dashed rgba(255,255,255,0.04);padding:12px;margin:12px 0;border-radius:6px}
+.result{white-space:pre-wrap;background:#0b0c10;border:1px solid rgba(255,255,255,0.03);padding:10px;margin-top:8px;max-height:260px;overflow:auto;border-radius:6px}
+.hiddenCol{display:none;}
+label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
+thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
+th.dimmed { opacity: 0.55; }
+
+/* Responsive */
+@media (max-width:600px){
+  body { padding: 1rem; max-width: 100%; }
+  h1 { font-size: 2rem; }
+}
   </style>
 
   <script>
-    window.MathJax = {
-      loader: { load: ['input/tex', 'output/chtml'] },
-      tex: { packages: {'[+]': ['ams','amsmath','amssymb']}, inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] },
-      chtml: { scale: 1.05 },
-      startup: { typeset: true }
-    };
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 </head>
 <body>
-  <div class="container">
-    <header class="topnav">
-      <a href="#intro">Introduction</a>
-      <a href="#location">Measures of Location</a>
-      <a href="#dispersion">Measures of Dispersion</a>
-      <a href="#robustness">Robustness & IF</a>
-      <a href="#comparison">Comparison & Guidance</a>
+  <header>
+    <nav class="topnav">
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="#location">Location</a>
+      <a href="#dispersion">Dispersion</a>
       <a href="#examples">Examples</a>
-      <a href="#code">Code</a>
-      <a href="#refs">References</a>
-    </header>
+      <a href="#references">References</a>
+    </nav>
+  </header>
 
-    <main>
-      <article class="card" id="intro">
-        <h1>Measures of Location and Dispersion — In-depth Survey and Practical Guidance</h1>
-      </article>
+  <main>
 
-      <article class="card" id="location">
-        <h2>1. Measures of location (central tendency)</h2>
+    <article class="card">
+      <h1>Homework 5 — Measures of Location and Dispersion</h1>
 
-        <section>
-          <h3>1.1 Arithmetic mean</h3>
-          <p><strong>Definition.</strong> For observations $x_1,\dots,x_n$:</p>
-          <div class="display-equation">\[ \n            \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i.
-          \]</div>
+      <p>This research task reviews the principal <strong>measures of location</strong> (central tendency) and <strong>measures of dispersion</strong> used in descriptive statistics. For each measure we provide a formal definition, key formulae, typical uses, advantages and limitations, and concise practical guidance. The focus is on the most commonly used summaries requested by the assignment: arithmetic mean, median, mode, variance, standard deviation, and interquartile range — plus a few complementary robust measures (MAD, CV) that are important in applications.</p>
 
-          <p><strong>Loss interpretation.</strong> The mean minimizes quadratic loss:</p>
-          <div class="display-equation">\[ \n            \bar{x} = \arg\min_m \sum_{i=1}^n (x_i - m)^2.
-          \]</div>
+      <hr/>
 
-          <p><strong>Sampling properties (classical).</strong> Under i.i.d. sampling from a distribution with finite variance $\sigma^2$,</p>
-          <div class="display-equation">\[ \n            \mathbb{E}[\bar{X}] = \mu, \qquad \mathrm{Var}(\bar{X}) = \frac{\sigma^2}{n}.
-          \]</div>
+      <h2 id="location">Measures of Location (Central Tendency)</h2>
 
-          <p>By the central limit theorem (CLT), $\sqrt{n}(\bar{X}-\mu)\xrightarrow{d} N(0,\sigma^2)$ under mild conditions, justifying approximate Gaussian inference for large $n$.</p>
+      <h3>Arithmetic mean (mean)</h3>
+      <p><strong>Definition.</strong> For observations \(x_1,\dots,x_n\) the sample (arithmetic) mean is</p>
+      <div class="display-equation">
+        \[
+          \bar{x} \;=\; \frac{1}{n}\sum_{i=1}^n x_i.
+        \]
+      </div>
+      <p><strong>Uses:</strong> Estimate central value when deviations matter quadratically; basis for least-squares regression and many inferential procedures.</p>
+      <p><strong>Advantages:</strong> Uses all data, algebraically convenient, asymptotically efficient under Gaussian errors (CLT: \(\sqrt{n}(\bar{X}-\mu)\to N(0,\sigma^2)\)).</p>
+      <p><strong>Limitations:</strong> Sensitive to outliers and heavy tails; can be misleading for skewed distributions (e.g., income).</p>
 
-          <p><strong>Advantages.</strong> Efficient under Gaussian errors (attains Cramér–Rao lower bound for location in normal model), additive, simple estimation and inferential apparatus (SE, t-tests, confidence intervals).</p>
+      <h3>Median</h3>
+      <p><strong>Definition.</strong> Sort the sample \(x_{(1)}\le\dots\le x_{(n)}\). The sample median \(\tilde{x}\) is:</p>
+      <ul>
+        <li>if \(n\) odd: \(\tilde{x}=x_{((n+1)/2)}\).</li>
+        <li>if \(n\) even: \(\tilde{x}=\dfrac{x_{(n/2)}+x_{(n/2+1)}}{2}.\)</li>
+      </ul>
+      <p><strong>Uses:</strong> Robust center for skewed data, ordinal data, or when outliers are expected.</p>
+      <p><strong>Advantages:</strong> High breakdown point (≈50%), bounded influence for single extreme observations.</p>
+      <p><strong>Limitations:</strong> Ignores magnitudes of extreme values and some distributional information; asymptotically less efficient than the mean under normality (ARE ≈ 0.64).</p>
 
-          <p><strong>Limitations.</strong> Highly sensitive to outliers and heavy tails; when $\mathrm{Var}(X)=\infty$ the sample mean does not concentrate and inference breaks down. For skewed or contaminated data, other estimators may be preferable.</p>
-        </section>
+      <h3>Mode</h3>
+      <p><strong>Definition.</strong> The mode is the most frequent value (discrete) or the location of highest density (continuous). For continuous data the mode is often estimated via kernel density estimation or histogram peaks.</p>
+      <p><strong>Uses:</strong> Best for categorical / nominal data, detecting peaks and multimodality in continuous distributions.</p>
+      <p><strong>Limitations:</strong> May be non-unique; unstable in small samples for continuous variables; not a good single summary for symmetric continuous data.</p>
 
-        <section>
-          <h3>1.2 Median</h3>
-          <p><strong>Definition.</strong> Let $x_{(1)}\le\dots\le x_{(n)}$ be the order statistics. The sample median $\tilde{x}$ is the middle value (or average of the two middle values if $n$ is even).</p>
+      <hr/>
 
-          <p><strong>Loss interpretation.</strong> Minimizes absolute deviations:</p>
-          <div class="display-equation">\[ \n            \tilde{x} = \arg\min_m \sum_{i=1}^n |x_i - m|.
-          \]</div>
+      <h2 id="dispersion">Measures of Dispersion (Spread)</h2>
 
-          <p><strong>Asymptotic variance.</strong> If the underlying density $f$ at the true median $m$ is positive, then asymptotically</p>
-          <div class="display-equation">\[ \n            \sqrt{n}(\tilde{X}-m) \xrightarrow{d} N\left(0,\frac{1}{4f(m)^2}\right).
-          \]</div>
+      <h3>Range</h3>
+      <p><strong>Definition.</strong> \(\text{Range} = \max_i x_i - \min_i x_i.\)</p>
+      <p><strong>Uses:</strong> Quick summary of total spread or bounds; sometimes used for quality control tolerances.</p>
+      <p><strong>Limitations:</strong> Extremely sensitive to single outliers; ignores the distribution between extremes.</p>
 
-          <p>This shows the median's efficiency depends on the density at the center; under normality it is less efficient than the mean (asymptotic relative efficiency ~0.64).</p>
+      <h3>Variance and Standard Deviation</h3>
+      <p><strong>Population variance (if full population available):</strong></p>
+      <div class="display-equation">
+        \[
+          \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i-\mu)^2.
+        \]
+      </div>
+      <p><strong>Sample variance (unbiased estimator):</strong></p>
+      <div class="display-equation">
+        \[
+          s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2.
+        \]
+      </div>
+      <p>Standard deviation is the square root: \(s=\sqrt{s^2}\). Variance/SD are fundamental in modeling and inference (e.g., t-tests, ANOVA, regression), but are influenced heavily by extreme values.</p>
 
-          <p><strong>Advantages.</strong> Robust (breakdown point ≈ 50%), bounded influence function, natural for skewed data or ordinal scales.</p>
-        </section>
+      <h3>Interquartile Range (IQR)</h3>
+      <p><strong>Definition.</strong> \( \mathrm{IQR} = Q_3 - Q_1 \), where \(Q_1\) and \(Q_3\) are the 25th and 75th percentiles respectively.</p>
+      <p><strong>Uses:</strong> Robust measure of central spread (middle 50%), common in boxplots, used for outlier detection via the \(1.5\mathrm{IQR}\) rule.</p>
+      <p><strong>Limitations:</strong> Does not describe tails beyond the central 50% and ignores some information in the distribution.</p>
 
-        <section>
-          <h3>1.3 Mode</h3>
-          <p><strong>Definition.</strong> The mode is the value (or set of values) with highest probability mass (discrete case) or highest density (continuous case). For continuous data the sample mode can be estimated via kernel density estimation or histogram peaks.</p>
+      <h3>Mean Absolute Deviation (MAD)</h3>
+      <p><strong>Definition (median-centered):</strong></p>
+      <div class="display-equation">
+        \[
+          \mathrm{MAD} = \mathrm{median}_i\big(|x_i - \mathrm{median}(x)|\big).
+        \]
+      </div>
+      <p>MAD (median-based) is very robust (breakdown ≈50%). Scaled by 1.4826 it is a consistent estimator of \(\sigma\) under normality.</p>
 
-          <p><strong>Use cases.</strong> Categorical/nominal variables, multimodal distributions to reveal subpopulations. Not generally used as a sole location estimator for continuous unimodal symmetric data.</p>
-        </section>
+      <h3>Coefficient of Variation (CV)</h3>
+      <p><strong>Definition.</strong> \(\mathrm{CV} = \dfrac{s}{\bar{x}}\) (dimensionless).</p>
+      <p><strong>Uses:</strong> Compare relative dispersion across datasets with different units or means. Not meaningful when mean is near zero; unstable for heavy-tailed data.</p>
 
-        <section>
-          <h3>1.4 Geometric mean and harmonic mean</h3>
-          <p><strong>Geometric mean.</strong> For strictly positive data:</p>
-          <div class="display-equation">\[ \n            G = \left(\prod_{i=1}^n x_i\right)^{1/n} = \exp\left(\frac{1}{n}\sum_{i=1}^n \ln x_i\right).
-          \]</div>
-          <p>Appropriate for multiplicative processes (compounded returns) and ratios; stable under log-transform.</p>
+      <hr/>
 
-          <p><strong>Harmonic mean.</strong> For positive rates $x_i$:</p>
-          <div class="display-equation">\[ \n            H = \left(\frac{1}{n}\sum_{i=1}^n \frac{1}{x_i}\right)^{-1}.
-          \]</div>
-          <p>Useful when averaging rates where the denominator is fixed (e.g., average speed over equal distances). Extremely sensitive to small values and zeros.</p>
-        </section>
+      <h2 id="comparison">Practical guidance: choosing summaries</h2>
 
-        <section>
-          <h3>1.5 Power means and Lehmer means</h3>
-          <div class="display-equation">\[ \n            M_r(x) = \left(\frac{1}{n}\sum_{i=1}^n x_i^r\right)^{1/r}, \quad L_p(x) = \frac{\sum x_i^p}{\sum x_i^{p-1}}.
-          \]</div>
-          <p>These families interpolate among common means: $M_1$ is arithmetic, $M_0$ (limit) is geometric, $M_{-1}$ harmonic, $M_2$ RMS. Monotonicity in the parameter controls tail emphasis.</p>
+      <p>Which measures to report depends on data shape, robustness needs, and analysis goals. The following heuristics are practical:</p>
+      <ul>
+        <li><strong>Symmetric, no outliers:</strong> report mean & standard deviation (efficient; aligns with many models).</li>
+        <li><strong>Skewed distribution or outliers likely:</strong> report median & IQR (robust central tendency and spread).</li>
+        <li><strong>Categorical data:</strong> report mode and frequency tables.</li>
+        <li><strong>Multiplicative processes (returns):</strong> use geometric mean.</li>
+        <li><strong>Comparing variability across scales:</strong> use CV (with caution).</li>
+        <li>In practice, reporting both a pair (mean & SD) and a robust pair (median & IQR) gives readers a fuller picture.</li>
+      </ul>
 
-        </section>
+      <h3>Summary table</h3>
+      <table>
+        <thead>
+          <tr><th>Measure</th><th>Key advantage</th><th>Key limitation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Mean</td><td>Efficient under normality; uses all data</td><td>Sensitive to outliers / heavy tails</td></tr>
+          <tr><td>Median</td><td>Robust to outliers; intuitive for skewed data</td><td>Less efficient under normality; ignores extremes' magnitude</td></tr>
+          <tr><td>Mode</td><td>Best for categorical data; finds peaks</td><td>May be non-unique / unstable</td></tr>
+          <tr><td>Range</td><td>Simple, intuitive</td><td>Completely driven by extremes</td></tr>
+          <tr><td>Variance / SD</td><td>Convenient for modeling and inference</td><td>Units squared (variance) and sensitive to outliers</td></tr>
+          <tr><td>IQR</td><td>Robust measure of central spread</td><td>Ignores tails</td></tr>
+          <tr><td>MAD (median)</td><td>Very robust; interpretable units</td><td>Less common in classical inference</td></tr>
+        </tbody>
+      </table>
 
-        <section>
-          <h3>1.6 Trimmed, Winsorized means and M-estimators</h3>
-          <p><strong>Trimmed mean.</strong> Remove an equal percentage $\alpha$ from each tail and compute the mean of the remaining data. This reduces influence of extremes while maintaining interpretability.</p>
+      <hr/>
 
-          <p><strong>Winsorized mean.</strong> Replace the extreme $\alpha$ fraction by the corresponding percentile values, then compute the mean — preserves sample size and reduces variance.</p>
+      <h2 id="examples">Worked examples</h2>
 
-          <p><strong>M-estimators (robust).</strong> Solve for $\hat\theta$:</p>
-          <div class="display-equation">\[ \n            \sum_{i=1}^n \psi\left(\frac{x_i-\hat\theta}{s}\right) = 0,
-          \]</div>
-          <p>where $\psi$ is the derivative of a chosen loss $\rho$, and $s$ is a robust scale (MAD, etc.). Examples: Huber's $\psi$ (combines quadratic near 0 and linear tails), Tukey's biweight (redescending $\psi$ that completely rejects extreme points).</p>
+      <h3>Example 1 — Outlier effect</h3>
+      <p>Data: 10, 12, 11, 13, 100.</p>
+      <ul>
+        <li>Mean: \(\bar{x}=\dfrac{10+12+11+13+100}{5}=29.2\).</li>
+        <li>Median: 12.</li>
+        <li>IQR: order statistics \{10,11,12,13,100\} → \(Q_1=11\), \(Q_3=13\) → IQR = 2.</li>
+        <li>MAD (median-based): median(|x − 12|) = median(2,1,0,1,88) = 1 (scaled MAD ≈ 1.4826).</li>
+      </ul>
+      <p>Interpretation: mean is inflated by the outlier 100; median, IQR and MAD correctly reflect the central cluster (10–13).</p>
 
-          <p>M-estimators balance efficiency and robustness; tuning constants control trade-offs.</p>
-        </section>
-      </article>
+      <h3>Example 2 — Rates (harmonic mean)</h3>
+      <p>Two equal-distance legs at speeds 60 km/h and 40 km/h. Overall average speed over equal distances:</p>
+      <div class="display-equation">
+        \[
+          H = \frac{2}{\frac{1}{60}+\frac{1}{40}} = 48\ \text{km/h}.
+        \]
+      </div>
 
-      <article class="card" id="dispersion">
-        <h2>2. Measures of dispersion (spread)</h2>
+      <h3>Example 3 — Compounded returns (geometric mean)</h3>
+      <p>Annual returns: +10%, +20%, +30% → geometric mean per year:</p>
+      \[
+        G = (1.10\cdot1.20\cdot1.30)^{1/3}-1 \approx 0.1979 \;(\approx 19.8\%).
+      \]
 
-        <section>
-          <h3>2.1 Variance and standard deviation</h3>
-          <p><strong>Definition (sample variance, unbiased):</strong></p>
-          <div class="display-equation">\[ \n            s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2, \qquad s = \sqrt{s^2}.
-          \]</div>
+      <hr/>
 
-          <p>Variance is central to many inferential procedures because of additivity for independent variables and its relationship to quadratic loss. Standard deviation $s$ is in the same units as the data and is used extensively for reporting volatility and constructing parametric confidence intervals.</p>
+      <h2 id="practical">Practical notes & applications</h2>
+      <p>Brief application examples where choice of measure matters:</p>
+      <ul>
+        <li><strong>Income / wealth reporting:</strong> distributions heavily right-skewed — median and IQR are preferred to avoid influence from a few large values.</li>
+        <li><strong>Quality control:</strong> process variation often assumed Gaussian — mean and SD used for control charts (but robust charts exist when outliers are present).</li>
+        <li><strong>Finance:</strong> volatility typically measured with SD; however heavy tails motivate use of tail-risk measures (VaR, expected shortfall) in addition to variance.</li>
+        <li><strong>Engineering / signal processing:</strong> RMS (root-mean-square) used for energy-like quantities.</li>
+      </ul>
 
-          <p><strong>Notes.</strong> For heavy-tailed distributions variance may be infinite or dominated by a few observations; consider robust alternatives in such cases.</p>
-        </section>
+      <hr/>
 
-        <section>
-          <h3>2.2 Interquartile range (IQR)</h3>
-          <p><strong>Definition.</strong> $\mathrm{IQR} = Q_3 - Q_1$ where $Q_1$ and $Q_3$ are the 25th and 75th percentiles.</p>
-          <p>IQR is robust to outliers and useful for boxplots and robust spread summaries. Often used with rule-of-thumb outlier detection: a point is an outlier if it lies outside $[Q_1 - 1.5\mathrm{IQR}, Q_3 + 1.5\mathrm{IQR}]$.</p>
-        </section>
-
-        <section>
-          <h3>2.3 Median absolute deviation (MAD)</h3>
-          <p><strong>Definition (median-based):</strong></p>
-          <div class="display-equation">\[ \n            \mathrm{MAD} = \mathrm{median}_i\left(|x_i - \mathrm{median}(x)|\right).
-          \]</div>
-          <p>MAD is a highly robust scale estimator (breakdown point 50%). Often scaled by a constant (\(1/\Phi^{-1}(3/4)\) ≈ 1.4826 for normal consistency) to estimate $\sigma$ under normality.</p>
-        </section>
-
-        <section>
-          <h3>2.4 Coefficient of variation (CV)</h3>
-          <div class="display-equation">\[ \n            \mathrm{CV} = \frac{s}{\bar{x}}.
-          \]</div>
-          <p>CV is dimensionless and useful for comparing variability across datasets with different means/units. Not meaningful when the mean is near zero, and unstable for heavy-tailed data.</p>
-        </section>
-
-        <section>
-          <h3>2.5 Other measures</h3>
-          <ul>
-            <li><strong>Range:</strong> $\max - \min$. Simple but entirely non-robust.</li>
-            <li><strong>Percentile-based spreads:</strong> e.g. 10–90% range, trimmed standard deviation.</li>
-            <li><strong>Quantile regression residual scales:</strong> model-based dispersion measures robust to asymmetric noise.</li>
-          </ul>
-        </section>
-      </article>
-
-      <article class="card" id="robustness">
-        <h2>3. Robustness concepts: breakdown point, influence function, and efficiency</h2>
-
-        <section>
-          <h3>3.1 Breakdown point</h3>
-          <p>Informally, the finite-sample breakdown point of an estimator is the smallest fraction of observations that needs to be replaced by arbitrary values to make the estimator arbitrarily bad (e.g., unbounded). For a sample of size $n$:</p>
-          <ul>
-            <li>Sample mean: breakdown point $=1/n$ (practically 0 for large $n$).</li>
-            <li>Sample median: breakdown point $\approx 0.5$ (robust).</li>
-            <li>Trimmed means: breakdown point equals trimming proportion.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>3.2 Influence function (IF)</h3>
-          <p>For an estimator $T$ defined at distribution $F$, the influence function at point $x$ is</p>
-          <div class="display-equation">\[ \n            \mathrm{IF}(x;T,F) = \lim_{\varepsilon\downarrow 0} \frac{T((1-\varepsilon)F + \varepsilon\delta_x)-T(F)}{\varepsilon},
-          \]</div>
-          <p>which quantifies the effect of an infinitesimal contamination at $x$. If the IF is bounded then single extreme observations cannot exert arbitrarily large effect.</p>
-
-          <p><strong>Examples.</strong></p>
-          <ul>
-            <li><strong>Mean:</strong> $\mathrm{IF}(x;\mathrm{mean},F)=x-\mu$ (unbounded → non-robust).</li>
-            <li><strong>Median:</strong> $\mathrm{IF}(x;\mathrm{median},F) = \dfrac{\operatorname{sgn}(x-m)}{2f(m)}$ (bounded if $f(m)>0$).</li>
-            <li><strong>Huber M-estimator:</strong> IF is bounded by the tuning constant, providing controlled sensitivity.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>3.3 Efficiency and influence on variance</h3>
-          <p>An estimator's asymptotic variance can be expressed using the IF: for large $n$,</p>
-          <div class="display-equation">\[ \n            \mathrm{Var}(\sqrt{n}(T_n - T)) \approx \mathbb{E}_F[\mathrm{IF}(X;T,F)^2].
-          \]</div>
-          <p>Thus choosing an estimator with a smaller squared-IF under a model increases asymptotic efficiency. The efficiency vs robustness trade-off is central: highly robust estimators often sacrifice some efficiency under the ideal model.</p>
-        </section>
-      </article>
-
-      <article class="card" id="comparison">
-        <h2>4. Practical comparison and selection guidelines</h2>
-
-        <table>
-          <thead><tr><th>Estimator</th><th>Strengths</th><th>Weaknesses/When to avoid</th></tr></thead>
-          <tbody>
-            <tr><td>Mean</td><td>Efficient under normal, simple inference</td><td>Sensitive to outliers, heavy tails</td></tr>
-            <tr><td>Median</td><td>Robust, good for skewed data</td><td>Less efficient under normal (< --- approx 64% eff.)</td></tr>
-            <tr><td>Trimmed mean (e.g., 10–20%)</td><td>Compromise: robust and relatively efficient</td><td>Choice of trim fraction is ad hoc</td></tr>
-            <tr><td>M-estimators (Huber)</td><td>Tunable balance: near-efficient under normal and robust against outliers</td><td>Requires scale estimate and tuning</td></tr>
-            <tr><td>Geometric mean</td><td>Proper for multiplicative processes</td><td>Requires positive data; sensitive to zeros</td></tr>
-            <tr><td>IQR, MAD</td><td>Robust measures of spread</td><td>Less efficient if data are truly normal and outlier-free</td></tr>
-          </tbody>
-        </table>
-
-        <p><strong>Practical heuristics:</strong></p>
-        <ol>
-          <li>If the sample looks symmetric and there are no obvious gross errors → mean & standard deviation.</li>
-          <li>If data are skewed / contain outliers → median & IQR or robust M-estimator and MAD.</li>
-          <li>When comparing volatility across different mean levels → use coefficient of variation (with caution when mean≈0).</li>
-          <li>For compounded growth or multiplicative processes → geometric mean.</li>
-        </ol>
-      </article>
-
-      <article class="card" id="examples">
-        <h2>5. Worked numerical examples and diagnostics</h2>
-
-        <h3>5.1 Outlier sensitivity</h3>
-        <p>Data: 10, 12, 11, 13, 100.</p>
-        <p>Compute central tendencies:</p>
-        <ul>
-          <li>Mean $= (10+12+11+13+100)/5 = 29.2$</li>
-          <li>Median $=12$</li>
-          <li>Trimmed mean 20% (drop min and max) → mean(12,11,13)=12</li>
-        </ul>
-        <p>Observation: mean inflated by outlier; robust measures (median, trimmed) reflect central cluster.</p>
-
-        <h3>5.2 Variance vs IQR</h3>
-        <p>Same data: compute sample variance (unbiased):</p>
-        <div class="display-equation">\[ \n          s^2 = \frac{1}{4}\sum (x_i-29.2)^2 \approx 1508.2, \quad s\approx 38.84.
-        \]</div>
-        <p>IQR computed from order statistics {10,11,12,13,100}: $Q_1=11$, $Q_3=13$, IQR=2 — which shows the bulk of the data is tightly clustered despite large variance driven by outlier.</p>
-
-        <h3>5.3 Robust scale: MAD</h3>
-        <p>MAD = median(|x - median(x)|) = median(|[2,1,0,1,88]|) = 1. Scaling for normal consistency: $1.4826\times1 = 1.4826$ (robust estimate of $\sigma$).</p>
-      </article>
-
-      <article class="card" id="code">
-        <h2>6. Practical code snippets</h2>
-        <p>Below are small examples that compute common measures. These are self-contained and are useful for reproducing results in practice.</p>
-
-        <h3>6.1 Python (NumPy / SciPy / statsmodels)</h3>
-        <pre><code>import numpy as np
+      <h2 id="code">Quick reproducible code (Python)</h2>
+      <p>Small snippet computing the key summaries in Python (NumPy / SciPy):</p>
+      <pre><code>import numpy as np
 from scipy import stats
+
 x = np.array([10,12,11,13,100])
-print('mean', x.mean())
-print('median', np.median(x))
-print('trimmed mean (20%)', stats.trim_mean(x, 0.2))
-print('sample variance (unbiased)', x.var(ddof=1))
-print('IQR', stats.iqr(x))
-print('MAD (median-based)', np.median(np.abs(x - np.median(x))))
+print('mean:', x.mean())
+print('median:', np.median(x))
+print('sample variance (unbiased):', x.var(ddof=1))
+print('std (sample):', x.std(ddof=1))
+print('IQR:', stats.iqr(x))
+print('MAD (median):', np.median(np.abs(x - np.median(x))))
+print('range:', x.max() - x.min())</code></pre>
 
-# Huber location via statsmodels
-from statsmodels import robust
-print('Huber location', robust.scale.huber(x))
-</code></pre>
+      <hr/>
 
-        <h3>6.2 R</h3>
-        <pre><code># Basic R code
-x <- c(10,12,11,13,100)
-mean(x)
-median(x)
-# trimmed mean (10% each side)
-mean(x, trim=0.1)
-var(x) # sample variance uses n-1 by default
-IQR(x)
-mad(x, constant=1.4826) # median absolute deviation (scaled)
+      <h2 id="references">References & further reading</h2>
+      <ol>
+        <li>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., & Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>.</li>
+        <li>Huber, P. J., & Ronchetti, E. M. (2009). <em>Robust Statistics (2nd ed.)</em>. Wiley.</li>
+        <li>DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em>. Pearson.</li>
+        <li>Wilcox, R. R. (2012). <em>Modern Statistics for the Social and Behavioral Sciences</em>. CRC Press.</li>
+        <li>Wasserman, L. (2004). <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer.</li>
+      </ol>
 
-# robustbase and MASS provide robust estimators
-library(robustbase)
-hubers <- huber(x)
-</code></pre>
+      <hr/>
 
-        <h3>6.3 JavaScript (client-side quick calculator)</h3>
-        <pre><code>function stats(arr){
-  arr = arr.slice().sort((a,b)=>a-b);
-  const n = arr.length;
-  const mean = arr.reduce((a,b)=>a+b,0)/n;
-  const median = n%2 ? arr[(n-1)/2] : (arr[n/2-1]+arr[n/2])/2;
-  const diffs = arr.map(v=>Math.abs(v-mean));
-  const variance = arr.reduce((s,v)=>s+(v-mean)*(v-mean),0)/(n-1);
-  return {mean,median,variance,sd:Math.sqrt(variance)};
-}
-</code></pre>
-      </article>
+      <h2>Conclusion</h2>
+      <p>Measures of location and dispersion are complementary: a single statistic rarely suffices. The assignment asks you to identify and discuss the most common measures — the page above provides precise definitions, formulas, practical guidance, and examples. For reporting and decision-making it is good practice to present both a classical pair (mean ± SD) and a robust pair (median & IQR or MAD) when data quality or the presence of outliers is uncertain.</p>
 
-      <article class="card" id="refs">
-        <h2>7. References and further reading</h2>
-        <ol>
-          <li>P. J. Huber and E. M. Ronchetti, <em>Robust Statistics</em>, 2nd ed., Wiley, 2009 — modern overview of M-estimation and robustness theory.</li>
-          <li>R. A. Maronna, R. D. Martin, V. J. Yohai, <em>Robust Statistics: Theory and Methods</em>, Wiley, 2006.</li>
-          <li>J. W. Tukey, <em>Exploratory Data Analysis</em>, Addison-Wesley, 1977 — classic for robust exploratory summaries.</li>
-          <li>M. H. DeGroot and M. J. Schervish, <em>Probability and Statistics</em>, 4th ed. — sampling theory and estimator properties.</li>
-          <li>Hampel, Ronchetti, Rousseeuw, and Stahel, <em>Robust Statistics: The Approach Based on Influence Functions</em> — foundational for IF and breakdown point.</li>
-        </ol>
+    </article>
 
-        <p class="muted">Authors: prepared as an educational resource. If you want, I can add citations to specific theorems and papers (with DOIs), interactive calculators embedded in the page, or export this HTML as a downloadable file.</p>
-      </article>
+  </main>
 
-    </main>
-
-    <footer class="muted">© 2025 — Comprehensive survey on measures of location and dispersion</footer>
-  </div>
-
-  <script>
-    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{});
-  </script>
+  <footer>
+    <p>© 2025 Riccardo D'Annibale</p>
+  </footer>
 </body>
 </html>
