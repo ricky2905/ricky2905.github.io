@@ -109,15 +109,12 @@
       <a href="/" aria-label="Home">Home</a>
       <a href="/about/" aria-label="About">About</a>
       <div style="flex:1"></div>
-      <div class="small muted">Mean & Variance Simulator — © 2025 Riccardo D'Annibale</div>
     </header>
 
     <main id="main">
 
       <article class="card" aria-labelledby="explain-title">
         <h1 id="explain-title">Mean and Variance Simulator — Numerical Stability and Algorithm Comparison</h1>
-        <p class="small muted">Interactive demonstration of Welford's online algorithm, a comparison with the naive sum/sumsq approach, and proofs / notes.</p>
-
         <h2>What this page does</h2>
         <p>
           This page implements two methods for computing mean and variance:
@@ -181,14 +178,14 @@ M2 = 0
         <h4>Numerical note (concrete example)</h4>
         <p>
           Suppose data are around \(10^8\) with very small variance (e.g. variance ≈ \(10^{-2}\)). The naive formula
-          \(\frac{1}{n-1}\big(\sum x_i^2 - n\bar x^2\big)\) subtracts two large numbers (order \(10^{16}\)) that differ by a small quantity — this causes catastrophic cancellation and large relative errors. Welford's updates avoid that subtraction and keep rounding error small relative to the data scale.
+          \(\frac{1}{n-1}\big(\sum x_i^2 - n\bar x^2\big)\) subtracts two large numbers (order \(10^{16}\)) that differ by a small quantity , this causes catastrophic cancellation and large relative errors. Welford's updates avoid that subtraction and keep rounding error small relative to the data scale.
         </p>
       </article>
 
       <article class="card" aria-labelledby="howto-title">
         <h2 id="howto-title">How to use (modes)</h2>
         <ol>
-          <li><strong>Step-by-step (recommended)</strong>: enter values one at a time with <em>Add value</em> to see incremental updates.</li>
+          <li><strong>Step-by-step </strong>: enter values one at a time with <em>Add value</em> to see incremental updates.</li>
           <li><strong>Vector mode</strong>: paste a comma-separated list; the page processes values element-by-element (keeps streaming semantics but stores values for plotting).</li>
           <li><strong>Benchmark</strong>: compare Welford (stable) vs sum/sumsq (fast but numerically fragile).</li>
         </ol>
@@ -306,9 +303,6 @@ M2 = 0
             <tr><td>Welford incremental update</td><td>O(1) per element, O(n) total</td><td>O(1)</td></tr>
           </tbody>
         </table>
-
-        <h3>Repository notes & attribution</h3>
-        <p class="small muted">This page is authored by <strong>Riccardo D'Annibale</strong>. Acknowledgements to my friend Cosimo Lombardi for a pedagogically clear reference implementation (Cosimo's repository informed parts of the original demo).</p>
       </article>
 
     </main>
