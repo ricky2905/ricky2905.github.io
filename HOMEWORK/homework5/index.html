@@ -1,215 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>RSA Exposed — RSA Toy & Demo | Riccardo D'Annibale</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Analysis of a flawed letter-by-letter RSA implementation and how frequency analysis can break it; correct implementation notes and C example.">
+  <meta charset="utf-8" />
+  <title>Homework 5 — Measures of Location and Dispersion | Riccardo D'Annibale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Research task: measures of location and dispersion — definitions, formulas, uses, advantages and limitations, worked examples and reporting guidance." />
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0f111a;
-      color: #e0e0e0;
-      line-height: 1.8;
-      padding: 2rem;
-      max-width: 900px;
-      margin: auto;
+    :root{
+      --bg:#0f111a;
+      --panel:#1a1c2b;
+      --accent:#4CAF50;
+      --muted:#cfd8cf;
+      --glass: rgba(255,255,255,0.03);
     }
-
-    h1, h2, h3, h4 { color: #4CAF50; }
-
-    h1 {
-      font-size: 2.8rem;
-      border-bottom: 3px solid #4CAF50;
-      padding-bottom: 0.3rem;
-      margin: 0 0 1rem 0;
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color:var(--bg);
+      color:#e0e0e0;
+      line-height:1.8;
+      padding:2rem;
+      max-width:1100px;
+      margin:auto;
     }
-    h2 { font-size: 2rem; margin-top: 1.5rem; }
-    h3 { font-size: 1.3rem; margin-top: 1rem; }
-
-    .card {
-      background-color: #1a1c2b;
-      border-left: 5px solid #4CAF50;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-      box-shadow: 0 4px 15px rgba(76,175,80,0.08);
-    }
-
-    a { color: #4CAF50; text-decoration: none; }
-    a:hover { color: #66bb6a; text-decoration: underline; }
-
-    table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
-    th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
-    th { background: rgba(76,175,80,0.06); color: #dfffe0; }
-
-    pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
-    code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
-
-    .small { font-size: 13px; color: #cfd8cf; }
-
-    @media (max-width:600px){
-      body { padding: 1rem; max-width: 100%; }
-      h1 { font-size: 2rem; }
-    }
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    .topnav a:hover{color:#66bb6a}
+    h1,h2,h3{color:var(--accent)}
+    h1{font-size:2.2rem;border-bottom:3px solid var(--accent);padding-bottom:0.3rem;margin:0 0 1rem}
+    .card{background-color:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    table{border-collapse:collapse;width:100%;margin-top:8px}
+    th,td{border:1px solid rgba(255,255,255,0.06);padding:8px;text-align:left;color:#e7e7e7}
+    th{background:rgba(76,175,80,0.06);color:#dfffe0}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
+    code{background:rgba(255,255,255,0.03);padding:2px 6px;border-radius:4px;color:#e8f5e9;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace}
+    ol,ul{margin-left:1.1rem}
+    .muted{color:var(--muted)}
+    .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
+    @media(max-width:720px){ body{padding:1rem} }
+    .mjx-chtml { color: #e0e0e0 !important; font-size:1.02rem !important; line-height:1.25 !important; }
   </style>
 
   <script>
-    /* Minimal MathJax config (deferred typesetting) if equations present */
-    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, startup: { typeset: false } };
+    /* MathJax configuration for rendering formulas */
+    window.MathJax = {
+      loader: { load: ['input/tex','output/chtml'] },
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']]
+      },
+      chtml: { scale: 1.02 },
+      startup: { typeset: false }
+    };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 </head>
 <body>
-  <header>
-    <nav style="display:flex;gap:12px;margin-bottom:1rem">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-    </nav>
+  <header class="topnav">
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+    <span class="small muted">| Homework 5 — Measures of Location and Dispersion</span>
   </header>
 
   <main>
 
     <article class="card">
-      <h1>RSA Exposed: A Statistical Look at Public-Key Encryption</h1>
-      <p class="small">Short note: this page analyses a common implementation mistake (applying RSA per letter) and explains why frequency analysis breaks it; it also provides guidance on correct use of RSA and a small C example for block-based encryption/decryption.</p>
+      <h1>Measures of Location and Dispersion — Research Survey</h1>
+      <p class="small">Research task: conduct a concise review of common measures of location (central tendency) and dispersion, present formulas (population vs sample where relevant), discuss uses, advantages and limitations, and provide worked examples and reporting guidance suitable for a university assignment.</p>
     </article>
 
     <article class="card">
-      <h2>Overview of RSA</h2>
-      <p>RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem whose security relies on the practical difficulty of factoring a large composite modulus <code>n = p·q</code>. The canonical operations are:</p>
+      <h2>Learning objectives</h2>
       <ul>
-        <li><strong>Key generation:</strong> choose large primes <code>p</code>, <code>q</code>; compute <code>n = p·q</code> and <code>φ(n) = (p−1)(q−1)</code>; pick public exponent <code>e</code> coprime with <code>φ(n)</code>; compute private exponent <code>d ≡ e⁻¹ (mod φ(n))</code>.</li>
-        <li><strong>Encryption:</strong> for a message representative <code>M</code> (as an integer with 0 ≤ M &lt; n) compute <code>C ≡ Mᵉ (mod n)</code>.</li>
-        <li><strong>Decryption:</strong> compute <code>M ≡ Cᵈ (mod n)</code> to recover the original representative.</li>
-      </ul>
-      <p class="small">Important: RSA operates on integers (blocks) that represent properly padded messages; it is not intended to be applied naively to individual characters without padding and block formatting.</p>
-    </article>
-
-    <article class="card">
-      <h2>Exercise premise: letter-by-letter RSA (why it's insecure)</h2>
-      <p>Applying the RSA formula independently to each letter (or ASCII byte) creates a deterministic mapping of plaintext symbol → ciphertext symbol. For a fixed public key, the same plaintext symbol always maps to the same ciphertext integer. This situation is essentially a homophonic substitution cipher with a one-to-one map when no randomness/padding is used.</p>
-      <p>Consequences:</p>
-      <ul>
-        <li><strong>Frequency preservation:</strong> symbol frequencies of the plaintext are preserved in the ciphertext (modulo subsequent reduction, e.g. mapping <code>c mod 26</code>). Hence an attacker can exploit statistical regularities (frequency analysis) to map frequent ciphertext symbols to likely plaintext symbols.</li>
-        <li><strong>No semantic hiding / no IND-CPA:</strong> modern asymmetric encryption schemes must provide semantic security (indistinguishability under chosen-plaintext attack). Deterministic per-symbol RSA without randomized padding (e.g. OAEP) fails this requirement.</li>
-      </ul>
-      <p class="small">Takeaway: security of RSA in practice depends as much on correct padding and message formatting (e.g. PKCS#1 v2 / OAEP) as on key sizes and factoring hardness.</p>
-    </article>
-
-    <article class="card">
-      <h2>How frequency analysis breaks per-symbol RSA</h2>
-      <p>Basic attack outline (statistical cryptanalysis):</p>
-      <ol>
-        <li>Collect ciphertext symbols and compute their empirical frequency distribution.</li>
-        <li>Compare with expected plaintext frequencies from a reference corpus (English, Italian, …).</li>
-        <li>Construct a candidate mapping by ranking ciphertext symbols and mapping them to letters by descending frequency (most frequent → 'E', second → 'T', etc.).</li>
-        <li>Optionally refine the candidate via simple local search (swap two mappings and accept improvements based on language scoring such as dictionary matches, n-gram scores or χ² goodness of fit).</li>
-      </ol>
-      <p>This attack is effective when the plaintext is long enough for frequency estimates to concentrate and when the mapping is deterministic and small alphabet reductions (e.g. <code>c mod 26</code>) do not sufficiently obscure relative frequencies.</p>
-    </article>
-
-    <article class="card">
-      <h2>Practical recommendations</h2>
-      <ul>
-        <li>Do <strong>not</strong> encrypt single characters deterministically with raw RSA. Use hybrid schemes: generate a random symmetric key, encrypt data with a symmetric cipher, then encrypt the symmetric key with RSA (or use authenticated public-key encryption primitives).</li>
-        <li>Always use modern padding schemes (OAEP) for RSA encryption and proper signature schemes (PSS) for signatures.</li>
-        <li>Use recommended key sizes (e.g., 2048–3072 bits or larger depending on policy and lifetime) and vetted cryptographic libraries rather than home-rolled implementations.</li>
-        <li>For educational demos, clearly state limitations and avoid suggesting insecure practices as acceptable in real systems.</li>
+        <li>Identify standard measures of location: arithmetic mean, median, mode, geometric mean, harmonic mean, RMS.</li>
+        <li>Identify standard measures of dispersion: range, variance, standard deviation, interquartile range (IQR), mean absolute deviation (MAD), coefficient of variation (CV).</li>
+        <li>Understand formal definitions, population vs sample formulas, and practical choices depending on data properties (symmetry, outliers, scale).</li>
       </ul>
     </article>
 
-    <article class="card">
-      <h2>Suggested experiments (for coursework)</h2>
+    <article class="card" id="methodology">
+      <h2>Recommended methodology for the report</h2>
+      <p>For reproducible university research, document:</p>
+      <ul>
+        <li>Data source and provenance (who collected data, when, sampling design).</li>
+        <li>Cleaning steps: how missing values, duplicates, and obvious errors were handled.</li>
+        <li>Transformations applied (log, winsorizing, trimming) and justification.</li>
+        <li>Exact formulas used (population vs sample), software versions, and seed values for any randomness.</li>
+        <li>Both numeric summaries and diagnostic visualizations (histogram and boxplot) to support interpretation.</li>
+      </ul>
+    </article>
+
+    <article class="card" id="location">
+      <h2>Measures of Location (Central Tendency)</h2>
+
+      <h3>Arithmetic mean (sample)</h3>
+      <div class="display-equation">
+        \[
+          \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i.
+        \]
+      </div>
+      <p><strong>When to use:</strong> symmetric distributions without heavy outliers; as basis for least-squares methods.</p>
+      <p><strong>Advantages:</strong> uses all observations; algebraically convenient; under mild conditions is efficient (CLT).</p>
+      <p><strong>Limitations:</strong> sensitive to outliers and skewed tails; may be misleading for income-like data.</p>
+
+      <h3>Median</h3>
+      <p>Order \(x_{(1)}\le\dots\le x_{(n)}\). Then</p>
+      <ul>
+        <li>if \(n\) odd: \(\tilde{x}=x_{((n+1)/2)}\).</li>
+        <li>if \(n\) even: \(\tilde{x}=\dfrac{x_{(n/2)}+x_{(n/2+1)}}{2}\).</li>
+      </ul>
+      <p><strong>When to use:</strong> skewed data or when robustness to outliers is required.</p>
+      <p><strong>Advantages:</strong> high breakdown point (~50%); bounded influence of single extreme observation.</p>
+      <p><strong>Limitations:</strong> ignores magnitude of extremes; less efficient than mean under Gaussian assumptions (ARE ≈ 0.64).</p>
+
+      <h3>Mode</h3>
+      <p><strong>Definition:</strong> most frequent value (discrete) or location(s) of highest density (continuous).</p>
+      <p><strong>When to use:</strong> categorical/nominal data, detecting multimodality.</p>
+      <p><strong>Limitations:</strong> non-unique, unstable in small samples for continuous variables.</p>
+
+      <h3>Other means</h3>
+      <ul>
+        <li><strong>Geometric mean</strong> (for multiplicative processes): \(G = \left(\prod_{i=1}^n x_i\right)^{1/n}\) (requires positive values).</li>
+        <li><strong>Harmonic mean</strong> (for average rates): \(H = \dfrac{n}{\sum_{i=1}^n 1/x_i}\) (requires positive values).</li>
+        <li><strong>Root-mean-square (RMS)</strong> for energy-like quantities: \(\mathrm{RMS}=\sqrt{\dfrac{1}{n}\sum x_i^2}\).</li>
+      </ul>
+    </article>
+
+    <article class="card" id="dispersion">
+      <h2>Measures of Dispersion (Spread)</h2>
+
+      <h3>Range</h3>
+      <p><strong>Definition:</strong> \(\mathrm{Range} = \max_i x_i - \min_i x_i.\)</p>
+      <p><strong>Use:</strong> simple bound on spread; quick check for gross anomalies.</p>
+      <p><strong>Limitation:</strong> extremely sensitive to single outliers; ignores internal distribution.</p>
+
+      <h3>Variance and Standard Deviation</h3>
+      <p><strong>Population variance:</strong></p>
+      <div class="display-equation">
+        \[
+          \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i - \mu)^2.
+        \]
+      </div>
+      <p><strong>Sample (unbiased) variance:</strong></p>
+      <div class="display-equation">
+        \[
+          s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})^2,\qquad s=\sqrt{s^2}.
+        \]
+      </div>
+      <p><strong>Use:</strong> fundamental to modeling and inference (t-tests, ANOVA, regression).</p>
+      <p><strong>Limitations:</strong> squared units (variance) can be unintuitive; both variance and SD are sensitive to outliers.</p>
+
+      <h3>Interquartile Range (IQR)</h3>
+      <p><strong>Definition:</strong> \(\mathrm{IQR} = Q_3 - Q_1\) (distance between 75th and 25th percentiles).</p>
+      <p><strong>Use:</strong> robust measure of central spread; used for boxplots and outlier detection (1.5·IQR rule).</p>
+      <p><strong>Limitation:</strong> ignores tails beyond central 50%.</p>
+
+      <h3>Mean Absolute Deviation (MAD)</h3>
+      <div class="display-equation">
+        \[
+          \mathrm{MAD} = \mathrm{median}_i\big(|x_i - \mathrm{median}(x)|\big).
+        \]
+      </div>
+      <p><strong>Use:</strong> robust measure in original units; median-centered MAD has high breakdown point (~50%).</p>
+      <p><strong>Note:</strong> scaled by 1.4826 to be consistent with σ under normality.</p>
+
+      <h3>Coefficient of Variation (CV)</h3>
+      <p><strong>Definition:</strong> \(\mathrm{CV} = \dfrac{s}{\bar{x}}\) (dimensionless).</p>
+      <p><strong>Use:</strong> compare relative dispersion across series with different units or means.</p>
+      <p><strong>Limitation:</strong> meaningless or unstable when mean close to zero; heavy-tail sensitivity remains.</p>
+    </article>
+
+    <article class="card" id="comparison">
+      <h2>Practical guidance: selecting summaries</h2>
+      <p>Choice depends on data characteristics and analysis goals. Heuristics:</p>
+      <ul>
+        <li><strong>Symmetric, few/no outliers:</strong> mean &amp; SD (model-friendly, efficient).</li>
+        <li><strong>Skewed or outliers:</strong> median &amp; IQR (robust pair).</li>
+        <li><strong>Categorical:</strong> mode &amp; frequency tables.</li>
+        <li><strong>Multiplicative processes:</strong> geometric mean (e.g., compounded returns).</li>
+        <li><strong>Compare variability across scales:</strong> CV (use cautiously).</li>
+        <li><strong>Best practice:</strong> report both classical and robust summaries (e.g., mean ± SD and median (IQR)) and include visual diagnostics.</li>
+      </ul>
+
+      <h3>Summary table</h3>
+      <table>
+        <thead>
+          <tr><th>Measure</th><th>Key advantage</th><th>Key limitation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Mean</td><td>Efficient under normality; uses all data</td><td>Sensitive to outliers and skewness</td></tr>
+          <tr><td>Median</td><td>Robust to outliers; intuitive for skewed data</td><td>Less efficient under normality; ignores extremes' magnitude</td></tr>
+          <tr><td>Mode</td><td>Good for categorical data; identifies peaks</td><td>May be non-unique; unstable in small samples</td></tr>
+          <tr><td>Range</td><td>Simple and intuitive</td><td>Completely driven by extremes</td></tr>
+          <tr><td>Variance / SD</td><td>Convenient for modeling and inference</td><td>Units squared (variance); sensitive to outliers</td></tr>
+          <tr><td>IQR</td><td>Robust central spread</td><td>Ignores tails beyond central 50%</td></tr>
+          <tr><td>MAD (median)</td><td>Very robust; interpretable units</td><td>Less common in classical inference</td></tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="card" id="examples">
+      <h2>Worked examples</h2>
+
+      <h3>Example 1 — Outlier effect</h3>
+      <p>Data: \(10, 12, 11, 13, 100\).</p>
+      <ul>
+        <li>Mean: \(\bar{x}=\dfrac{10+12+11+13+100}{5}=29.2\).</li>
+        <li>Median: 12.</li>
+        <li>IQR: ordered \(\{10,11,12,13,100\}\Rightarrow Q_1=11, Q_3=13 \Rightarrow \mathrm{IQR}=2.\)</li>
+        <li>MAD (median): median(|x−12|)=median(2,1,0,1,88)=1 (scaled ≈1.4826).</li>
+      </ul>
+      <p><strong>Interpretation:</strong> the mean is pulled upward by the outlier 100; median, IQR and MAD more accurately reflect the central cluster (10–13).</p>
+
+      <h3>Example 2 — Rates (harmonic mean)</h3>
+      <p>Two equal-distance legs at speeds 60 km/h and 40 km/h. Overall average speed over equal distances:</p>
+      <div class="display-equation">
+        \[
+          H = \frac{2}{\frac{1}{60}+\frac{1}{40}} = 48\ \mathrm{km/h}.
+        \]
+      </div>
+
+      <h3>Example 3 — Compounded returns (geometric mean)</h3>
+      <p>Annual returns +10%, +20%, +30% → growth factors 1.10, 1.20, 1.30:</p>
+      <div class="display-equation">
+        \[
+          G = (1.10\cdot 1.20\cdot 1.30)^{1/3}-1 \approx 0.1979 \;(\approx 19.8\%).
+        \]
+      </div>
+    </article>
+
+    <article class="card" id="reporting">
+      <h2>Reporting guidance for university submissions</h2>
       <ol>
-        <li>Measure empirical recovery success as a function of plaintext length with per-symbol RSA and single-letter alphabet reductions.</li>
-        <li>Compare ranking by χ², simple frequency ranking, and combined language scores (n-grams, dictionary hits) to evaluate refinement strategies.</li>
-        <li>Explore the effect of mapping <code>c mod 26</code> versus using the full ciphertext integers on frequency leakage.</li>
-        <li>Demonstrate the improvement in secrecy when deterministic per-symbol RSA is replaced with RSA-OAEP or a hybrid approach.</li>
+        <li>State clearly whether your data represent a sample or the full population and justify formula choices (divide by \(n\) vs \(n-1\)).</li>
+        <li>Report both a classical pair and a robust pair: <strong>mean ± SD</strong> and <strong>median (IQR)</strong>. Example: mean = 10.3 (SD = 4.2); median = 9.8 (IQR = 3.0).</li>
+        <li>Include at least one diagnostic figure: histogram (with density overlay) and a boxplot showing IQR and outliers.</li>
+        <li>If skewness or heavy tails are present, consider transformations (e.g., log) or report geometric mean for multiplicative data.</li>
+        <li>If trimming or winsorizing is used, report the exact fraction and procedure.</li>
+        <li>Include reproducible code in an appendix or repository (link to GitHub/Zenodo) and list software versions.</li>
       </ol>
     </article>
 
-    <article class="card">
-      <h2>Correct RSA usage: an illustrative C example (block-based)</h2>
-      <p class="small">The following compact C example demonstrates modular exponentiation, modular inverse (naïve loop) and a toy block encryption/decryption on an integer. It is educational — production code must use big-integer libraries (e.g., GMP) and proper padding.</p>
-      <pre><code>#include &lt;stdio.h&gt;
-#include &lt;math.h&gt;
-typedef long long ll;
-
-ll pow_mod(ll base, ll exp, ll mod) {
-    ll res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp % 2 == 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp /= 2;
-    }
-    return res;
-}
-
-ll mod_inverse(ll a, ll m) {
-    a = a % m;
-    for (ll x = 1; x &lt; m; x++) {
-        if ((a * x) % m == 1) {
-            return x;
-        }
-    }
-    return 1;
-}
-
-int main(void) {
-    ll p = 53;
-    ll q = 59;
-    ll e = 3;
-
-    ll n = p * q;
-    ll phi_n = (p - 1) * (q - 1);
-    
-    ll d = mod_inverse(e, phi_n);
-
-    printf("--- RSA Parameters ---\n");
-    printf("p = %lld, q = %lld, e = %lld\n", p, q, e);
-    printf("Public Key (n, e): (%lld, %lld)\n", n, e);
-    printf("Phi(n) = %lld\n", phi_n);
-    printf("Private Key (d): %lld\n", d);
-    
-    ll message = 888;
-
-    printf("\n--- Process ---\n");
-    printf("Original Message (M): %lld\n", message);
-
-    ll encrypted = pow_mod(message, e, n);
-    printf("Encrypted (C): %lld\n", encrypted);
-
-    ll decrypted = pow_mod(encrypted, d, n);
-    printf("Decrypted (M'): %lld\n", decrypted);
-
-    if (message == decrypted) {
-        printf("\nSuccess: The message was recovered!\n");
-    } else {
-        printf("\nError: Decryption failed.\n");
-    }
-    
-    return 0;
-}
-</code></pre>
-
-      <p class="small">Notes: this example uses native integers for clarity only. Real RSA requires arbitrary-precision arithmetic and robust modular inverse implementations (extended Euclidean algorithm), plus safe padding and constant-time routines.</p>
-    </article>
-
-    <article class="card">
-      <h2>References</h2>
+    <article class="card" id="references">
+      <h2>References & further reading</h2>
       <ol>
-        <li>Rivest, R. L., Shamir, A., & Adleman, L. (1978). <em>A Method for Obtaining Digital Signatures and Public-Key Cryptosystems</em>. Communications of the ACM.</li>
-        <li>Menezes, A., van Oorschot, P., & Vanstone, S. (1996). <em>Handbook of Applied Cryptography</em>. CRC Press.</li>
-        <li>Boneh, D. (1999). <em>Twenty Years of Attacks on the RSA Cryptosystem</em>. Notices of the AMS.</li>
-        <li>Cover, T. M., & Thomas, J. A. (2006). <em>Elements of Information Theory</em>. Wiley.</li>
+        <li>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., & Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>. Wiley.</li>
+        <li>Huber, P. J., & Ronchetti, E. M. (2009). <em>Robust Statistics (2nd ed.)</em>. Wiley.</li>
+        <li>DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em>. Pearson.</li>
+        <li>Wilcox, R. R. (2012). <em>Modern Statistics for the Social and Behavioral Sciences</em>. CRC Press.</li>
+        <li>Wasserman, L. (2004). <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer.</li>
       </ol>
+      <p class="small muted">Note: for a publication-quality bibliography add DOIs and precise editions; link datasets and code repositories (GitHub, Zenodo) and provide reproducible scripts.</p>
     </article>
 
-    <article class="card">
+    <article class="card" id="conclusion">
       <h2>Conclusion</h2>
-      <p>Applying RSA naively to single characters yields a deterministic substitution that leaks statistical structure and is vulnerable to frequency analysis. The security of public-key encryption in real systems requires correct algorithms, proper padding, careful block formatting and the use of vetted cryptographic libraries. This page is intended for educational use to illustrate the difference between a toy implementation and secure practice.</p>
+      <p>Measures of location and dispersion are complementary: no single statistic suffices to characterise a dataset fully. For robust and transparent reporting in research, present both classical (mean ± SD) and robust (median &amp; IQR or MAD) summaries, accompany them with visual diagnostics, and document preprocessing and formula choices clearly.</p>
     </article>
 
   </main>
@@ -217,9 +266,9 @@ int main(void) {
   <footer class="small" style="margin-top:18px">© 2025 Riccardo D'Annibale</footer>
 
   <script>
-    // Defer MathJax typesetting until page fully loaded
+    // Typeset math after load
     document.addEventListener('DOMContentLoaded', () => {
-      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise().catch(e => console.error('MathJax typeset error', e));
       }
     });
