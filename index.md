@@ -27,10 +27,10 @@ Select Homework:
 
 - [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
 - [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/index.html)
-- [Homework 3 - RSA (toy) — Letter-level encryption and statistical recovery](/HOMEWORK/homework3/index.html)
-- [Homework 4 - Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
-- [Homework 5 — Measures of Location and Dispersion](/HOMEWORK/homework5/index.html)
-- [Homework 6 -  Mean and Variance Simulator - Numerical Stability and Algorithm Comparison](/HOMEWORK/homework6/index.html)
+- [Homework 3 – RSA (toy) — Letter-level encryption and statistical recovery](/HOMEWORK/homework3/index.html)
+- [Homework 4 – Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
+- [Homework 5 – Measures of Location and Dispersion](/HOMEWORK/homework5/index.html)
+- [Homework 6 –  Mean and Variance Simulator - Numerical Stability and Algorithm Comparison](/HOMEWORK/homework6/index.html)
 
 ---
 
