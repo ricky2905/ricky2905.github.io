@@ -45,7 +45,8 @@ A web page presenting key measures of location and dispersion, including the mea
 
 **Title:** *Mean and Variance Simulator - Numerical Stability and Algorithm Comparison*
 
-Web page that computes sample mean and variance using two-pass, Welford (online), and naive algorithms. It visualizes cumulative mean, running variance, and histogram with kernel density estimate, and includes benchmarks comparing speed and numerical accuracy across different data distributions.
+Interactive simulator that computes sample mean and variance using numerically stable Welford (online) updates and a naive incremental sum/sumsq comparator. Visualizations include cumulative mean with ±1 standard error, running sample variance, and histogram with KDE. Includes reproducible benchmarks, a catastrophic-cancellation demo, and automated merge-based tests to demonstrate numerical stability, efficiency, and how to aggregate statistics in parallel.
+
 
 ---
 
