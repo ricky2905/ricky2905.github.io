@@ -2,888 +2,227 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Homework 5 — Measures of Location and Dispersion | Riccardo D'Annibale</title>
+  <title>RSA Exposed — RSA Toy & Demo | Riccardo D'Annibale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Analysis of a flawed letter-by-letter RSA implementation and how frequency analysis can break it; correct implementation notes and C example.">
   <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0f111a;
-  color: #e0e0e0;
-  line-height: 1.8;<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Homework 5 — Measures of Location and Dispersion | Riccardo D'Annibale</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0f111a;
-  color: #e0e0e0;
-  line-height: 1.8;
-  padding: 2rem;
-  max-width: 900px;
-  margin: auto;
-}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f111a;
+      color: #e0e0e0;
+      line-height: 1.8;
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
 
-h1, h2, h3, h4, h5, h6 {
-  color: #4CAF50;
-}
+    h1, h2, h3, h4 { color: #4CAF50; }
 
-h1 {
-  font-size: 2.8rem;
-  border-bottom: 3px solid #4CAF50;
-  padding-bottom: 0.3rem;
-  margin: 0 0 1rem 0;
-}
+    h1 {
+      font-size: 2.8rem;
+      border-bottom: 3px solid #4CAF50;
+      padding-bottom: 0.3rem;
+      margin: 0 0 1rem 0;
+    }
+    h2 { font-size: 2rem; margin-top: 1.5rem; }
+    h3 { font-size: 1.3rem; margin-top: 1rem; }
 
-h2 { font-size: 2rem; margin-top: 2rem; }
-h3 { font-size: 1.5rem; margin-top: 1.5rem; }
+    .card {
+      background-color: #1a1c2b;
+      border-left: 5px solid #4CAF50;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 15px rgba(76,175,80,0.08);
+    }
 
-.card {
-  background-color: #1a1c2b;
-  border-left: 5px solid #4CAF50;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 2rem 0;
-  box-shadow: 0 4px 15px rgba(76,175,80,0.08);
-}
+    a { color: #4CAF50; text-decoration: none; }
+    a:hover { color: #66bb6a; text-decoration: underline; }
 
-a { color: #4CAF50; text-decoration: none; }
-a:hover { color: #66bb6a; text-decoration: underline; }
+    table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
+    th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
+    th { background: rgba(76,175,80,0.06); color: #dfffe0; }
 
-hr { border: none; height: 2px; background-color: #4CAF50; margin: 2rem 0; }
+    pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
+    code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
 
-select { padding:0.5rem 1rem; border-radius:5px; font-size:1rem; background-color: #222236; color: #e0e0e0; border: 1px solid #4CAF50; margin-top:0.5rem; }
+    .small { font-size: 13px; color: #cfd8cf; }
 
-.topnav { display: flex; justify-content: flex-start; gap: 1rem; margin-bottom: 2rem; }
-.topnav a { font-weight: bold; }
-.topnav a:hover { color: #66bb6a; }
-
-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #4CAF50; text-align: center; font-size: 0.9rem; color: #999; }
-
-table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
-th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
-th { background: rgba(76,175,80,0.06); color: #dfffe0; }
-
-code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
-pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
-img { max-width: 100%; display: block; margin: 12px 0; border-radius: 4px; }
-
-textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:6px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
-.small{font-size:13px;color:#cfd8cf}
-input[type="number"]{width:72px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:6px;border-radius:4px}
-button.small{padding:6px 10px;font-size:13px;border-radius:6px;background:#142218;color:#e8f5e9;border:1px solid rgba(76,175,80,0.12);cursor:pointer}
-button.small:hover{background:#1d2b20}
-.generator{border:1px dashed rgba(255,255,255,0.04);padding:12px;margin:12px 0;border-radius:6px}
-.result{white-space:pre-wrap;background:#0b0c10;border:1px solid rgba(255,255,255,0.03);padding:10px;margin-top:8px;max-height:260px;overflow:auto;border-radius:6px}
-.hiddenCol{display:none;}
-label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
-thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
-th.dimmed { opacity: 0.55; }
-
-/* simple boxplot SVG area */
-.boxplot { width:100%; height:60px; margin-top: 8px; }
-
-@media (max-width:600px){
-  body { padding: 1rem; max-width: 100%; }
-  h1 { font-size: 2rem; }
-}
+    @media (max-width:600px){
+      body { padding: 1rem; max-width: 100%; }
+      h1 { font-size: 2rem; }
+    }
   </style>
 
   <script>
-  window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+    /* Minimal MathJax config (deferred typesetting) if equations present */
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, startup: { typeset: false } };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-
-  <!-- Chart.js for histogram -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 </head>
 <body>
   <header>
-    <nav class="topnav">
+    <nav style="display:flex;gap:12px;margin-bottom:1rem">
       <a href="/">Home</a>
       <a href="/about/">About</a>
-      <a href="#location">Location</a>
-      <a href="#dispersion">Dispersion</a>
-      <a href="#examples">Examples</a>
-      <a href="#interactive">Interactive</a>
-      <a href="#references">References</a>
     </nav>
   </header>
 
   <main>
 
     <article class="card">
-      <h1>Homework 5 — Measures of Location and Dispersion</h1>
-
-      <p>This enhanced, university-ready version contains: clear learning objectives, a concise methodology section, population vs sample clarifications, recommended reporting guidelines, worked examples, references, and an interactive toolkit for quick computation and visualization (histogram + boxplot).</p>
-
-      <hr/>
-
-      <h2>Learning objectives</h2>
-      <ul>
-        <li>Define and compute the main measures of location: arithmetic mean, median, mode.</li>
-        <li>Define and compute the main measures of dispersion: variance, standard deviation, IQR, MAD, CV.</li>
-        <li>Understand when each measure is appropriate, their advantages and limitations.</li>
-        <li>Interpret these measures in applied contexts (income, quality control, finance).</li>
-        <li>Report summary statistics and simple visual diagnostics appropriately in a research setting.</li>
-      </ul>
-
-      <hr/>
-
-      <h2 id="methodology">Methodology (recommended for the report)</h2>
-      <p>For reproducible research include: data source, cleaning steps (missing values, duplicates, outliers), transformations (log, winsorizing, trimming), and the exact formulas used for estimates. Present both numeric summaries and visual diagnostics (histogram + boxplot) to aid interpretation.</p>
-
-      <h3>Population vs sample — brief note</h3>
-      <p>Use population formulas (division by <code>N</code>) only when you possess the full population. For samples, use sample formulas and report whether the variance is the unbiased estimator (divide by <code>n-1</code>) when appropriate. Example:</p>
-      <div class="display-equation">
-        \[
-          \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i-\mu)^2 \quad\text{(population)}
-        \]
-      </div>
-      <div class="display-equation">
-        \[
-          s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2 \quad\text{(sample, unbiased estimator)}
-        \]
-      </div>
-
+      <h1>RSA Exposed: A Statistical Look at Public-Key Encryption</h1>
+      <p class="small">Short note: this page analyses a common implementation mistake (applying RSA per letter) and explains why frequency analysis breaks it; it also provides guidance on correct use of RSA and a small C example for block-based encryption/decryption.</p>
     </article>
-
-    <article class="card" id="location">
-      <h2>Measures of Location (Central Tendency)</h2>
-
-      <h3>Arithmetic mean</h3>
-      <div class="display-equation">
-        \[
-          \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i.
-        \]
-      </div>
-      <p>Use when data are roughly symmetric and you care about average magnitude (least-squares based methods). Avoid using the mean alone for skewed distributions.</p>
-
-      <h3>Median</h3>
-      <p>Sort \(x_{(1)}\le\dots\le x_{(n)}\):</p>
-      <ul>
-        <li>if \(n\) odd: \(\tilde{x}=x_{((n+1)/2)}\)</li>
-        <li>if \(n\) even: \(\tilde{x}=\dfrac{x_{(n/2)}+x_{(n/2+1)}}{2}\)</li>
-      </ul>
-
-      <h3>Mode</h3>
-      <p>Most frequent value (discrete) or density peak (continuous). Helpful for categorical data and detecting multi-modal structure.</p>
-    </article>
-
-    <article class="card" id="dispersion">
-      <h2>Measures of Dispersion (Spread)</h2>
-
-      <h3>Range</h3>
-      <p><strong>Range =</strong> max − min. Simple but non-robust.</p>
-
-      <h3>Variance & Standard Deviation</h3>
-      <div class="display-equation">
-        \[
-          s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2,\qquad s=\sqrt{s^2}.
-        \]
-      </div>
-      <p>Useful in modeling; sensitive to extremes.</p>
-
-      <h3>Interquartile Range (IQR)</h3>
-      <p>\(\mathrm{IQR} = Q_3 - Q_1\). Robust central spread; used in boxplots and the 1.5·IQR outlier rule.</p>
-
-      <h3>Mean Absolute Deviation (MAD)</h3>
-      <div class="display-equation">
-        \[
-          \mathrm{MAD} = \mathrm{median}_i(|x_i - \mathrm{median}(x)|)
-        \]
-      </div>
-      <p>Scale by 1.4826 for normal-consistent estimate of σ when desired.</p>
-
-      <h3>Coefficient of Variation (CV)</h3>
-      <p>\(\mathrm{CV}=s/\bar{x}\). Dimensionless; useful for comparing variability across different magnitudes.</p>
-    </article>
-
-    <article class="card" id="comparison">
-      <h2>Reporting guidance (recommended for the write-up)</h2>
-      <ol>
-        <li>State whether your data are a sample or the full population.</li>
-        <li>Report both a classical pair and a robust pair: <strong>mean ± SD</strong> and <strong>median (IQR)</strong>. Example: mean=10.3 (SD=4.2); median=9.8 (IQR=3.0).</li>
-        <li>Include a histogram and a boxplot to show shape and outliers.</li>
-        <li>If skewness or heavy tails are present, consider reporting geometric mean (for multiplicative processes) or transforming the data (log) and then reporting summaries on the transformed scale.</li>
-        <li>If you apply trimming or winsorizing, report the trim fraction and the exact procedure.</li>
-      </ol>
-
-      <h3>Recommended figure</h3>
-      <p>One combined figure with: (A) histogram with density overlay, (B) boxplot with IQR and whiskers, (C) table of numeric summaries — this provides both visual and numeric evidence for conclusions.</p>
-    </article>
-
-    <article class="card" id="examples">
-      <h2>Worked examples</h2>
-
-      <h3>1) Outlier effect</h3>
-      <p>Data: 10, 12, 11, 13, 100</p>
-      <ul>
-        <li>Mean = 29.2; Median = 12; IQR = 2; MAD = 1 (scaled MAD ≈ 1.48)</li>
-        <li>Interpretation: mean distorted by single extreme; robust summaries reflect central cluster.</li>
-      </ul>
-
-      <h3>2) Rates (harmonic mean)</h3>
-      <div class="display-equation">
-        \[
-          H = \frac{2}{\frac{1}{60}+\frac{1}{40}} = 48\ \mathrm{km/h}.
-        \]
-      </div>
-
-      <h3>3) Compounded returns (geometric mean)</h3>
-      <p>Growth factors: 1.10, 1.20, 1.30 → geometric mean ≈ 1.1979 ⇒ annual ≈ 19.8%</p>
-    </article>
-
-    <!-- Interactive toolbox -->
-    <article class="card" id="interactive">
-      <h2>Interactive: paste numeric data and compute summaries</h2>
-
-      <div class="small">Enter numbers separated by commas, spaces, semicolons or newlines. Non-numeric tokens are ignored.</div>
-
-      <div class="generator" aria-live="polite">
-        <textarea id="dataInput" placeholder="e.g. 10, 12, 11, 13, 100"></textarea>
-        <div class="controls">
-          <button id="calcBtn" class="small">Compute summaries</button>
-          <button id="histBtn" class="small">Draw histogram & boxplot</button>
-          <button id="clearBtn" class="small">Clear</button>
-          <label style="margin-left:8px" class="small inline">Trim % <input id="trimPct" type="number" min="0" max="45" value="0"></label>
-        </div>
-
-        <div id="statsResult" class="result" aria-live="polite">Results will appear here.</div>
-
-        <div style="margin-top:12px">
-          <canvas id="histCanvas" width="760" height="220" style="background:#0f111a;border-radius:6px;border:1px solid rgba(255,255,255,0.03)"></canvas>
-          <div id="boxplotSvg" class="boxplot" aria-hidden="false"></div>
-        </div>
-      </div>
-
-      <script>
-      // Helper: parse numbers robustly
-      function parseNumbers(s){
-        if(!s) return [];
-        // split on common delimiters
-        const tokens = s.split(/[\s,;]+/).filter(Boolean);
-        const nums = [];
-        for(const t of tokens){
-          const v = Number(t);
-          if(!Number.isFinite(v)) continue;
-          nums.push(v);
-        }
-        return nums;
-      }
-
-      function quantile(sorted, p){
-        if(sorted.length===0) return NaN;
-        const pos = (sorted.length - 1) * p;
-        const lower = Math.floor(pos);
-        const upper = Math.ceil(pos);
-        if(lower === upper) return sorted[lower];
-        return sorted[lower] * (upper - pos) + sorted[upper] * (pos - lower);
-      }
-
-      function median(sorted){
-        return quantile(sorted, 0.5);
-      }
-
-      function mean(arr){
-        if(arr.length===0) return NaN;
-        return arr.reduce((a,b)=>a+b,0)/arr.length;
-      }
-
-      function sampleVariance(arr){
-        const n = arr.length;
-        if(n<2) return NaN;
-        const m = mean(arr);
-        const ss = arr.reduce((s,x)=>s + (x - m)*(x - m), 0);
-        return ss/(n-1);
-      }
-
-      function populationVariance(arr){
-        if(arr.length===0) return NaN;
-        const m = mean(arr);
-        const ss = arr.reduce((s,x)=>s + (x - m)*(x - m), 0);
-        return ss/arr.length;
-      }
-
-      function stddev(arr, sample=true){
-        const v = sample ? sampleVariance(arr) : populationVariance(arr);
-        return Math.sqrt(v);
-      }
-
-      function iqr(sorted){
-        return quantile(sorted, 0.75) - quantile(sorted, 0.25);
-      }
-
-      function madMedian(sorted){
-        const med = median(sorted);
-        const devs = sorted.map(x=>Math.abs(x - med)).sort((a,b)=>a-b);
-        return median(devs);
-      }
-
-      function mode(arr){
-        if(arr.length===0) return null;
-        const counts = new Map();
-        for(const x of arr){
-          counts.set(x, (counts.get(x)||0)+1);
-        }
-        let maxc = 0, modes = [];
-        for(const [k,v] of counts){
-          if(v>maxc){ maxc=v; modes=[k]; }
-          else if(v===maxc){ modes.push(k);}
-        }
-        // if every value unique, return null to indicate no clear mode
-        if(maxc===1) return null;
-        return modes;
-      }
-
-      function geomMean(arr){
-        if(arr.length===0) return NaN;
-        // requires positive values
-        if(arr.some(x=>x<=0)) return NaN;
-        const logsum = arr.reduce((s,x)=>s + Math.log(x), 0);
-        return Math.exp(logsum/arr.length);
-      }
-
-      function harmMean(arr){
-        if(arr.length===0) return NaN;
-        if(arr.some(x=>x<=0)) return NaN;
-        const inv = arr.reduce((s,x)=>s + 1/x, 0);
-        return arr.length / inv;
-      }
-
-      function trimmedMean(arr, trimPct){
-        const n = arr.length;
-        if(n===0) return NaN;
-        const trimCount = Math.floor(n * (trimPct/100));
-        if(trimCount===0) return mean(arr);
-        const trimmed = arr.slice(trimCount, n - trimCount);
-        if(trimmed.length===0) return NaN;
-        return mean(trimmed);
-      }
-
-      // UI handlers
-      document.getElementById('calcBtn').addEventListener('click', () => {
-        const raw = document.getElementById('dataInput').value;
-        const nums = parseNumbers(raw).sort((a,b)=>a-b);
-        const out = document.getElementById('statsResult');
-        if(nums.length===0){ out.textContent = 'No numeric data parsed.'; return; }
-        const n = nums.length;
-        const mn = mean(nums), med = median(nums), md = mode(nums);
-        const popVar = populationVariance(nums), sampVar = sampleVariance(nums);
-        const popSD = Math.sqrt(popVar), sampSD = Math.sqrt(sampVar);
-        const theIQR = iqr(nums), theMAD = madMedian(nums);
-        const theCV = mn === 0 ? NaN : sampSD / mn;
-        const gmean = geomMean(nums), hmean = harmMean(nums);
-        const trimPct = Number(document.getElementById('trimPct').value) || 0;
-        const tmean = trimmedMean(nums, trimPct);
-
-        const lines = [];
-        lines.push(`n = ${n}`);
-        lines.push(`mean = ${mn.toFixed(6)}`);
-        lines.push(`median = ${med.toFixed(6)}`);
-        lines.push(`mode = ${md === null ? 'none (all unique)' : String(md)}`);
-        lines.push(`sample variance (s^2) = ${sampVar.toFixed(6)}; sample SD = ${sampSD.toFixed(6)}`);
-        lines.push(`population variance = ${popVar.toFixed(6)}; population SD = ${popSD.toFixed(6)}`);
-        lines.push(`IQR = ${theIQR.toFixed(6)}`);
-        lines.push(`MAD (median) = ${theMAD.toFixed(6)} (scale factor 1.4826 ⇒ ≈ ${(theMAD*1.4826).toFixed(6)})`);
-        lines.push(`CV (s/mean) = ${Number.isFinite(theCV) ? theCV.toFixed(6) : 'NaN'}`);
-        lines.push(`geometric mean = ${Number.isFinite(gmean) ? gmean.toFixed(6) : 'N/A (nonpositive values present)'}`);
-        lines.push(`harmonic mean = ${Number.isFinite(hmean) ? hmean.toFixed(6) : 'N/A (nonpositive values present)'}`);
-        if(trimPct>0) lines.push(`trimmed mean (${trimPct}% each tail) = ${Number.isFinite(tmean) ? tmean.toFixed(6) : 'N/A'}`);
-
-        out.textContent = lines.join('\n');
-
-      });
-
-      // histogram + boxplot using Chart.js for histogram and custom SVG for boxplot
-      let histChart = null;
-      function drawHistogramAndBoxplot(){
-        const raw = document.getElementById('dataInput').value;
-        const nums = parseNumbers(raw).sort((a,b)=>a-b);
-        if(nums.length===0){ alert('No numeric data parsed.'); return; }
-
-        // histogram bins: Freedman–Diaconis rule for bin width (robust)
-        const n = nums.length;
-        const iqrVal = iqr(nums);
-        const binWidth = iqrVal === 0 ? (nums[nums.length-1]-nums[0]) / Math.sqrt(n) : 2 * iqrVal / Math.cbrt(n);
-        const dataRange = nums[nums.length-1] - nums[0];
-        const bins = Math.max(4, Math.round(dataRange / (binWidth || 1)));
-        const min = nums[0], max = nums[nums.length-1];
-        const edges = [];
-        for(let i=0;i<=bins;i++) edges.push(min + i*(max-min)/bins);
-        const counts = new Array(bins).fill(0);
-        for(const v of nums){
-          let idx = Math.floor((v - min) / (max - min + 1e-12) * bins);
-          if(idx<0) idx=0; if(idx>=bins) idx=bins-1;
-          counts[idx]++;
-        }
-        const labels = edges.slice(0,-1).map((e,i)=>`${edges[i].toFixed(2)}–${edges[i+1].toFixed(2)}`);
-
-        // Chart.js draw/update
-        const ctx = document.getElementById('histCanvas').getContext('2d');
-        if(histChart) histChart.destroy();
-        histChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [{
-              label: 'Counts',
-              data: counts,
-              borderWidth: 0.5
-            }]
-          },
-          options: {
-            responsive: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { ticks: { color: '#dfeee0' } },
-              y: { ticks: { color: '#dfeee0' }, beginAtZero:true }
-            }
-          }
-        });
-
-        // compute boxplot stats
-        const q1 = quantile(nums, 0.25), q2 = median(nums), q3 = quantile(nums, 0.75);
-        const iqrVal2 = q3 - q1;
-        const lowerFence = q1 - 1.5*iqrVal2;
-        const upperFence = q3 + 1.5*iqrVal2;
-        const minWhisk = nums.find(x=>x>=lowerFence) || nums[0];
-        const maxWhisk = nums.slice().reverse().find(x=>x<=upperFence) || nums[nums.length-1];
-        const outliers = nums.filter(x=> x < lowerFence || x > upperFence);
-
-        // draw boxplot as simple SVG
-        const svgContainer = document.getElementById('boxplotSvg');
-        svgContainer.innerHTML = ''; // clear
-        const w = svgContainer.clientWidth || 760;
-        const h = 60;
-        const svgNS = 'http://www.w3.org/2000/svg';
-        const svg = document.createElementNS(svgNS,'svg');
-        svg.setAttribute('width', w);
-        svg.setAttribute('height', h);
-        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-        svg.style.display = 'block';
-
-        // scale function
-        function sx(v){ return 40 + (v - min) / (max - min + 1e-12) * (w - 80); }
-
-        // whiskers
-        const line1 = document.createElementNS(svgNS,'line');
-        line1.setAttribute('x1', sx(minWhisk));
-        line1.setAttribute('x2', sx(q1));
-        line1.setAttribute('y1', h/2);
-        line1.setAttribute('y2', h/2);
-        line1.setAttribute('stroke', '#dfeee0'); line1.setAttribute('stroke-width', 2);
-        svg.appendChild(line1);
-
-        const line2 = document.createElementNS(svgNS,'line');
-        line2.setAttribute('x1', sx(q3));
-        line2.setAttribute('x2', sx(maxWhisk));
-        line2.setAttribute('y1', h/2);
-        line2.setAttribute('y2', h/2);
-        line2.setAttribute('stroke', '#dfeee0'); line2.setAttribute('stroke-width', 2);
-        svg.appendChild(line2);
-
-        // box
-        const rect = document.createElementNS(svgNS,'rect');
-        rect.setAttribute('x', sx(q1));
-        rect.setAttribute('y', h/2 - 14);
-        rect.setAttribute('width', Math.max(2, sx(q3)-sx(q1)));
-        rect.setAttribute('height', 28);
-        rect.setAttribute('fill', 'rgba(76,175,80,0.06)');
-        rect.setAttribute('stroke', '#dfeee0');
-        svg.appendChild(rect);
-
-        // median line
-        const medLine = document.createElementNS(svgNS,'line');
-        medLine.setAttribute('x1', sx(q2));
-        medLine.setAttribute('x2', sx(q2));
-        medLine.setAttribute('y1', h/2 - 14);
-        medLine.setAttribute('y2', h/2 + 14);
-        medLine.setAttribute('stroke', '#4CAF50');
-        medLine.setAttribute('stroke-width', 2);
-        svg.appendChild(medLine);
-
-        // whisker caps
-        const cap1 = document.createElementNS(svgNS,'line');
-        cap1.setAttribute('x1', sx(minWhisk));
-        cap1.setAttribute('x2', sx(minWhisk));
-        cap1.setAttribute('y1', h/2 - 8);
-        cap1.setAttribute('y2', h/2 + 8);
-        cap1.setAttribute('stroke', '#dfeee0');
-        svg.appendChild(cap1);
-
-        const cap2 = document.createElementNS(svgNS,'line');
-        cap2.setAttribute('x1', sx(maxWhisk));
-        cap2.setAttribute('x2', sx(maxWhisk));
-        cap2.setAttribute('y1', h/2 - 8);
-        cap2.setAttribute('y2', h/2 + 8);
-        cap2.setAttribute('stroke', '#dfeee0');
-        svg.appendChild(cap2);
-
-        // outliers as small circles
-        for(const o of outliers){
-          const c = document.createElementNS(svgNS,'circle');
-          c.setAttribute('cx', sx(o));
-          c.setAttribute('cy', h/2);
-          c.setAttribute('r', 3);
-          c.setAttribute('fill', '#ff7043');
-          svg.appendChild(c);
-        }
-
-        // axis labels (min, Q1, median, Q3, max)
-        const labels = [{v:min,label:'min'},{v:q1,label:'Q1'},{v:q2,label:'median'},{v:q3,label:'Q3'},{v:max,label:'max'}];
-        labels.forEach((it, idx) => {
-          const t = document.createElementNS(svgNS,'text');
-          t.setAttribute('x', sx(it.v));
-          t.setAttribute('y', h - 2);
-          t.setAttribute('font-size', '10');
-          t.setAttribute('fill', '#dfeee0');
-          t.setAttribute('text-anchor', 'middle');
-          t.textContent = it.label;
-          svg.appendChild(t);
-        });
-
-        svgContainer.appendChild(svg);
-
-        // update statsResult with summary if empty
-        const out = document.getElementById('statsResult');
-        if(out.textContent.trim().length===0) document.getElementById('calcBtn').click();
-      }
-
-      document.getElementById('histBtn').addEventListener('click', drawHistogramAndBoxplot);
-      document.getElementById('clearBtn').addEventListener('click', () => {
-        document.getElementById('dataInput').value = '';
-        document.getElementById('statsResult').textContent = '';
-        if(histChart){ histChart.destroy(); histChart=null; }
-        document.getElementById('boxplotSvg').innerHTML = '';
-      });
-
-      </script>
-
-    </article>
-
-    <article class="card" id="code">
-      <h2>Reproducible code (Python)</h2>
-      <p>Same as before — use these snippets in your notebook to reproduce the numbers and figures above.</p>
-      <pre><code>import numpy as np
-from scipy import stats
-import matplotlib.pyplot as plt
-
-x = np.array([10,12,11,13,100])
-print('mean:', x.mean())
-print('median:', np.median(x))
-print('sample variance (unbiased):', x.var(ddof=1))
-print('std (sample):', x.std(ddof=1))
-print('IQR:', stats.iqr(x))
-print('MAD (median):', np.median(np.abs(x - np.median(x))))
-# histogram + boxplot
-fig, axes = plt.subplots(2,1, figsize=(6,6))
-axes[0].hist(x, bins='auto')
-axes[1].boxplot(x, vert=False)
-plt.show()</code></pre>
-    </article>
-
-    <article class="card" id="references">
-      <h2>References & further reading</h2>
-      <ol>
-        <li>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., & Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>. Wiley.</li>
-        <li>Huber, P. J., & Ronchetti, E. M. (2009). <em>Robust Statistics (2nd ed.)</em>. Wiley.</li>
-        <li>Wilcox, R. R. (2012). <em>Modern Statistics for the Social and Behavioral Sciences</em>. CRC Press.</li>
-        <li>DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em>. Pearson.</li>
-        <li>Wasserman, L. (2004). <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer.</li>
-      </ol>
-
-      <p class="small">Notes: for publication-quality reports add DOI links and dataset provenance; include code and data in a repository (GitHub, Zenodo) and cite them in the manuscript.</p>
-    </article>
-
-    <article class="card" id="conclusion">
-      <h2>Conclusion and recommendations</h2>
-      <p>For a university research submission: include a clear statement of the research task, data provenance, cleaning steps, the exact formulas used (population vs sample), both classical and robust summaries, one or two diagnostic plots (histogram + boxplot), and reproducible code in an appendix or repository. The interactive toolkit above helps students validate calculations and inspect the effect of outliers or trimming quickly.</p>
-    </article>
-
-  </main>
-
-  <footer>
-    <p>© 2025 Riccardo D'Annibale</p>
-  </footer>
-</body>
-</html>
-
-  padding: 2rem;
-  max-width: 900px;
-  margin: auto;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: #4CAF50;
-}
-
-h1 {
-  font-size: 2.8rem;
-  border-bottom: 3px solid #4CAF50;
-  padding-bottom: 0.3rem;
-  margin: 0 0 1rem 0;
-}
-
-h2 { font-size: 2rem; margin-top: 2rem; }
-h3 { font-size: 1.5rem; margin-top: 1.5rem; }
-
-.card {
-  background-color: #1a1c2b;
-  border-left: 5px solid #4CAF50;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 2rem 0;
-  box-shadow: 0 4px 15px rgba(76,175,80,0.08);
-}
-
-a { color: #4CAF50; text-decoration: none; }
-a:hover { color: #66bb6a; text-decoration: underline; }
-
-hr { border: none; height: 2px; background-color: #4CAF50; margin: 2rem 0; }
-
-select { padding:0.5rem 1rem; border-radius:5px; font-size:1rem; background-color: #222236; color: #e0e0e0; border: 1px solid #4CAF50; margin-top:0.5rem; }
-
-.topnav { display: flex; justify-content: flex-start; gap: 1rem; margin-bottom: 2rem; }
-.topnav a { font-weight: bold; }
-.topnav a:hover { color: #66bb6a; }
-
-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #4CAF50; text-align: center; font-size: 0.9rem; color: #999; }
-
-table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
-th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
-th { background: rgba(76,175,80,0.06); color: #dfffe0; }
-
-code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
-pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
-img { max-width: 100%; display: block; margin: 12px 0; border-radius: 4px; }
-
-textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:6px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
-.small{font-size:13px;color:#cfd8cf}
-input[type="number"]{width:72px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:6px;border-radius:4px}
-button.small{padding:6px 10px;font-size:13px;border-radius:6px;background:#142218;color:#e8f5e9;border:1px solid rgba(76,175,80,0.12);cursor:pointer}
-button.small:hover{background:#1d2b20}
-.generator{border:1px dashed rgba(255,255,255,0.04);padding:12px;margin:12px 0;border-radius:6px}
-.result{white-space:pre-wrap;background:#0b0c10;border:1px solid rgba(255,255,255,0.03);padding:10px;margin-top:8px;max-height:260px;overflow:auto;border-radius:6px}
-.hiddenCol{display:none;}
-label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
-thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
-th.dimmed { opacity: 0.55; }
-
-/* Responsive */
-@media (max-width:600px){
-  body { padding: 1rem; max-width: 100%; }
-  h1 { font-size: 2rem; }
-}
-  </style>
-
-  <script>
-  window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-</head>
-<body>
-  <header>
-    <nav class="topnav">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="#location">Location</a>
-      <a href="#dispersion">Dispersion</a>
-      <a href="#examples">Examples</a>
-      <a href="#references">References</a>
-    </nav>
-  </header>
-
-  <main>
 
     <article class="card">
-      <h1>Homework 5 — Measures of Location and Dispersion</h1>
-
-<p>We will examine the main measures of location (central tendency) and dispersion used in descriptive statistics. For each measure, we provide a formal definition, key formulas, typical uses, advantages, and limitations.</p>
-
-      <hr/>
-
-      <h2 id="location">Measures of Location (Central Tendency)</h2>
-
-      <h3>Arithmetic mean (mean)</h3>
-      <p><strong>Definition.</strong> For observations \(x_1,\dots,x_n\) the sample (arithmetic) mean is</p>
-      <div class="display-equation">
-        \[
-          \bar{x} \;=\; \frac{1}{n}\sum_{i=1}^n x_i.
-        \]
-      </div>
-      <p><strong>Uses:</strong> Estimate central value when deviations matter quadratically; basis for least-squares regression and many inferential procedures.</p>
-      <p><strong>Advantages:</strong> Uses all data, algebraically convenient, asymptotically efficient under Gaussian errors (CLT: \(\sqrt{n}(\bar{X}-\mu)\to N(0,\sigma^2)\)).</p>
-      <p><strong>Limitations:</strong> Sensitive to outliers and heavy tails; can be misleading for skewed distributions (e.g., income).</p>
-
-      <h3>Median</h3>
-      <p><strong>Definition.</strong> Sort the sample \(x_{(1)}\le\dots\le x_{(n)}\). The sample median \(\tilde{x}\) is:</p>
+      <h2>Overview of RSA</h2>
+      <p>RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem whose security relies on the practical difficulty of factoring a large composite modulus <code>n = p·q</code>. The canonical operations are:</p>
       <ul>
-        <li>if \(n\) odd: \(\tilde{x}=x_{((n+1)/2)}\).</li>
-        <li>if \(n\) even: \(\tilde{x}=\dfrac{x_{(n/2)}+x_{(n/2+1)}}{2}.\)</li>
+        <li><strong>Key generation:</strong> choose large primes <code>p</code>, <code>q</code>; compute <code>n = p·q</code> and <code>φ(n) = (p−1)(q−1)</code>; pick public exponent <code>e</code> coprime with <code>φ(n)</code>; compute private exponent <code>d ≡ e⁻¹ (mod φ(n))</code>.</li>
+        <li><strong>Encryption:</strong> for a message representative <code>M</code> (as an integer with 0 ≤ M &lt; n) compute <code>C ≡ Mᵉ (mod n)</code>.</li>
+        <li><strong>Decryption:</strong> compute <code>M ≡ Cᵈ (mod n)</code> to recover the original representative.</li>
       </ul>
-      <p><strong>Uses:</strong> Robust center for skewed data, ordinal data, or when outliers are expected.</p>
-      <p><strong>Advantages:</strong> High breakdown point (≈50%), bounded influence for single extreme observations.</p>
-      <p><strong>Limitations:</strong> Ignores magnitudes of extreme values and some distributional information; asymptotically less efficient than the mean under normality (ARE ≈ 0.64).</p>
+      <p class="small">Important: RSA operates on integers (blocks) that represent properly padded messages; it is not intended to be applied naively to individual characters without padding and block formatting.</p>
+    </article>
 
-      <h3>Mode</h3>
-      <p><strong>Definition.</strong> The mode is the most frequent value (discrete) or the location of highest density (continuous). For continuous data the mode is often estimated via kernel density estimation or histogram peaks.</p>
-      <p><strong>Uses:</strong> Best for categorical / nominal data, detecting peaks and multimodality in continuous distributions.</p>
-      <p><strong>Limitations:</strong> May be non-unique; unstable in small samples for continuous variables; not a good single summary for symmetric continuous data.</p>
-
-      <hr/>
-
-      <h2 id="dispersion">Measures of Dispersion (Spread)</h2>
-
-      <h3>Range</h3>
-      <p><strong>Definition.</strong> \(\text{Range} = \max_i x_i - \min_i x_i.\)</p>
-      <p><strong>Uses:</strong> Quick summary of total spread or bounds; sometimes used for quality control tolerances.</p>
-      <p><strong>Limitations:</strong> Extremely sensitive to single outliers; ignores the distribution between extremes.</p>
-
-      <h3>Variance and Standard Deviation</h3>
-      <p><strong>Population variance (if full population available):</strong></p>
-      <div class="display-equation">
-        \[
-          \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i-\mu)^2.
-        \]
-      </div>
-      <p><strong>Sample variance (unbiased estimator):</strong></p>
-      <div class="display-equation">
-        \[
-          s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2.
-        \]
-      </div>
-      <p>Standard deviation is the square root: \(s=\sqrt{s^2}\). Variance/SD are fundamental in modeling and inference (e.g., t-tests, ANOVA, regression), but are influenced heavily by extreme values.</p>
-
-      <h3>Interquartile Range (IQR)</h3>
-      <p><strong>Definition.</strong> \( \mathrm{IQR} = Q_3 - Q_1 \), where \(Q_1\) and \(Q_3\) are the 25th and 75th percentiles respectively.</p>
-      <p><strong>Uses:</strong> Robust measure of central spread (middle 50%), common in boxplots, used for outlier detection via the \(1.5\mathrm{IQR}\) rule.</p>
-      <p><strong>Limitations:</strong> Does not describe tails beyond the central 50% and ignores some information in the distribution.</p>
-
-      <h3>Mean Absolute Deviation (MAD)</h3>
-      <p><strong>Definition (median-centered):</strong></p>
-      <div class="display-equation">
-        \[
-          \mathrm{MAD} = \mathrm{median}_i\big(|x_i - \mathrm{median}(x)|\big).
-        \]
-      </div>
-      <p>MAD (median-based) is very robust (breakdown ≈50%). Scaled by 1.4826 it is a consistent estimator of \(\sigma\) under normality.</p>
-
-      <h3>Coefficient of Variation (CV)</h3>
-      <p><strong>Definition.</strong> \(\mathrm{CV} = \dfrac{s}{\bar{x}}\) (dimensionless).</p>
-      <p><strong>Uses:</strong> Compare relative dispersion across datasets with different units or means. Not meaningful when mean is near zero; unstable for heavy-tailed data.</p>
-
-      <hr/>
-
-      <h2 id="comparison">Practical guidance: choosing summaries</h2>
-
-      <p>Which measures to report depends on data shape, robustness needs, and analysis goals. The following heuristics are practical:</p>
+    <article class="card">
+      <h2>Exercise premise: letter-by-letter RSA (why it's insecure)</h2>
+      <p>Applying the RSA formula independently to each letter (or ASCII byte) creates a deterministic mapping of plaintext symbol → ciphertext symbol. For a fixed public key, the same plaintext symbol always maps to the same ciphertext integer. This situation is essentially a homophonic substitution cipher with a one-to-one map when no randomness/padding is used.</p>
+      <p>Consequences:</p>
       <ul>
-        <li><strong>Symmetric, no outliers:</strong> report mean & standard deviation (efficient; aligns with many models).</li>
-        <li><strong>Skewed distribution or outliers likely:</strong> report median & IQR (robust central tendency and spread).</li>
-        <li><strong>Categorical data:</strong> report mode and frequency tables.</li>
-        <li><strong>Multiplicative processes (returns):</strong> use geometric mean.</li>
-        <li><strong>Comparing variability across scales:</strong> use CV (with caution).</li>
-        <li>In practice, reporting both a pair (mean & SD) and a robust pair (median & IQR) gives readers a fuller picture.</li>
+        <li><strong>Frequency preservation:</strong> symbol frequencies of the plaintext are preserved in the ciphertext (modulo subsequent reduction, e.g. mapping <code>c mod 26</code>). Hence an attacker can exploit statistical regularities (frequency analysis) to map frequent ciphertext symbols to likely plaintext symbols.</li>
+        <li><strong>No semantic hiding / no IND-CPA:</strong> modern asymmetric encryption schemes must provide semantic security (indistinguishability under chosen-plaintext attack). Deterministic per-symbol RSA without randomized padding (e.g. OAEP) fails this requirement.</li>
       </ul>
+      <p class="small">Takeaway: security of RSA in practice depends as much on correct padding and message formatting (e.g. PKCS#1 v2 / OAEP) as on key sizes and factoring hardness.</p>
+    </article>
 
-      <h3>Summary table</h3>
-      <table>
-        <thead>
-          <tr><th>Measure</th><th>Key advantage</th><th>Key limitation</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Mean</td><td>Efficient under normality; uses all data</td><td>Sensitive to outliers / heavy tails</td></tr>
-          <tr><td>Median</td><td>Robust to outliers; intuitive for skewed data</td><td>Less efficient under normality; ignores extremes' magnitude</td></tr>
-          <tr><td>Mode</td><td>Best for categorical data; finds peaks</td><td>May be non-unique / unstable</td></tr>
-          <tr><td>Range</td><td>Simple, intuitive</td><td>Completely driven by extremes</td></tr>
-          <tr><td>Variance / SD</td><td>Convenient for modeling and inference</td><td>Units squared (variance) and sensitive to outliers</td></tr>
-          <tr><td>IQR</td><td>Robust measure of central spread</td><td>Ignores tails</td></tr>
-          <tr><td>MAD (median)</td><td>Very robust; interpretable units</td><td>Less common in classical inference</td></tr>
-        </tbody>
-      </table>
-
-      <hr/>
-
-      <h2 id="examples">Worked examples</h2>
-
-      <h3>Example 1 — Outlier effect</h3>
-      <p>Data: 10, 12, 11, 13, 100.</p>
-      <ul>
-        <li>Mean: \(\bar{x}=\dfrac{10+12+11+13+100}{5}=29.2\).</li>
-        <li>Median: 12.</li>
-        <li>IQR: order statistics \{10,11,12,13,100\} → \(Q_1=11\), \(Q_3=13\) → IQR = 2.</li>
-        <li>MAD (median-based): median(|x − 12|) = median(2,1,0,1,88) = 1 (scaled MAD ≈ 1.4826).</li>
-      </ul>
-      <p>Interpretation: mean is inflated by the outlier 100; median, IQR and MAD correctly reflect the central cluster (10–13).</p>
-
-      <h3>Example 2 — Rates (harmonic mean)</h3>
-      <p>Two equal-distance legs at speeds 60 km/h and 40 km/h. Overall average speed over equal distances:</p>
-      <div class="display-equation">
-        \[
-          H = \frac{2}{\frac{1}{60}+\frac{1}{40}} = 48\ \text{km/h}.
-        \]
-      </div>
-
-      <h3>Example 3 — Compounded returns (geometric mean)</h3>
-      <p>Annual returns: +10%, +20%, +30% → geometric mean per year:</p>
-      \[
-        G = (1.10\cdot1.20\cdot1.30)^{1/3}-1 \approx 0.1979 \;(\approx 19.8\%).
-      \]
-
-      <hr/>
-
-      <h2 id="practical">Practical notes & applications</h2>
-      <p>Brief application examples where choice of measure matters:</p>
-      <ul>
-        <li><strong>Income / wealth reporting:</strong> distributions heavily right-skewed — median and IQR are preferred to avoid influence from a few large values.</li>
-        <li><strong>Quality control:</strong> process variation often assumed Gaussian — mean and SD used for control charts (but robust charts exist when outliers are present).</li>
-        <li><strong>Finance:</strong> volatility typically measured with SD; however heavy tails motivate use of tail-risk measures (VaR, expected shortfall) in addition to variance.</li>
-        <li><strong>Engineering / signal processing:</strong> RMS (root-mean-square) used for energy-like quantities.</li>
-      </ul>
-
-      <hr/>
-
-      <h2 id="code">Quick reproducible code (Python)</h2>
-      <p>Small snippet computing the key summaries in Python (NumPy / SciPy):</p>
-      <pre><code>import numpy as np
-from scipy import stats
-
-x = np.array([10,12,11,13,100])
-print('mean:', x.mean())
-print('median:', np.median(x))
-print('sample variance (unbiased):', x.var(ddof=1))
-print('std (sample):', x.std(ddof=1))
-print('IQR:', stats.iqr(x))
-print('MAD (median):', np.median(np.abs(x - np.median(x))))
-print('range:', x.max() - x.min())</code></pre>
-
-      <hr/>
-
-      <h2 id="references">References & further reading</h2>
+    <article class="card">
+      <h2>How frequency analysis breaks per-symbol RSA</h2>
+      <p>Basic attack outline (statistical cryptanalysis):</p>
       <ol>
-        <li>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., & Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>.</li>
-        <li>Huber, P. J., & Ronchetti, E. M. (2009). <em>Robust Statistics (2nd ed.)</em>. Wiley.</li>
-        <li>DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em>. Pearson.</li>
-        <li>Wilcox, R. R. (2012). <em>Modern Statistics for the Social and Behavioral Sciences</em>. CRC Press.</li>
-        <li>Wasserman, L. (2004). <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer.</li>
+        <li>Collect ciphertext symbols and compute their empirical frequency distribution.</li>
+        <li>Compare with expected plaintext frequencies from a reference corpus (English, Italian, …).</li>
+        <li>Construct a candidate mapping by ranking ciphertext symbols and mapping them to letters by descending frequency (most frequent → 'E', second → 'T', etc.).</li>
+        <li>Optionally refine the candidate via simple local search (swap two mappings and accept improvements based on language scoring such as dictionary matches, n-gram scores or χ² goodness of fit).</li>
       </ol>
+      <p>This attack is effective when the plaintext is long enough for frequency estimates to concentrate and when the mapping is deterministic and small alphabet reductions (e.g. <code>c mod 26</code>) do not sufficiently obscure relative frequencies.</p>
+    </article>
 
-      <hr/>
+    <article class="card">
+      <h2>Practical recommendations</h2>
+      <ul>
+        <li>Do <strong>not</strong> encrypt single characters deterministically with raw RSA. Use hybrid schemes: generate a random symmetric key, encrypt data with a symmetric cipher, then encrypt the symmetric key with RSA (or use authenticated public-key encryption primitives).</li>
+        <li>Always use modern padding schemes (OAEP) for RSA encryption and proper signature schemes (PSS) for signatures.</li>
+        <li>Use recommended key sizes (e.g., 2048–3072 bits or larger depending on policy and lifetime) and vetted cryptographic libraries rather than home-rolled implementations.</li>
+        <li>For educational demos, clearly state limitations and avoid suggesting insecure practices as acceptable in real systems.</li>
+      </ul>
+    </article>
 
+    <article class="card">
+      <h2>Suggested experiments (for coursework)</h2>
+      <ol>
+        <li>Measure empirical recovery success as a function of plaintext length with per-symbol RSA and single-letter alphabet reductions.</li>
+        <li>Compare ranking by χ², simple frequency ranking, and combined language scores (n-grams, dictionary hits) to evaluate refinement strategies.</li>
+        <li>Explore the effect of mapping <code>c mod 26</code> versus using the full ciphertext integers on frequency leakage.</li>
+        <li>Demonstrate the improvement in secrecy when deterministic per-symbol RSA is replaced with RSA-OAEP or a hybrid approach.</li>
+      </ol>
+    </article>
+
+    <article class="card">
+      <h2>Correct RSA usage: an illustrative C example (block-based)</h2>
+      <p class="small">The following compact C example demonstrates modular exponentiation, modular inverse (naïve loop) and a toy block encryption/decryption on an integer. It is educational — production code must use big-integer libraries (e.g., GMP) and proper padding.</p>
+      <pre><code>#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+typedef long long ll;
+
+ll pow_mod(ll base, ll exp, ll mod) {
+    ll res = 1;
+    base %= mod;
+    while (exp > 0) {
+        if (exp % 2 == 1) res = (res * base) % mod;
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return res;
+}
+
+ll mod_inverse(ll a, ll m) {
+    a = a % m;
+    for (ll x = 1; x &lt; m; x++) {
+        if ((a * x) % m == 1) {
+            return x;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    ll p = 53;
+    ll q = 59;
+    ll e = 3;
+
+    ll n = p * q;
+    ll phi_n = (p - 1) * (q - 1);
+    
+    ll d = mod_inverse(e, phi_n);
+
+    printf("--- RSA Parameters ---\n");
+    printf("p = %lld, q = %lld, e = %lld\n", p, q, e);
+    printf("Public Key (n, e): (%lld, %lld)\n", n, e);
+    printf("Phi(n) = %lld\n", phi_n);
+    printf("Private Key (d): %lld\n", d);
+    
+    ll message = 888;
+
+    printf("\n--- Process ---\n");
+    printf("Original Message (M): %lld\n", message);
+
+    ll encrypted = pow_mod(message, e, n);
+    printf("Encrypted (C): %lld\n", encrypted);
+
+    ll decrypted = pow_mod(encrypted, d, n);
+    printf("Decrypted (M'): %lld\n", decrypted);
+
+    if (message == decrypted) {
+        printf("\nSuccess: The message was recovered!\n");
+    } else {
+        printf("\nError: Decryption failed.\n");
+    }
+    
+    return 0;
+}
+</code></pre>
+
+      <p class="small">Notes: this example uses native integers for clarity only. Real RSA requires arbitrary-precision arithmetic and robust modular inverse implementations (extended Euclidean algorithm), plus safe padding and constant-time routines.</p>
+    </article>
+
+    <article class="card">
+      <h2>References</h2>
+      <ol>
+        <li>Rivest, R. L., Shamir, A., & Adleman, L. (1978). <em>A Method for Obtaining Digital Signatures and Public-Key Cryptosystems</em>. Communications of the ACM.</li>
+        <li>Menezes, A., van Oorschot, P., & Vanstone, S. (1996). <em>Handbook of Applied Cryptography</em>. CRC Press.</li>
+        <li>Boneh, D. (1999). <em>Twenty Years of Attacks on the RSA Cryptosystem</em>. Notices of the AMS.</li>
+        <li>Cover, T. M., & Thomas, J. A. (2006). <em>Elements of Information Theory</em>. Wiley.</li>
+      </ol>
+    </article>
+
+    <article class="card">
       <h2>Conclusion</h2>
-      <p>Measures of location and dispersion are complementary: a single statistic rarely suffices. The assignment asks you to identify and discuss the most common measures — the page above provides precise definitions, formulas, practical guidance, and examples. For reporting and decision-making it is good practice to present both a classical pair (mean ± SD) and a robust pair (median & IQR or MAD) when data quality or the presence of outliers is uncertain.</p>
-
+      <p>Applying RSA naively to single characters yields a deterministic substitution that leaks statistical structure and is vulnerable to frequency analysis. The security of public-key encryption in real systems requires correct algorithms, proper padding, careful block formatting and the use of vetted cryptographic libraries. This page is intended for educational use to illustrate the difference between a toy implementation and secure practice.</p>
     </article>
 
   </main>
 
-  <footer>
-    <p>© 2025 Riccardo D'Annibale</p>
-  </footer>
+  <footer class="small" style="margin-top:18px">© 2025 Riccardo D'Annibale</footer>
+
+  <script>
+    // Defer MathJax typesetting until page fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        MathJax.typesetPromise().catch(e => console.error('MathJax typeset error', e));
+      }
+    });
+  </script>
 </body>
 </html>
