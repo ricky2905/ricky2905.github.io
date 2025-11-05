@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Measures of Location and Dispersion </title>
+  <title>Measures of Location and Dispersion</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Research survey of measures of location and dispersion: definitions, population vs sample formulas, theoretical properties, uses, limitations, worked examples, and reporting guidance." />
   <style>
@@ -70,7 +70,7 @@
 </head>
 
 <body>
-  <header class="topnav">
+  <header class="topnav" role="navigation" aria-label="Main navigation">
     <a href="/">Home</a>
     <a href="/about/">About</a>
   </header>
@@ -78,40 +78,39 @@
   <main>
 
     <article class="card">
-      <h1>Measures of Location and Dispersion — In-depth Research Survey</h1>
+      <h1>Measures of Location and Dispersion</h1>
+      <p class="small muted">A concise, connected guide to choosing and interpreting common summary statistics.</p>
     </article>
 
     <article class="card" id="overview">
       <h2>Overview</h2>
       <p>
-        Summary statistics reduce a dataset to a few numbers that characterise a distribution. Measures of <strong>location</strong> describe a typical or central value;
-        measures of <strong>dispersion</strong> describe how spread out observations are around that centre. Neither type of measure alone suffices:
-        use them together to give a fuller description (e.g., mean ± standard deviation, and median (IQR)).
+        When we summarise a dataset we typically want two complementary pieces of information: <em>where</em> values tend to cluster (a measure of <strong>location</strong>) and <em>how</em> they are spread around that centre (a measure of <strong>dispersion</strong>). Together these provide a compact but informative portrait of a distribution.
+      </p>
+      <p>
+        The choice of specific summaries is guided by the data's measurement scale, presence of outliers, and the goals of the analysis. For example, parametric modelling often uses mean and standard deviation because they fit naturally into likelihoods and least-squares; robust reporting in applied work often pairs median with IQR or MAD to protect against outliers. The sections that follow explain common measures, highlight their strengths and weaknesses, and show how they relate in practice.
       </p>
     </article>
 
     <article class="card" id="locationDetailed">
-      <h2>Measures of Location — Detailed</h2>
+      <h2>Measures of Location</h2>
+
+      <p>
+        Measures of location aim to represent a "typical" value from the data. Below are the most frequently used estimators, ordered from the most common (mean) to alternatives used when particular data characteristics or interpretability concerns matter.
+      </p>
 
       <h3>Arithmetic mean (sample)</h3>
       <div class="display-equation">\[
         \bar{x}=\frac{1}{n}\sum_{i=1}^{n} x_i
       \]</div>
-      <p><strong>Interpretation and key properties.</strong>
-        The sample mean is the centroid of the data and minimizes the sum of squared deviations:
+      <p>
+        The sample mean is the arithmetic centre of the data and has useful optimality properties in many inferential settings. Concretely, it minimizes the sum of squared deviations from the centre:
       </p>
       <div class="display-equation">\[
         \bar{x}=\arg\min_{\mu}\sum_{i=1}^n (x_i-\mu)^2.
       \]</div>
       <p>
-        Under iid sampling with finite variance \(\sigma^2\), the mean is asymptotically normal (Central Limit Theorem):
-      </p>
-      <div class="display-equation">\[
-        \sqrt{n}(\bar{X}-\mu)\ \xrightarrow{d}\ \mathcal N(0,\sigma^2).
-      \]</div>
-      <p>
-        <strong>Advantages:</strong> uses all observations, algebraically convenient, most efficient (lowest variance) among unbiased location estimators under normality.
-        <strong>Limitations:</strong> influence function is unbounded — a single extreme observation can move the mean arbitrarily (sensitive to outliers, heavy tails).
+        Under classical iid sampling with finite variance the sample mean is consistent and asymptotically normal (Central Limit Theorem). This makes it easy to build confidence intervals and hypothesis tests. However, because the mean gives equal weight to every observation and squares deviations in variance computations, it is sensitive to outliers and heavy tails.
       </p>
 
       <h3>Median</h3>
@@ -119,80 +118,58 @@
         \tilde{x}=\text{the 50\% sample quantile (median)}
       \]</div>
       <p>
-        The median minimizes sum of absolute deviations: \(\tilde{x}=\arg\min_\mu\sum_i |x_i-\mu|\).
-        Asymptotically its variance depends on the density \(f\) at the median:
+        The median is the central quantile and minimizes the sum of absolute deviations: \(\tilde{x}=\arg\min_\mu\sum_i |x_i-\mu|\). This gives the median a bounded influence — a single extreme value cannot drag it arbitrarily far — and a high breakdown point (~50%), which makes it a preferred summary for skewed or contaminated data.
       </p>
-      <div class="display-equation">\[
-        \mathrm{Var}(\tilde{X}) \approx \frac{1}{4n f(\theta)^2},
-      \]</div>
       <p>
-        where \(f(\theta)\) is the pdf at the true median \(\theta\). <strong>Advantages:</strong> bounded influence and high breakdown point (~50%) make the median robust to outliers and skewness.
-        <strong>Limitations:</strong> less efficient than the mean when the underlying distribution is normal (ARE ≈ 0.64).
+        The trade-off is efficiency: when the underlying distribution is Gaussian the mean has lower asymptotic variance than the median (the asymptotic relative efficiency of the median is ≈0.64 under normality). Practically, we often report both mean and median to make the presence of skewness or outliers visible.
       </p>
 
       <h3>Mode</h3>
       <p>
-        The mode is the most frequent value (for discrete data) or the location of the highest density (for continuous data).
-        For continuous variables the mode is estimated with density methods (histogram peaks or kernel density estimation).
-        The mode is useful for categorical or multi-modal data but unstable as a single-number summary in small samples for continuous data.
+        The mode identifies the most frequent value (discrete data) or the point of highest density (continuous data). It is particularly useful for categorical outcomes or multimodal distributions where a single central tendency measure (mean/median) hides important structure. For continuous variables the mode is usually estimated via density methods (histogram peaks, kernel density estimates) and can be unstable in small samples.
       </p>
 
       <h3>Other location estimators</h3>
+      <p>
+        Several alternatives exist when your problem requires them:
+      </p>
       <ul>
-        <li>
-          <strong>Geometric mean</strong> (for positive data):
-          <div class="display-equation">\[
-            G=\left(\prod_{i=1}^n x_i\right)^{1/n}
-          \]</div>
-          Use for multiplicative processes (growth rates, compound returns). Sensitive to zeros/negatives.
-        </li>
-        <li>
-          <strong>Harmonic mean</strong>:
-          <div class="display-equation">\[
-            H=\frac{n}{\sum_{i=1}^n 1/x_i}
-          \]</div>
-          Appropriate for averaging rates when the denominator (e.g., distance) is fixed.
-        </li>
-        <li>
-          <strong>Root-mean-square (RMS)</strong>:
-          <div class="display-equation">\[
-            \mathrm{RMS}=\sqrt{\frac{1}{n}\sum_{i=1}^n x_i^2}
-          \]</div>
-          Used in engineering and signal processing to measure magnitude/energy.
-        </li>
-        <li>
-          <strong>Trimmed mean</strong>: remove the lowest and highest \(\alpha\%\) and compute the mean of remaining values. Balances efficiency (close to mean) and robustness (resistant to extremes).
-        </li>
-        <li>
-          <strong>Winsorized mean</strong>: cap extreme values at a given percentile before averaging — reduces variance inflation while retaining sample size.
-        </li>
-        <li>
-          <strong>M-estimators (e.g., Huber)</strong>: solve
+        <li><strong>Geometric mean</strong> — appropriate for positive-valued, multiplicative processes (e.g., long-run growth rates). It is sensitive to zeros and negatives.</li>
+        <li><strong>Harmonic mean</strong> — useful when averaging rates over a fixed denominator (e.g., average speed over equal distances).</li>
+        <li><strong>RMS</strong> — the root-mean-square reflects magnitude and energy; common in engineering and signal processing.</li>
+        <li><strong>Trimmed / Winsorized means</strong> — reduce the effect of extremes by removing or capping tails; provide a middle ground between full efficiency and robustness.</li>
+        <li><strong>M-estimators (e.g., Huber)</strong> — solutions to an estimating equation involving a bounded score (\(\psi\)) allow you to tune the robustness/efficiency trade-off explicitly.
           <div class="display-equation">\[
             \sum_{i=1}^n \psi\!\left(\frac{x_i-\hat\theta}{s}\right)=0,
           \]</div>
-          where \(\psi\) is a chosen score function (Huber’s psi is linear inside a tuning constant \(c\) and constant beyond). M-estimators let you tune robustness vs efficiency.
         </li>
       </ul>
 
-      <h3>Choosing a location measure — practical advice</h3>
+      <h3>How to choose a location measure</h3>
+      <p>
+        Rather than a single rule, choose a location summary guided by the data and the inferential goal:
+      </p>
       <ul>
-        <li>If data are approximately symmetric and you plan parametric inference: use the mean ± standard deviation.</li>
-        <li>When data are skewed or contain outliers: prefer median and IQR (or MAD) as robust summaries.</li>
-        <li>For multiplicative phenomena (returns, growth): use geometric mean (or report both geometric and arithmetic means where appropriate).</li>
-        <li>Report multiple summaries (classical + robust) to give readers a fuller picture.</li>
+        <li>Use <strong>mean ± standard deviation</strong> for roughly symmetric data and when you plan parametric inference (t-tests, linear models).</li>
+        <li>Prefer <strong>median + IQR (or MAD)</strong> when distributions are skewed or contain outliers; these are robust alternatives that communicate centrality without being distorted by extremes.</li>
+        <li>For <strong>multiplicative</strong> phenomena (returns, compound growth) report the geometric mean, and consider showing both arithmetic and geometric means to clarify interpretation.</li>
+        <li>When in doubt, <strong>report multiple summaries</strong> (classical and robust) and use graphical displays (boxplots, density plots) to complement the numbers.</li>
       </ul>
     </article>
 
     <article class="card" id="dispersionDetailed">
-      <h2>Measures of Dispersion — Detailed</h2>
+      <h2>Measures of Dispersion</h2>
+
+      <p>
+        Measures of dispersion quantify how widely values scatter around the chosen centre. They answer complementary questions to location measures: are values tightly clustered, moderately spread, or strongly dispersed with heavy tails? Below are common choices and when they are informative.
+      </p>
 
       <h3>Range</h3>
       <div class="display-equation">\[
         \mathrm{Range} = \max_i x_i - \min_i x_i
       \]</div>
       <p>
-        The range is the simplest spread measure. It is useful for quick sanity checks or when extreme bounds matter (spec limits), but since it depends only on two observations it is extremely sensitive to outliers.
+        The range is the simplest measure and useful for bounding values (e.g., specification limits), but because it depends only on the two most extreme observations it is highly sensitive to outliers and typically not used as the sole measure of spread.
       </p>
 
       <h3>Variance and standard deviation</h3>
@@ -205,8 +182,7 @@
         s^2=\frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2
       \]</div>
       <p>
-        The standard deviation is \(s=\sqrt{s^2}\). Variance and SD are central to statistical modelling (t-tests, ANOVA, regression) because they appear naturally in likelihoods and least-squares theory.
-        Their downside: squaring amplifies the effect of outliers (heavy tails inflate variance).
+        Standard deviation (\(s=\sqrt{s^2}\)) is the most common spread used in inferential statistics. It plays a central role because many models assume normally distributed errors where standard deviation fully characterises dispersion. Its downside is sensitivity to outliers — squaring deviations gives high weight to extreme values and can inflate variance estimates under heavy tails.
       </p>
 
       <h3>Interquartile range (IQR)</h3>
@@ -214,55 +190,63 @@
         \mathrm{IQR} = Q_3 - Q_1
       \]</div>
       <p>
-        IQR measures the spread of the middle 50% and is robust to extremes. For a normal distribution:
+        The IQR measures the spread of the middle 50% of observations and is robust to extremes. It is often paired with the median to describe the typical range where most observations lie. For a normal distribution the relationship to \(\sigma\) is approximately:
       </p>
       <div class="display-equation">\[
         \mathrm{IQR}_{\mathcal N} = 2\Phi^{-1}(0.75)\,\sigma \approx 1.349\,\sigma,
       \]</div>
-      <p>so you can convert between IQR and σ approximately when normality is plausible.</p>
+      <p>
+        which is useful if you need an approximate conversion under normality assumptions.
+      </p>
 
       <h3>Mean absolute deviation (MAD)</h3>
       <div class="display-equation">\[
         \mathrm{MAD} = \mathrm{median}_i\big(|x_i - \mathrm{median}(x)|\big)
       \]</div>
       <p>
-        MAD is a median-based measure of spread with breakdown ~50%. For Gaussian data, scaling MAD by 1.4826 gives an estimator consistent for σ:
+        MAD is a median-based spread with high breakdown (~50%) and, when scaled by about 1.4826, provides a consistent estimator for \(\sigma\) under Gaussian assumptions. Because MAD uses absolute deviations, it is less sensitive to extreme observations than the standard deviation.
       </p>
-      <div class="display-equation">\[
-        \hat\sigma_{\text{MAD}} \approx 1.4826\cdot\mathrm{MAD}.
-      \]</div>
 
       <h3>Coefficient of variation (CV)</h3>
       <div class="display-equation">\[
         \mathrm{CV} = \frac{s}{\bar{x}}
       \]</div>
       <p>
-        CV is unitless and useful to compare relative dispersion across series with different units or magnitudes. Caveats: meaningless or unstable when the mean is near zero and not robust to outliers.
+        CV is unitless and useful for comparing relative dispersion across variables measured on different scales. Use it with caution when the mean is close to zero (it becomes unstable) or when outliers distort \(s\).
       </p>
 
       <h3>Robust and tail-focused measures</h3>
+      <p>
+        When tail behaviour matters — for example in finance or risk management — classical variance may understate risk. Consider:
+      </p>
       <ul>
-        <li><strong>Trimmed / Winsorized variance</strong>: reduce influence of extremes before computing spread.</li>
-        <li><strong>Quantile spread</strong>: report multiple quantiles (e.g., 10th, 25th, 50th, 75th, 90th) to summarise tails explicitly.</li>
-        <li><strong>Tail risk (finance)</strong>: variance may understate risk under heavy tails — consider Value-at-Risk (VaR) or Expected Shortfall (ES) for loss distributions.</li>
+        <li><strong>Trimmed / Winsorized variance</strong>: trim or cap extremes before computing spread to reduce influence of outliers while retaining most data.</li>
+        <li><strong>Quantile spreads</strong>: reporting several quantiles (e.g., 10th, 25th, 50th, 75th, 90th) communicates tail shape directly.</li>
+        <li><strong>Tail risk measures</strong>: Value-at-Risk (VaR) and Expected Shortfall (ES) focus on extreme losses and are used where tail events dominate decision-making.</li>
       </ul>
 
-      <h3>Choosing a dispersion measure — practical advice</h3>
+      <h3>How to choose a dispersion measure</h3>
       <ul>
-        <li>For parametric modelling and symmetric errors: SD is natural and interpretable in many inferential procedures.</li>
-        <li>For robustness to outliers: prefer IQR or MAD (or report both classical and robust measures).</li>
-        <li>When comparing scale across groups with different means, consider CV (with caution).</li>
+        <li>For parametric inference and symmetric errors: use <strong>standard deviation</strong>.</li>
+        <li>For robustness and skewed data: prefer <strong>IQR</strong> or <strong>MAD</strong>, and consider reporting both classical and robust measures.</li>
+        <li>To compare scale across groups with different means: consider <strong>CV</strong>, but check mean stability first.</li>
       </ul>
     </article>
 
     <article class="card" id="theory">
-      <h2>Theoretical properties – concise catalogue</h2>
+      <h2>Theoretical properties — how they connect</h2>
+      <p>
+        A few theoretical concepts explain why different estimators behave as they do and how location and dispersion are connected in practice.
+      </p>
       <ul>
-        <li><strong>Breakdown point:</strong> the fraction of contamination that can drive an estimator arbitrarily far. Median/MAD ≈ 50%; mean/variance ≈ 0% (single outlier may break them).</li>
-        <li><strong>Influence function:</strong> describes local sensitivity to infinitesimal contamination. Bounded influence implies robustness; the mean has unbounded influence while median and MAD have bounded influence.</li>
-        <li><strong>Asymptotic variance / efficiency:</strong> the mean is asymptotically optimal under Gaussian errors; the median has ARE ≈ 0.64 under normality (loss in efficiency but gain in robustness).</li>
-        <li><strong>Consistency:</strong> standard estimators (mean, median, variance) are consistent under mild regularity conditions.</li>
+        <li><strong>Breakdown point:</strong> the largest fraction of contaminated data that can make an estimator arbitrarily bad. Median and MAD have high breakdown (~50%), whereas mean and variance have breakdown near 0% (a single extreme point can dominate).</li>
+        <li><strong>Influence function:</strong> captures local sensitivity to contamination. Bounded influence implies robustness — the median and MAD are bounded, the mean is not.</li>
+        <li><strong>Asymptotic variance / efficiency:</strong> under normality the mean is optimal in the class of unbiased location estimators. The median trades some efficiency for robustness (ARE ≈ 0.64 under normality).</li>
+        <li><strong>Consistency:</strong> classical estimators (mean, median, variance) converge to the true parameter under mild regularity conditions, enabling reliable large-sample inference when assumptions hold.</li>
       </ul>
+      <p>
+        In practice these properties guide reporting choices: if you expect contamination or heavy tails, prefer robust summaries; if you rely on parametric models, the mean and SD integrate more naturally into estimation and hypothesis testing.
+      </p>
     </article>
 
     <article class="card" id="examplesDetailed">
@@ -272,20 +256,25 @@
       <div class="display-equation">\[
         10,\;12,\;11,\;13,\;100
       \]</div>
+      <p>
+        Compute the main summaries to see how a single extreme value affects different statistics:
+      </p>
       <ul>
-        <li>\(\text{mean} = \dfrac{10+12+11+13+100}{5} = 29.2.\)</li>
+        <li>\(\text{mean} = \dfrac{10+12+11+13+100}{5} = 29.2\).</li>
         <li>\(\text{median} = 12.\)</li>
         <li>\(\mathrm{IQR}: Q_1=11,\ Q_3=13 \Rightarrow \mathrm{IQR}=2.\)</li>
         <li>\(\mathrm{MAD}=\mathrm{median}(|x-12|)=1\) (scaled MAD ≈ \(1.4826\)).</li>
       </ul>
-      <p><strong>Interpretation:</strong> the single extreme value 100 inflates the mean and variance but has little effect on median, IQR and MAD. For reporting, include robust summaries when such outliers may distort classical summaries.</p>
+      <p>
+        <strong>Interpretation:</strong> the mean and variance are pulled upward by the 100, overstating a typical value and spread. Median, IQR and MAD remain stable, so reporting them in addition to the mean reveals the distortion and aids transparent interpretation.
+      </p>
 
       <h3>Example 2 — Averaging rates (harmonic mean)</h3>
       <div class="display-equation">\[
         H=\frac{2}{1/60 + 1/40} = 48\ \mathrm{km/h}
       \]</div>
       <p>
-        When averaging speeds over equal distances, the harmonic mean gives the correct overall average speed; the arithmetic mean would be incorrect.
+        Averaging speeds over equal distances requires the harmonic mean; the arithmetic mean would give the wrong overall average. This highlights how the underlying data-generating mechanism (additive vs multiplicative) dictates the appropriate summary.
       </p>
 
       <h3>Example 3 — Compounded returns (geometric mean)</h3>
@@ -293,29 +282,31 @@
         G = (1.10 \cdot 1.20 \cdot 1.30)^{1/3} - 1 \approx 0.1979 \quad (19.8\%)
       \]</div>
       <p>
-        Geometric mean is the appropriate long-run average growth rate for multiplicative sequences.
+        For sequences of multiplicative growth (returns), the geometric mean captures the correct long-run average growth rate. When communicating investment performance, pairing arithmetic and geometric means clarifies short-term vs long-term perspectives.
       </p>
     </article>
 
 
     <article class="card" id="conclusion">
-      <h2>Conclusion </h2>
+      <h2>Conclusion</h2>
       <p>
-        In statistics, measures of location and dispersion together provide a concise yet powerful summary of data. Measures of location describe where values tend to cluster, while measures of dispersion quantify how widely they spread around that center. Understanding both aspects is essential for accurate interpretation, comparison between datasets, and sound inferential reasoning. There is no universal best measure: each has strengths and limitations depending on the data type, distributional shape, and research objective. A thoughtful combination of descriptive summaries, visual tools, and context-aware interpretation leads to more meaningful and reliable statistical conclusions.
+        Measures of location and dispersion are complementary: one describes the centre, the other describes spread. There is no single "best" measure — the right choice depends on data scale, presence of outliers, and the question at hand. Good practice is to pair a location measure with a corresponding dispersion measure (e.g., mean ± SD, median with IQR), to show both classical and robust summaries when appropriate, and to accompany numbers with simple visualisations (histogram, boxplot, density) so readers can immediately see shape and tail behaviour.
+      </p>
+      <p>
+        This document aims to make the connections between estimators explicit: robustness (breakdown, influence) explains why some measures resist outliers; efficiency explains why others are preferred under model assumptions. Use these principles to choose summaries that communicate your data honestly and support sound inference.
       </p>
     </article>
-    
+
     <article class="card" id="references">
-      <h2>References & further reading</h2>
+      <h2>References &amp; further reading</h2>
       <ol>
-        <li>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., & Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>. Wiley.</li>
-        <li>Huber, P. J., & Ronchetti, E. M. (2009). <em>Robust Statistics (2nd ed.)</em>. Wiley.</li>
+        <li>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., &amp; Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>. Wiley.</li>
+        <li>Huber, P. J., &amp; Ronchetti, E. M. (2009). <em>Robust Statistics (2nd ed.)</em>. Wiley.</li>
         <li>Wasserman, L. (2004). <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer.</li>
         <li>Wilcox, R. R. (2012). <em>Modern Statistics for the Social and Behavioral Sciences</em>. CRC Press.</li>
-        <li>DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em>. Pearson.</li>
+        <li>DeGroot, M. H., &amp; Schervish, M. J. (2012). <em>Probability and Statistics</em>. Pearson.</li>
       </ol>
     </article>
-
 
   </main>
 
