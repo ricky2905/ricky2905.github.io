@@ -79,7 +79,6 @@
 
     <article class="card">
       <h1>Measures of Location and Dispersion</h1>
-      <p class="small muted">A concise, connected guide to choosing and interpreting common summary statistics.</p>
     </article>
 
     <article class="card" id="overview">
@@ -134,11 +133,11 @@
         Several alternatives exist when your problem requires them:
       </p>
       <ul>
-        <li><strong>Geometric mean</strong> — appropriate for positive-valued, multiplicative processes (e.g., long-run growth rates). It is sensitive to zeros and negatives.</li>
-        <li><strong>Harmonic mean</strong> — useful when averaging rates over a fixed denominator (e.g., average speed over equal distances).</li>
-        <li><strong>RMS</strong> — the root-mean-square reflects magnitude and energy; common in engineering and signal processing.</li>
-        <li><strong>Trimmed / Winsorized means</strong> — reduce the effect of extremes by removing or capping tails; provide a middle ground between full efficiency and robustness.</li>
-        <li><strong>M-estimators (e.g., Huber)</strong> — solutions to an estimating equation involving a bounded score (\(\psi\)) allow you to tune the robustness/efficiency trade-off explicitly.
+        <li><strong>Geometric mean</strong> : appropriate for positive-valued, multiplicative processes (e.g., long-run growth rates). It is sensitive to zeros and negatives.</li>
+        <li><strong>Harmonic mean</strong> : useful when averaging rates over a fixed denominator (e.g., average speed over equal distances).</li>
+        <li><strong>RMS</strong> : the root-mean-square reflects magnitude and energy; common in engineering and signal processing.</li>
+        <li><strong>Trimmed / Winsorized means</strong> : reduce the effect of extremes by removing or capping tails; provide a middle ground between full efficiency and robustness.</li>
+        <li><strong>M-estimators (e.g., Huber)</strong> : solutions to an estimating equation involving a bounded score (\(\psi\)) allow you to tune the robustness/efficiency trade-off explicitly.
           <div class="display-equation">\[
             \sum_{i=1}^n \psi\!\left(\frac{x_i-\hat\theta}{s}\right)=0,
           \]</div>
@@ -234,7 +233,7 @@
     </article>
 
     <article class="card" id="theory">
-      <h2>Theoretical properties — how they connect</h2>
+      <h2>Theoretical properties</h2>
       <p>
         A few theoretical concepts explain why different estimators behave as they do and how location and dispersion are connected in practice.
       </p>
@@ -292,9 +291,7 @@
       <p>
         Measures of location and dispersion are complementary: one describes the centre, the other describes spread. There is no single "best" measure — the right choice depends on data scale, presence of outliers, and the question at hand. Good practice is to pair a location measure with a corresponding dispersion measure (e.g., mean ± SD, median with IQR), to show both classical and robust summaries when appropriate, and to accompany numbers with simple visualisations (histogram, boxplot, density) so readers can immediately see shape and tail behaviour.
       </p>
-      <p>
-        This document aims to make the connections between estimators explicit: robustness (breakdown, influence) explains why some measures resist outliers; efficiency explains why others are preferred under model assumptions. Use these principles to choose summaries that communicate your data honestly and support sound inference.
-      </p>
+  
     </article>
 
     <article class="card" id="references">
