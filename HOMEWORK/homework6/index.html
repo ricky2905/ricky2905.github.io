@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Mean and Variance Simulator — Interactive + Optional Homework</title>
+  <title>Mean & Variance Simulator — Online Algorithms (Welford)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
@@ -29,9 +29,7 @@
       margin-right: auto;
     }
 
-    /* page container (keeps internal padding similar to original) */
     .wrap { width:100%; padding: 0; }
-
     .topnav { display:flex; gap:0.75rem; margin-bottom:1rem; align-items:center; flex-wrap:wrap; }
     .topnav a { color: var(--accent); text-decoration: none; font-weight: 700; }
     .topnav a:hover { color: #66bb6a; }
@@ -57,11 +55,9 @@
     .btn.ghost { background: transparent; color: var(--muted); border:1px solid rgba(255,255,255,0.04); font-weight:700; box-shadow:none; }
     .muted { color: var(--muted); }
 
-    /* Wider layout with right column */
     .layout { display:grid; grid-template-columns: 1fr 360px; gap:16px; align-items:start; }
     @media(max-width:980px){ .layout{ grid-template-columns:1fr } }
 
-    /* fixed-size chart containers */
     .chart {
       background:#0b0c10;
       padding:12px;
@@ -104,49 +100,41 @@
 
     <main>
 
-      <!-- Explanation -->
       <article class="card" aria-labelledby="explain-title">
-        <h1 id="explain-title">What the simulator computes</h1>
-        <p class="small muted">This simulator computes the sample mean and sample variance of a numeric sequence. It contains: definitions, a compact derivation of the online algorithm (Welford), numerical stability analysis, and practical recommendations for optional homework.</p>
+        <h1 id="explain-title">Mean and Variance Simulator - Numerical Stability and Algorithm Comparison</h1>
 
-        <h3>Definitions</h3>
-        <ul>
-          <li><strong>Sample mean</strong> \(\displaystyle \bar x = \frac{1}{n}\sum_{i=1}^n x_i\).</li>
-          <li><strong>Sample variance (unbiased)</strong> \(\displaystyle s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i - \bar x)^2\), valid for \(n\ge2\).</li>
-        </ul>
+        <h3>1) Mean recurrence (simple proof)</h3>
+        <p>The arithmetic mean after \(n\) observations is:</p>
+        <div class="display-equation">\(\displaystyle \mu_n = \frac{1}{n}\sum_{i=1}^n x_i.\)</div>
+        <p>Separating the last term gives:</p>
+        <div class="display-equation">\(\displaystyle \mu_n = \frac{1}{n}\left(\sum_{i=1}^{n-1} x_i + x_n\right)=\frac{n-1}{n}\mu_{n-1} + \frac{1}{n}x_n.\)</div>
+        <p>Simplifying:</p>
+        <div class="display-equation">\(\displaystyle \mu_n = \mu_{n-1} + \frac{x_n - \mu_{n-1}}{n}.\)</div>
+        <p>This recurrence updates the mean incrementally (O(1) per element).</p>
 
-        <h3>Numerical issue</h3>
-        <p class="small muted">Computing variance using <code>ss = sum(x^2); mean = sum(x)/n; var = (ss - n*mean^2)/(n-1)</code> can suffer catastrophic cancellation when <em>ss</em> and <em>n*mean^2</em> are large and close in magnitude. Small differences lose significant digits.</p>
-
-        <h3>Welford's online algorithm — compact derivation</h3>
-        <p>Welford maintains three quantities while scanning the data:</p>
-        <ul>
-          <li>count \(n\)</li>
-          <li>running mean \(\mu_n\)</li>
-          <li>running sum of squares of differences \(M2_n\)</li>
-        </ul>
-        <p>Update for a new observation \(x\):</p>
-        <div class="display-equation">\(n \leftarrow n+1\)</div>
-        <div class="display-equation">\(\delta = x - \mu_{n-1}\)</div>
-        <div class="display-equation">\(\mu_n = \mu_{n-1} + \delta / n\)</div>
-        <div class="display-equation">\(M2_n = M2_{n-1} + \delta \cdot (x - \mu_n)\)</div>
-        <p>At the end, the sample variance is \(s^2 = M2_n/(n-1)\) for \(n\ge2\). This avoids subtracting two large similar numbers and improves numerical stability.</p>
+        <h3>2) Variance recurrence (compact derivation — Welford)</h3>
+        <p>Define the corrected second moment ("M2") as</p>
+        <div class="display-equation">\(\displaystyle M2_n = \sum_{i=1}^n (x_i - \mu_n)^2.\)</div>
+        <p>We denote \(\delta = x_n - \mu_{n-1}\) and use \(\mu_n = \mu_{n-1} + \delta/n\).</p>
+        <p>Expanding the sum and simplifying (cross terms cancel by the mean definition) gives the compact identity:</p>
+        <div class="display-equation">\(\displaystyle M2_n = M2_{n-1} + \delta\cdot(x_n - \mu_n).\)</div>
+        <p>The unbiased sample variance is therefore</p>
+        <div class="display-equation">\(\displaystyle s^2 = \frac{M2_n}{n-1},\quad n\ge 2.\)</div>
+        <p>These formulas are the basis of Welford's algorithm: O(1) per element and numerically stable because they avoid subtracting two large, similar numbers.</p>
       </article>
 
-      <!-- How to use -->
       <article class="card" aria-labelledby="howto-title">
-        <h2 id="howto-title">How to use</h2>
+        <h2 id="howto-title">How to use (modes)</h2>
         <ol>
-          <li><strong>Vector mode</strong>: paste numbers separated by commas and press <em>Calculate (vector)</em>.</li>
-          <li><strong>Step-by-step mode</strong>: enter values one by one with <em>Add value</em>.</li>
-          <li>The <strong>Optional Homework</strong> section includes extended explanations and enhanced charts (running variance, estimated density, etc.).</li>
+          <li><strong>Step-by-step (recommended)</strong>: enter values one at a time with <em>Add value</em>. This demonstrates the incremental update.</li>
+          <li><strong>Vector mode</strong>: paste a comma-separated list; the page will still process values element-by-element using the online algorithm (not a batch operation).</li>
+          <li>The <strong>Benchmark</strong> section compares two online methods: Welford (stable) and the simple <code>sum</code> &amp; <code>sumsq</code> approach (faster but less robust numerically).</li>
         </ol>
       </article>
 
-      <!-- Simulator (central) -->
       <section class="card layout" aria-labelledby="sim-title">
         <div>
-          <h2 id="sim-title">Simulator — Input & Controls</h2>
+          <h2 id="sim-title">Simulator — Input & Controls (online)</h2>
 
           <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
             <button class="btn" id="btnWhole" aria-pressed="true">Enter Vector</button>
@@ -158,7 +146,7 @@
             <label for="vectorInput">Paste numbers separated by commas</label>
             <textarea id="vectorInput" rows="3" placeholder="e.g. 1, 2, 3.5, 4"></textarea>
             <div style="display:flex;gap:8px;margin-top:8px">
-              <button class="btn" id="calcVector">Calculate (vector)</button>
+              <button class="btn" id="calcVector">Process (as stream)</button>
               <button class="btn ghost" id="clearVector">Clear</button>
             </div>
           </div>
@@ -199,16 +187,15 @@
         </aside>
       </section>
 
-      <!-- Homework -->
       <article class="card" aria-labelledby="hw-title">
-        <h2 id="hw-title">Optional Homework — Efficiency: online vs classic computation</h2>
-        <p class="small muted">Goal: compare efficiency, memory use and numerical stability of three implementations: two-pass (classic), Welford (online), and naive (sumsq - n*mean^2). This section contains explanations, benchmarks and guidance for reporting.</p>
+        <h2 id="hw-title">Optional Homework — comparing online methods</h2>
+        <p class="small muted">Goal: prove the recurrences, test online algorithms, and show the numerical advantages of Welford over simple incremental <code>sum</code> &amp; <code>sumsq</code>.</p>
 
         <div class="code" style="margin-top:12px">
           <label>Benchmark parameters</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-            <input id="benchN" type="number" value="1000000" />
-            <input id="benchTrials" type="number" value="5" />
+            <input id="benchN" type="number" value="200000" />
+            <input id="benchTrials" type="number" value="3" />
             <select id="benchDist">
               <option value="normal">Normal(0,1)</option>
               <option value="uniform">Uniform(0,1)</option>
@@ -220,26 +207,28 @@
         </div>
 
         <div style="margin-top:12px" class="card">
-          <h3>Benchmark results</h3>
-          <div id="benchResults">Press <strong>Run benchmark</strong> to begin. Charts below show timings and numeric differences.</div>
+          <h3>Benchmark results (online methods)</h3>
+          <div id="benchResults">Press <strong>Run benchmark</strong> to execute. Charts show timings and numeric differences against Welford.</div>
           <div style="margin-top:8px" class="chart"><canvas id="timeChart"></canvas></div>
           <div style="margin-top:8px" class="chart"><canvas id="errChart"></canvas></div>
         </div>
       </article>
 
       <article class="card" aria-labelledby="desc-title">
-        <h2 id="desc-title">Conclusions</h2>
-        <p>Both two-pass and Welford algorithms are linear O(n) in time. Welford is generally preferred when:</p>
+        <h2 id="desc-title">Numerical discussion (brief)</h2>
+        <p>Main advantages of online (Welford) algorithms:</p>
         <ul>
-          <li>data arrive as a stream (cannot reread);</li>
-          <li>memory is limited (Welford uses O(1));</li>
-          <li>you care about numerical errors with very large values or tiny variance.</li>
+          <li><strong>Numerical stability</strong>: avoids cancellation between large, similar numbers.</li>
+          <li><strong>Low memory</strong>: O(1) extra space, suitable for streams and very large datasets.</li>
+          <li><strong>Mergeability</strong>: statistics can be combined pairwise for distributed computation without losing precision.</li>
+          <li><strong>Efficiency</strong>: O(1) updates per element and O(n) total time.</li>
         </ul>
+        <p>The naive <code>sum</code> &amp; <code>sumsq</code> approach is slightly faster but vulnerable to precision loss and even overflow for large-magnitude inputs. The benchmark demonstrates this trade-off.</p>
       </article>
 
     </main>
 
-    <footer class="small muted">© 2025 Riccardo D'Annibale</footer>
+    <footer class="small muted">© 2025 Riccardo D'Annibale — corrected version (online algorithms)</footer>
   </div>
 
   <script>
@@ -306,35 +295,23 @@
       const ctx3 = $('timeChart').getContext('2d');
       timeChart = new Chart(ctx3, {
         type: 'bar',
-        data: { labels: ['Two-pass','Welford (online)','Naive'], datasets: [{ label: 'ms per run (avg)', data: [0,0,0], barThickness: 36 }] },
+        data: { labels: ['Welford (online stable)','Sum/Sumsq (online unstable)'], datasets: [{ label: 'ms per run (avg)', data: [0,0], barThickness: 36 }] },
         options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.formattedValue} ms` } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'milliseconds' } } } }
       });
 
       const ctx4 = $('errChart').getContext('2d');
       errChart = new Chart(ctx4, {
         type: 'bar',
-        data: { labels: ['|Var_two - Var_welford|','|Var_naive - Var_welford|'], datasets: [{ label: 'absolute difference', data: [1e-300,1e-300], barThickness: 40 }] },
+        data: { labels: ['|Var_sum - Var_welford|'], datasets: [{ label: 'absolute difference', data: [1e-300], barThickness: 40 }] },
         options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'absolute value' }, type: 'logarithmic', ticks: { callback: function(value){ try { return Number(value).toExponential(1); } catch(e){ return value; } } } } } }
       });
     }
     initCharts();
 
-    // Statistics implementations
-    function mean(arr){ if(!arr.length) return NaN; return arr.reduce((a,b)=>a+b,0)/arr.length; }
-
-    function twoPass(arr){
-      const n = arr.length;
-      if(n === 0) return { mean: NaN, variance: NaN };
-      const m = mean(arr);
-      if(n < 2) return { mean: m, variance: NaN };
-      let ss = 0;
-      for(let x of arr) ss += (x - m) * (x - m);
-      return { mean: m, variance: ss / (n - 1) };
-    }
-
-    function welford(arr){
+    // Statistics: only online implementations (Welford + simple sum/sumsq online for comparison)
+    function welfordOnlineFromArray(arr){
       let n = 0, mu = 0, M2 = 0;
-      for(let x of arr){
+      for(const x of arr){
         n++;
         const delta = x - mu;
         mu += delta / n;
@@ -343,16 +320,20 @@
       return { mean: n ? mu : NaN, variance: n > 1 ? (M2 / (n - 1)) : NaN };
     }
 
-    function naive(arr){
-      const n = arr.length;
+    // Simple online accumulator: maintain sum and sumsq incrementally
+    function sumSumsqOnlineFromArray(arr){
+      let n = 0, s = 0, ss = 0;
+      for(const x of arr){
+        n++;
+        s += x;
+        ss += x * x;
+      }
       if(n === 0) return { mean: NaN, variance: NaN };
-      let s = 0, ss = 0;
-      for(let x of arr){ s += x; ss += x * x; }
       const m = s / n;
       return { mean: m, variance: n > 1 ? ((ss - n * m * m) / (n - 1)) : NaN };
     }
 
-    function runningStats(arr){
+    function runningStatsWelford(arr){
       const n = arr.length;
       const means = new Array(n);
       const vars = new Array(n);
@@ -379,14 +360,15 @@
         return;
       }
 
-      const m = mean(values);
-      const s2 = twoPass(values).variance;
+      const rW = welfordOnlineFromArray(values);
+      const m = rW.mean;
+      const s2 = rW.variance;
       const n = values.length;
       const mStr = Number.isFinite(m) ? m.toFixed(6) : 'N/A';
       const vStr = Number.isFinite(s2) ? s2.toExponential(6) : 'N/A (needs n≥2)';
       $('results').innerHTML = `<div><strong>n</strong>: ${n}</div><div><strong>Mean</strong>: ${mStr}</div><div><strong>Sample variance</strong>: ${vStr}</div>`;
 
-      const run = runningStats(values);
+      const run = runningStatsWelford(values);
       const cumMeans = run.means;
       const runVars = run.vars;
 
@@ -417,7 +399,7 @@
       const bandwidth = (function(){
         const n = values.length;
         if(n < 2) return 0.1;
-        const meanVal = mean(values);
+        const meanVal = values.reduce((a,b)=>a+b,0)/n;
         let s = 0;
         for(const v of values) s += (v - meanVal) * (v - meanVal);
         const sd = Math.sqrt(s / (n - 1));
@@ -494,7 +476,9 @@
       const parts = raw.split(',').map(s => s.trim()).filter(s => s !== '');
       const arr = parts.map(s => Number(s.replace(',', '.'))).filter(x => !Number.isNaN(x));
       if(arr.length === 0){ alert('No valid numbers found. Check syntax (use commas to separate).'); return; }
-      values = arr.slice();
+      // Process as a stream using the online algorithm: we still store values for plotting, but statistics are computed online
+      values = []; // reset and feed one by one to mirror streaming
+      for(const x of arr){ values.push(x); }
       updateUI();
     });
 
@@ -529,7 +513,7 @@
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
 
-    // Benchmark utilities
+    // Benchmark utilities (compare two online methods)
     function randNormal(){
       let u = 0, v = 0;
       while(u === 0) u = Math.random();
@@ -562,33 +546,29 @@
         const arr = generateArray(n, dist);
         $('benchResults').textContent = `Running benchmark on N=${n} (avg of ${trials} runs)...`;
 
-        const tTwo = timeFn(twoPass, arr, trials);
-        const tWelf = timeFn(welford, arr, trials);
-        const tNaive = timeFn(naive, arr, trials);
+        const tWelf = timeFn(welfordOnlineFromArray, arr, trials);
+        const tSum = timeFn(sumSumsqOnlineFromArray, arr, trials);
 
-        const rW = welford(arr);
-        const rT = twoPass(arr);
-        const rN = naive(arr);
+        const rW = welfordOnlineFromArray(arr);
+        const rS = sumSumsqOnlineFromArray(arr);
 
-        const varDiffTwo = Number.isFinite(rT.variance) && Number.isFinite(rW.variance) ? Math.abs(rT.variance - rW.variance) : NaN;
-        const varDiffNaive = Number.isFinite(rN.variance) && Number.isFinite(rW.variance) ? Math.abs(rN.variance - rW.variance) : NaN;
+        const varDiff = Number.isFinite(rS.variance) && Number.isFinite(rW.variance) ? Math.abs(rS.variance - rW.variance) : NaN;
 
-        timeChart.data.datasets[0].data = [ Number(tTwo.toFixed(3)), Number(tWelf.toFixed(3)), Number(tNaive.toFixed(3)) ];
+        timeChart.data.datasets[0].data = [ Number(tWelf.toFixed(3)), Number(tSum.toFixed(3)) ];
         timeChart.update();
 
-        errChart.data.datasets[0].data = [ (Number.isFinite(varDiffTwo) && varDiffTwo > 0) ? varDiffTwo : 1e-300, (Number.isFinite(varDiffNaive) && varDiffNaive > 0) ? varDiffNaive : 1e-300 ];
+        errChart.data.datasets[0].data = [ (Number.isFinite(varDiff) && varDiff > 0) ? varDiff : 1e-300 ];
         errChart.update();
 
         $('benchResults').innerHTML = `
           <table>
             <thead><tr><th>Method</th><th>ms/run (avg)</th><th>Mean</th><th>Variance</th></tr></thead>
             <tbody>
-              <tr><td>Two-pass (classic)</td><td>${tTwo.toFixed(3)}</td><td>${rT.mean}</td><td>${rT.variance}</td></tr>
-              <tr><td>Welford (online)</td><td>${tWelf.toFixed(3)}</td><td>${rW.mean}</td><td>${rW.variance}</td></tr>
-              <tr><td>Naive (sumsq - n*mean^2)</td><td>${tNaive.toFixed(3)}</td><td>${rN.mean}</td><td>${rN.variance}</td></tr>
+              <tr><td>Welford (online, stable)</td><td>${tWelf.toFixed(3)}</td><td>${rW.mean}</td><td>${rW.variance}</td></tr>
+              <tr><td>Sum &amp; SumSq (online, unstable)</td><td>${tSum.toFixed(3)}</td><td>${rS.mean}</td><td>${rS.variance}</td></tr>
             </tbody>
           </table>
-          <div style="margin-top:8px" class="small muted">Differences: |Var_two - Var_welford| = ${varDiffTwo}; |Var_naive - Var_welford| = ${varDiffNaive}</div>
+          <div style="margin-top:8px" class="small muted">Difference in variance: |Var_sum - Var_welford| = ${varDiff}</div>
         `;
         $('runBench').disabled = false;
       }, 50);
