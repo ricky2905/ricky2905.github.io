@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="utf-8" />
-  <title>Mean and Variance Simulator — Interactive</title>
+  <title>Mean and Variance Simulator — Interactive + Optional Homework</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
@@ -15,34 +15,51 @@
       --text:#e6f4e6;
       --mono:#dfeee0;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background-color:var(--bg);color:var(--text);line-height:1.6;padding:2rem;max-width:1100px;margin:auto}
-    .topnav{display:flex;gap:1rem;margin-bottom:1rem;align-items:center}
-    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
-    .topnav a:hover{color:#66bb6a}
-    h1,h2,h3{color:var(--accent);margin:0}
-    h1{font-size:1.9rem;border-bottom:3px solid var(--accent);padding-bottom:0.3rem;margin-bottom:0.75rem}
-    .card{background-color:var(--panel);border-left:5px solid var(--accent);border-radius:10px;padding:1.25rem;margin:1rem 0;box-shadow:0 8px 30px rgba(0,0,0,0.5);border:1px solid var(--card-border)}
-    .small{font-size:13px;color:var(--muted)}
-    label{display:block;margin-top:10px;font-weight:700;color:var(--text)}
-    input, textarea, select, button.secondary{
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* page container (keeps internal padding similar to original) */
+    .wrap { width:100%; padding: 0; }
+
+    .topnav { display:flex; gap:0.75rem; margin-bottom:1rem; align-items:center; flex-wrap:wrap; }
+    .topnav a { color: var(--accent); text-decoration: none; font-weight: 700; }
+    .topnav a:hover { color: #66bb6a; }
+    h1,h2,h3 { color: var(--accent); margin: 0; }
+    h1 { font-size: 1.9rem; border-bottom: 3px solid var(--accent); padding-bottom: 0.3rem; margin-bottom: 0.75rem; }
+    .card { background-color: var(--panel); border-left: 5px solid var(--accent); border-radius: 10px; padding: 1.25rem; margin: 1rem 0; box-shadow: 0 8px 30px rgba(0,0,0,0.5); border: 1px solid var(--card-border); }
+    .small { font-size: 13px; color: var(--muted); }
+    label { display:block; margin-top:10px; font-weight:700; color:var(--text); }
+    input, textarea, select, button.secondary {
       width:100%;
       padding:10px 12px;
       border-radius:8px;
       border:1px solid rgba(255,255,255,0.03);
-      background:#0b0c10;color:var(--text);font-size:14px;
+      background:#0b0c10; color:var(--text); font-size:14px;
     }
-    textarea{resize:vertical}
-    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    textarea { resize: vertical; }
+    .controls { display:flex; gap:12px; margin-top:12px; flex-wrap:wrap; }
     .controls > * { flex: 1 1 auto; min-width:140px; }
     .btn {
-      padding:10px 14px;border-radius:8px;background:var(--accent);border:0;color:#072;font-weight:800;cursor:pointer;
+      padding:10px 14px; border-radius:8px; background:var(--accent); border:0; color:#072; font-weight:800; cursor:pointer;
       box-shadow: 0 6px 18px rgba(76,175,80,0.07);
     }
     .btn.ghost { background: transparent; color: var(--muted); border:1px solid rgba(255,255,255,0.04); font-weight:700; box-shadow:none; }
-    .muted{color:var(--muted)}
+    .muted { color: var(--muted); }
+
+    /* Wider layout with right column */
     .layout { display:grid; grid-template-columns: 1fr 360px; gap:16px; align-items:start; }
-    @media(max-width:980px){ .layout{grid-template-columns:1fr} }
+    @media(max-width:980px){ .layout{ grid-template-columns:1fr } }
 
     /* fixed-size chart containers */
     .chart {
@@ -56,15 +73,13 @@
       box-sizing:border-box;
       overflow:auto;
     }
-    .chart canvas {
-      display:block;
-      width:100% !important;
-      height:100% !important;
-    }
-    .values-list { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; color:var(--mono); background: rgba(255,255,255,0.02); padding:8px; border-radius:6px; margin-top:8px; }
-    .code{background:#0b0c10;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);color:var(--mono);overflow:auto}
-    .display-equation{background: rgba(255,255,255,0.02); padding:10px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); margin:8px 0; font-size:1rem; color:var(--mono)}
-    footer{opacity:0.7;font-size:13px;margin-top:18px}
+    .chart canvas { display:block; width:100% !important; height:100% !important; }
+    .values-list { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; color:var(--mono); background: rgba(255,255,255,0.02); padding:8px; border-radius:6px; margin-top:8px; white-space:pre-wrap; word-break:break-word; }
+    .code { background:#0b0c10; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); color:var(--mono); overflow:auto; }
+    .display-equation { background: rgba(255,255,255,0.02); padding:10px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); margin:8px 0; font-size:1rem; color:var(--mono); }
+    footer { opacity:0.8; font-size:13px; margin-top:18px; text-align:center; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:6px 8px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.03); color:var(--mono); font-size:0.95rem; }
   </style>
 
   <!-- MathJax for equations -->
@@ -81,211 +96,406 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
-  <header class="topnav">
-    <a href="/">Home</a>
-    <a href="/about/">About</a>
-  </header>
+  <div class="wrap">
+    <header class="topnav">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+    </header>
 
-  <main>
+    <main>
 
-    <!-- --- Explanation (before the simulator) --- -->
-    <article class="card" aria-labelledby="explain-title">
-      <h1 id="explain-title">Explanation: what the simulator computes</h1>
-      <p class="small muted">This tool computes the main statistics of location and spread from a sequence of real numbers. It provides:</p>
-      <ul>
-        <li><strong>Sample mean</strong> \(\bar x = \frac{1}{n}\sum_{i=1}^n x_i\)</li>
-        <li><strong>Sample variance (unbiased)</strong> \(s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2\), for \(n\ge2\)</li>
-        <li>Cumulative mean plot (running mean) to observe stabilization</li>
-        <li>Histogram of values to visualize the distribution</li>
-      </ul>
+      <!-- Explanation -->
+      <article class="card" aria-labelledby="explain-title">
+        <h1 id="explain-title">What the simulator computes</h1>
+        <p class="small muted">This simulator computes the sample mean and sample variance of a numeric sequence. It contains: definitions, a compact derivation of the online algorithm (Welford), numerical stability analysis, and practical recommendations for optional homework.</p>
 
-      <div class="display-equation">\(\displaystyle \bar x = \frac{1}{n}\sum_{i=1}^n x_i\)</div>
-      <div class="display-equation">\(\displaystyle s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2\)</div>
+        <h3>Definitions</h3>
+        <ul>
+          <li><strong>Sample mean</strong> \(\displaystyle \bar x = \frac{1}{n}\sum_{i=1}^n x_i\).</li>
+          <li><strong>Sample variance (unbiased)</strong> \(\displaystyle s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i - \bar x)^2\), valid for \(n\ge2\).</li>
+        </ul>
 
-    </article>
+        <h3>Numerical issue</h3>
+        <p class="small muted">Computing variance using <code>ss = sum(x^2); mean = sum(x)/n; var = (ss - n*mean^2)/(n-1)</code> can suffer catastrophic cancellation when <em>ss</em> and <em>n*mean^2</em> are large and close in magnitude. Small differences lose significant digits.</p>
 
-    <!-- --- How to use (before the simulator) --- -->
-    <article class="card" aria-labelledby="howto-title">
-      <h2 id="howto-title">How to use</h2>
-      <ol>
-        <li><strong>Vector mode</strong>: click <em>Enter Vector</em>, paste numbers separated by commas and press <em>Calculate (vector)</em>. Charts and results will update.</li>
-        <li><strong>Step-by-step mode</strong>: click <em>Enter Values</em>, type a number and press <em>Add value</em>. You can reset entered values with <em>Reset values</em>.</li>
-        <li><strong>Reset All</strong> clears vector, values and charts.</li>
-        <li>For n=1 the variance is shown as "N/A (needs n≥2)".</li>
-      </ol>
-    </article>
+        <h3>Welford's online algorithm — compact derivation</h3>
+        <p>Welford maintains three quantities while scanning the data:</p>
+        <ul>
+          <li>count \(n\)</li>
+          <li>running mean \(\mu_n\)</li>
+          <li>running sum of squares of differences \(M2_n\)</li>
+        </ul>
+        <p>Update for a new observation \(x\):</p>
+        <div class="display-equation">\(n \leftarrow n+1\)</div>
+        <div class="display-equation">\(\delta = x - \mu_{n-1}\)</div>
+        <div class="display-equation">\(\mu_n = \mu_{n-1} + \delta / n\)</div>
+        <div class="display-equation">\(M2_n = M2_{n-1} + \delta \cdot (x - \mu_n)\)</div>
+        <p>At the end, the sample variance is \(s^2 = M2_n/(n-1)\) for \(n\ge2\). This avoids subtracting two large similar numbers and improves numerical stability.</p>
+      </article>
 
-    <!-- --- Simulator (central) --- -->
-    <section class="card layout" aria-labelledby="sim-title">
-      <div>
-        <h2 id="sim-title">Simulator — Input and Controls</h2>
+      <!-- How to use -->
+      <article class="card" aria-labelledby="howto-title">
+        <h2 id="howto-title">How to use</h2>
+        <ol>
+          <li><strong>Vector mode</strong>: paste numbers separated by commas and press <em>Calculate (vector)</em>.</li>
+          <li><strong>Step-by-step mode</strong>: enter values one by one with <em>Add value</em>.</li>
+          <li>The <strong>Optional Homework</strong> section includes extended explanations and enhanced charts (running variance, estimated density, etc.).</li>
+        </ol>
+      </article>
 
-        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn" id="btnWhole">Enter Vector</button>
-          <button class="btn ghost" id="btnStep">Enter Values</button>
-          <button class="btn ghost" id="btnResetAll">Reset All</button>
-        </div>
+      <!-- Simulator (central) -->
+      <section class="card layout" aria-labelledby="sim-title">
+        <div>
+          <h2 id="sim-title">Simulator — Input & Controls</h2>
 
-        <div id="wholePanel" style="margin-top:12px;">
-          <label for="vectorInput">Enter all numbers separated by commas</label>
-          <textarea id="vectorInput" rows="3" placeholder="e.g. 1, 2, 3.5, 4"></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" id="calcVector">Calculate (vector)</button>
-            <button class="btn ghost" id="clearVector">Clear</button>
+          <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn" id="btnWhole" aria-pressed="true">Enter Vector</button>
+            <button class="btn ghost" id="btnStep" aria-pressed="false">Enter Values</button>
+            <button class="btn ghost" id="btnResetAll">Reset All</button>
+          </div>
+
+          <div id="wholePanel" style="margin-top:12px;">
+            <label for="vectorInput">Paste numbers separated by commas</label>
+            <textarea id="vectorInput" rows="3" placeholder="e.g. 1, 2, 3.5, 4"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="calcVector">Calculate (vector)</button>
+              <button class="btn ghost" id="clearVector">Clear</button>
+            </div>
+          </div>
+
+          <div id="stepPanel" style="margin-top:12px; display:none;">
+            <label for="singleValue">Single value</label>
+            <input id="singleValue" type="number" inputmode="decimal" placeholder="Enter a number and press Add" />
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="addValue">Add value</button>
+              <button class="btn ghost" id="resetValues">Reset values</button>
+              <button class="btn ghost" id="exportCSV">Export CSV</button>
+            </div>
+            <div class="values-list" id="valuesList" aria-live="polite">Current data: []</div>
+          </div>
+
+          <div style="margin-top:12px" class="code" id="resultBox">
+            <strong>Results:</strong>
+            <div id="results" style="margin-top:8px;color:var(--mono)">No calculation performed yet.</div>
           </div>
         </div>
 
-        <div id="stepPanel" style="margin-top:12px; display:none;">
-          <label for="singleValue">Single value</label>
-          <input id="singleValue" type="number" inputmode="decimal" placeholder="Enter a number and press Add" />
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" id="addValue">Add value</button>
-            <button class="btn ghost" id="resetValues">Reset values</button>
-            <button class="btn ghost" id="exportCSV">Export CSV</button>
+        <aside>
+          <h3>Charts</h3>
+          <div class="chart" style="margin-top:8px">
+            <canvas id="cumMeanChart" aria-label="Cumulative mean chart"></canvas>
+            <div class="small muted" style="margin-top:6px">Cumulative mean with ±1 standard error (dashed lines).</div>
           </div>
-          <div class="values-list" id="valuesList">Current data: []</div>
+
+          <div class="chart" style="margin-top:12px">
+            <canvas id="runningVarChart" aria-label="Running variance chart"></canvas>
+            <div class="small muted" style="margin-top:6px">Running (sample) variance vs n — useful to check stability.</div>
+          </div>
+
+          <div class="chart" style="margin-top:12px">
+            <canvas id="histChart" aria-label="Histogram of values"></canvas>
+            <div class="small muted" style="margin-top:6px">Histogram with kernel density estimate overlay.</div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- Homework -->
+      <article class="card" aria-labelledby="hw-title">
+        <h2 id="hw-title">Optional Homework — Efficiency: online vs classic computation</h2>
+        <p class="small muted">Goal: compare efficiency, memory use and numerical stability of three implementations: two-pass (classic), Welford (online), and naive (sumsq - n*mean^2). This section contains explanations, benchmarks and guidance for reporting.</p>
+
+        <div class="code" style="margin-top:12px">
+          <label>Benchmark parameters</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <input id="benchN" type="number" value="1000000" />
+            <input id="benchTrials" type="number" value="5" />
+            <select id="benchDist">
+              <option value="normal">Normal(0,1)</option>
+              <option value="uniform">Uniform(0,1)</option>
+              <option value="large">Large magnitude (1e8 + small noise)</option>
+            </select>
+            <button class="btn" id="runBench">Run benchmark</button>
+          </div>
+          <div style="margin-top:10px" class="small muted">N = number of elements, Trials = how many runs to average.</div>
         </div>
 
-        <div style="margin-top:12px" class="code" id="resultBox">
-          <strong>Results:</strong>
-          <div id="results" style="margin-top:8px;color:var(--mono)">No calculation performed yet.</div>
+        <div style="margin-top:12px" class="card">
+          <h3>Benchmark results</h3>
+          <div id="benchResults">Press <strong>Run benchmark</strong> to begin. Charts below show timings and numeric differences.</div>
+          <div style="margin-top:8px" class="chart"><canvas id="timeChart"></canvas></div>
+          <div style="margin-top:8px" class="chart"><canvas id="errChart"></canvas></div>
         </div>
-      </div>
+      </article>
 
-      <aside>
-        <h3>Charts</h3>
-        <div class="chart" style="margin-top:8px">
-          <canvas id="cumMeanChart" aria-label="Cumulative mean chart"></canvas>
-          <div class="small muted" style="margin-top:6px">Cumulative mean vs index</div>
-        </div>
+      <article class="card" aria-labelledby="desc-title">
+        <h2 id="desc-title">Conclusions</h2>
+        <p>Both two-pass and Welford algorithms are linear O(n) in time. Welford is generally preferred when:</p>
+        <ul>
+          <li>data arrive as a stream (cannot reread);</li>
+          <li>memory is limited (Welford uses O(1));</li>
+          <li>you care about numerical errors with very large values or tiny variance.</li>
+        </ul>
+      </article>
 
-        <div class="chart" style="margin-top:12px">
-          <canvas id="histChart" aria-label="Histogram of values"></canvas>
-          <div class="small muted" style="margin-top:6px">Histogram of values</div>
-        </div>
-      </aside>
-    </section>
+    </main>
 
-    <!-- --- Final description of the simulation (end) --- -->
-    <article class="card" aria-labelledby="desc-title">
-      <h2 id="desc-title">Final description of the simulation</h2>
-      <p class="small muted">This simulation helps exploring how the sample mean and variance behave as data change. The <strong>cumulative mean</strong> is useful to see whether the mean stabilizes when more observations are added (related to the Law of Large Numbers). The <strong>histogram</strong> shows the empirical shape of the entered values' distribution.</p>
-
-      <p class="small muted">Fields and outputs:</p>
-      <ul>
-        <li><strong>n</strong>: current number of observations.</li>
-        <li><strong>Mean</strong>: arithmetic mean of the observations.</li>
-        <li><strong>Sample variance</strong>: unbiased estimate of dispersion, uses n−1.</li>
-      </ul>
-    </article>
-
-  </main>
-
-  <footer class="small muted">© 2025 Riccardo D'Annibale</footer>
+    <footer class="small muted">© 2025 Riccardo D'Annibale</footer>
+  </div>
 
   <script>
+    // Helper short selector
     const $ = id => document.getElementById(id);
+
+    // State
     let values = [];
-    let cumChart = null, histChart = null, lastExport = null;
+    let cumChart = null, histChart = null, timeChart = null, errChart = null, runningVarChart = null, lastExport = null;
+
+    // Simple Gaussian kernel density
+    function kernelDensity(xs, data, bandwidth){
+      const out = new Array(xs.length).fill(0);
+      const n = data.length;
+      if(n === 0) return out;
+      const invSqrt2pi = 1/Math.sqrt(2*Math.PI);
+      for(let i=0;i<xs.length;i++){
+        const x = xs[i];
+        let s = 0;
+        for(let j=0;j<n;j++){
+          const u = (x - data[j]) / bandwidth;
+          s += Math.exp(-0.5*u*u) * invSqrt2pi;
+        }
+        out[i] = s / (n * bandwidth);
+      }
+      return out;
+    }
 
     function initCharts(){
       if(cumChart) cumChart.destroy();
       if(histChart) histChart.destroy();
+      if(timeChart) timeChart.destroy();
+      if(errChart) errChart.destroy();
+      if(runningVarChart) runningVarChart.destroy();
 
       const ctx1 = $('cumMeanChart').getContext('2d');
       cumChart = new Chart(ctx1, {
         type: 'line',
-        data: { labels: [], datasets: [{ label: 'Cumulative mean', data: [], borderWidth: 1.6, pointRadius: 0, tension: 0.15 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, animation: false,
-          scales: { x: { title: { display: true, text: 'Index (k)' } }, y: { title: { display: true, text: 'Cumulative mean' } } },
-          plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }
-        }
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Cumulative mean', data: [], borderWidth: 2, tension: 0.18, fill: false, pointRadius: 0, borderColor: 'rgba(76,175,80,0.9)' },
+            { label: '±1 SE (upper)', data: [], borderWidth: 1, tension: 0.18, pointRadius: 0, borderDash: [6,4], fill: false, borderColor: 'rgba(159,184,159,0.7)' },
+            { label: '±1 SE (lower)', data: [], borderWidth: 1, tension: 0.18, pointRadius: 0, borderDash: [6,4], fill: false, borderColor: 'rgba(159,184,159,0.7)' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Index (k)' } }, y: { title: { display: true, text: 'Cumulative mean' } } } }
+      });
+
+      const ctxRv = $('runningVarChart').getContext('2d');
+      runningVarChart = new Chart(ctxRv, {
+        type: 'line',
+        data: { labels: [], datasets: [ { label: 'Running sample variance (s^2)', data: [], borderWidth: 2, tension: 0.18, pointRadius: 0 } ] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Index (k)' } }, y: { title: { display: true, text: 'Running sample variance' }, beginAtZero: true } } }
       });
 
       const ctx2 = $('histChart').getContext('2d');
       histChart = new Chart(ctx2, {
         type: 'bar',
-        data: { labels: [], datasets: [{ label: 'Count', data: [] }] },
-        options: {
-          responsive: true, maintainAspectRatio: false, animation: false,
-          scales: { y: { beginAtZero: true, title: { display: true, text: 'count' } } },
-          plugins: { legend: { display: false } }
-        }
+        data: { labels: [], datasets: [ { label: 'Count', data: [], barThickness: 'flex' }, { label: 'KDE', data: [], type: 'line', borderWidth: 2, pointRadius: 0, tension: 0.35 } ] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'count / density' } } } }
+      });
+
+      const ctx3 = $('timeChart').getContext('2d');
+      timeChart = new Chart(ctx3, {
+        type: 'bar',
+        data: { labels: ['Two-pass','Welford (online)','Naive'], datasets: [{ label: 'ms per run (avg)', data: [0,0,0], barThickness: 36 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.formattedValue} ms` } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'milliseconds' } } } }
+      });
+
+      const ctx4 = $('errChart').getContext('2d');
+      errChart = new Chart(ctx4, {
+        type: 'bar',
+        data: { labels: ['|Var_two - Var_welford|','|Var_naive - Var_welford|'], datasets: [{ label: 'absolute difference', data: [1e-300,1e-300], barThickness: 40 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'absolute value' }, type: 'logarithmic', ticks: { callback: function(value){ try { return Number(value).toExponential(1); } catch(e){ return value; } } } } } }
       });
     }
     initCharts();
 
+    // Statistics implementations
     function mean(arr){ if(!arr.length) return NaN; return arr.reduce((a,b)=>a+b,0)/arr.length; }
-    function sampleVariance(arr){
-      const n = arr.length; if(n < 2) return NaN;
-      const m = mean(arr); let ss = 0; for(let x of arr) ss += (x - m)*(x - m); return ss / (n - 1);
+
+    function twoPass(arr){
+      const n = arr.length;
+      if(n === 0) return { mean: NaN, variance: NaN };
+      const m = mean(arr);
+      if(n < 2) return { mean: m, variance: NaN };
+      let ss = 0;
+      for(let x of arr) ss += (x - m) * (x - m);
+      return { mean: m, variance: ss / (n - 1) };
+    }
+
+    function welford(arr){
+      let n = 0, mu = 0, M2 = 0;
+      for(let x of arr){
+        n++;
+        const delta = x - mu;
+        mu += delta / n;
+        M2 += delta * (x - mu);
+      }
+      return { mean: n ? mu : NaN, variance: n > 1 ? (M2 / (n - 1)) : NaN };
+    }
+
+    function naive(arr){
+      const n = arr.length;
+      if(n === 0) return { mean: NaN, variance: NaN };
+      let s = 0, ss = 0;
+      for(let x of arr){ s += x; ss += x * x; }
+      const m = s / n;
+      return { mean: m, variance: n > 1 ? ((ss - n * m * m) / (n - 1)) : NaN };
+    }
+
+    function runningStats(arr){
+      const n = arr.length;
+      const means = new Array(n);
+      const vars = new Array(n);
+      let count = 0, mu = 0, M2 = 0;
+      for(let i=0;i<n;i++){
+        const x = arr[i];
+        count++;
+        const delta = x - mu;
+        mu += delta / count;
+        M2 += delta * (x - mu);
+        means[i] = mu;
+        vars[i] = (count > 1) ? (M2 / (count - 1)) : NaN;
+      }
+      return { means, vars };
     }
 
     function updateUI(){
-      $('valuesList').textContent = `Current data: [${values.join(', ')}]`;
+      $('valuesList').textContent = `Current data: [${values.slice(0,200).join(', ')}${values.length > 200 ? ', ...' : ''}]`;
+
       if(values.length === 0){
         $('results').innerHTML = `<em>No data available.</em>`;
-        updateCharts([], []);
+        updateCharts([], [], { labels: [], counts: [] }, null);
         lastExport = null;
         return;
       }
+
       const m = mean(values);
-      const s2 = sampleVariance(values);
+      const s2 = twoPass(values).variance;
       const n = values.length;
       const mStr = Number.isFinite(m) ? m.toFixed(6) : 'N/A';
       const vStr = Number.isFinite(s2) ? s2.toExponential(6) : 'N/A (needs n≥2)';
       $('results').innerHTML = `<div><strong>n</strong>: ${n}</div><div><strong>Mean</strong>: ${mStr}</div><div><strong>Sample variance</strong>: ${vStr}</div>`;
 
-      const cumMeans = [];
-      let cum = 0;
-      for(let i=0;i<values.length;i++){ cum += values[i]; cumMeans.push(cum / (i+1)); }
+      const run = runningStats(values);
+      const cumMeans = run.means;
+      const runVars = run.vars;
+
+      const se = cumMeans.map((_, i) => { const v = runVars[i]; return (i+1 > 1 && Number.isFinite(v)) ? Math.sqrt(v / (i+1)) : NaN; });
 
       const bins = Math.min(40, Math.max(6, Math.ceil(Math.sqrt(values.length))));
       const minV = Math.min(...values);
       const maxV = Math.max(...values);
       const range = (maxV - minV) || 1;
       const counts = new Array(bins).fill(0);
+      const binCenters = new Array(bins);
       for(let x of values){
         let idx = Math.floor(((x - minV) / range) * bins);
-        if(idx < 0) idx = 0; if(idx >= bins) idx = bins - 1; counts[idx]++;
+        if(idx < 0) idx = 0;
+        if(idx >= bins) idx = bins - 1;
+        counts[idx]++;
       }
-      const labels = counts.map((_,i) => {
-        const a = (minV + (i/ bins) * range);
-        const b = (minV + ((i+1)/ bins) * range);
-        return `${a.toFixed(2)}–${b.toFixed(2)}`;
-      });
+      for(let i=0;i<bins;i++){
+        const a = (minV + (i / bins) * range);
+        const b = (minV + ((i + 1) / bins) * range);
+        binCenters[i] = (a + b) / 2;
+      }
 
-      updateCharts(cumMeans, { labels, counts });
+      const gridSize = 200;
+      const grid = new Array(gridSize);
+      for(let i=0;i<gridSize;i++) grid[i] = minV + (i / (gridSize - 1)) * range;
+
+      const bandwidth = (function(){
+        const n = values.length;
+        if(n < 2) return 0.1;
+        const meanVal = mean(values);
+        let s = 0;
+        for(const v of values) s += (v - meanVal) * (v - meanVal);
+        const sd = Math.sqrt(s / (n - 1));
+        return Math.max(sd * Math.pow(n, -1/5), 1e-6);
+      })();
+
+      const kde = kernelDensity(grid, values, Math.max(bandwidth, 1e-6));
+      const histLabels = binCenters.map(c => c.toFixed(2));
+
+      updateCharts(cumMeans, runVars, { labels: histLabels, counts }, { grid, kde, gridMin: grid[0], gridMax: grid[grid.length - 1] }, se);
       lastExport = { values: values.slice(), mean: m, variance: s2 };
     }
 
-    function updateCharts(cumMeans, hist){
-      cumChart.data.labels = cumMeans.map((_,i) => i+1);
-      cumChart.data.datasets[0].data = cumMeans;
+    function updateCharts(cumMeans, runVars, hist, kdeData, se){
+      cumChart.data.labels = cumMeans.map((_, i) => i + 1);
+      cumChart.data.datasets[0].data = cumMeans.map(v => Number.isFinite(v) ? v : null);
+
+      const upper = cumMeans.map((m, i) => (Number.isFinite(m) && se && Number.isFinite(se[i])) ? (m + se[i]) : null);
+      const lower = cumMeans.map((m, i) => (Number.isFinite(m) && se && Number.isFinite(se[i])) ? (m - se[i]) : null);
+
+      cumChart.data.datasets[1].data = upper;
+      cumChart.data.datasets[2].data = lower;
       cumChart.update();
 
-      if(hist && hist.labels.length){
+      if(runningVarChart){
+        runningVarChart.data.labels = cumMeans.map((_, i) => i + 1);
+        runningVarChart.data.datasets[0].data = runVars.map(v => Number.isFinite(v) ? v : null);
+        runningVarChart.update();
+      }
+
+      if(histChart){
         histChart.data.labels = hist.labels;
         histChart.data.datasets[0].data = hist.counts;
-      } else {
-        histChart.data.labels = [];
-        histChart.data.datasets[0].data = [];
+        if(kdeData && kdeData.kde && kdeData.kde.length){
+          const maxCount = Math.max(...hist.counts, 1);
+          const kdeMax = Math.max(...kdeData.kde, 1e-12);
+          const scale = maxCount / kdeMax;
+          const sampled = hist.labels.map((lab, i) => {
+            const center = Number(lab);
+            const idx = Math.round((center - kdeData.gridMin) / (kdeData.gridMax - kdeData.gridMin) * (kdeData.kde.length - 1));
+            const clamped = Math.max(0, Math.min(kdeData.kde.length - 1, idx));
+            return kdeData.kde[clamped] * scale;
+          });
+          histChart.data.datasets[1].data = sampled;
+        } else {
+          histChart.data.datasets[1].data = [];
+        }
+        histChart.update();
       }
-      histChart.update();
     }
 
-    // Event bindings
-    $('btnWhole').addEventListener('click', ()=>{ $('wholePanel').style.display = 'block'; $('stepPanel').style.display = 'none'; $('btnWhole').classList.remove('ghost'); $('btnStep').classList.add('ghost'); });
-    $('btnStep').addEventListener('click', ()=>{ $('wholePanel').style.display = 'none'; $('stepPanel').style.display = 'block'; $('btnStep').classList.remove('ghost'); $('btnWhole').classList.add('ghost'); });
+    // UI events
+    $('btnWhole').addEventListener('click', ()=>{
+      $('wholePanel').style.display = 'block';
+      $('stepPanel').style.display = 'none';
+      $('btnWhole').classList.remove('ghost');
+      $('btnStep').classList.add('ghost');
+      $('btnWhole').setAttribute('aria-pressed','true');
+      $('btnStep').setAttribute('aria-pressed','false');
+    });
+    $('btnStep').addEventListener('click', ()=>{
+      $('wholePanel').style.display = 'none';
+      $('stepPanel').style.display = 'block';
+      $('btnStep').classList.remove('ghost');
+      $('btnWhole').classList.add('ghost');
+      $('btnStep').setAttribute('aria-pressed','true');
+      $('btnWhole').setAttribute('aria-pressed','false');
+    });
 
     $('clearVector').addEventListener('click', ()=>{ $('vectorInput').value = ''; });
     $('calcVector').addEventListener('click', ()=>{
       const raw = $('vectorInput').value.trim();
       if(!raw){ alert('Please enter some numbers separated by commas.'); return; }
-      const arr = raw.split(',').map(s => s.trim()).map(s => s === '' ? NaN : Number(s.replace(',', '.'))).filter(x => !Number.isNaN(x));
+      const parts = raw.split(',').map(s => s.trim()).filter(s => s !== '');
+      const arr = parts.map(s => Number(s.replace(',', '.'))).filter(x => !Number.isNaN(x));
       if(arr.length === 0){ alert('No valid numbers found. Check syntax (use commas to separate).'); return; }
-      values = arr.slice(); updateUI();
+      values = arr.slice();
+      updateUI();
     });
 
     $('addValue').addEventListener('click', ()=>{
@@ -293,11 +503,19 @@
       if(v === '') { alert('Please enter a number before adding.'); return; }
       const num = Number(String(v).replace(',', '.'));
       if(Number.isNaN(num)){ alert('Invalid value.'); return; }
-      values.push(num); $('singleValue').value = ''; updateUI();
+      values.push(num);
+      $('singleValue').value = '';
+      updateUI();
     });
 
     $('resetValues').addEventListener('click', ()=>{ values = []; updateUI(); });
-    $('btnResetAll').addEventListener('click', ()=>{ if(!confirm('Reset the simulator and delete all data?')) return; values = []; $('vectorInput').value = ''; $('singleValue').value = ''; updateUI(); });
+    $('btnResetAll').addEventListener('click', ()=>{
+      if(!confirm('Reset the simulator and delete all data?')) return;
+      values = [];
+      $('vectorInput').value = '';
+      $('singleValue').value = '';
+      updateUI();
+    });
 
     $('exportCSV').addEventListener('click', ()=>{
       if(!lastExport || !lastExport.values || lastExport.values.length === 0){ alert('Run at least one input / calculation before exporting.'); return; }
@@ -311,10 +529,83 @@
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
 
+    // Benchmark utilities
+    function randNormal(){
+      let u = 0, v = 0;
+      while(u === 0) u = Math.random();
+      while(v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    function generateArray(n, dist){
+      const arr = new Array(n);
+      if(dist === 'normal'){ for(let i=0;i<n;i++) arr[i] = randNormal(); }
+      else if(dist === 'uniform'){ for(let i=0;i<n;i++) arr[i] = Math.random(); }
+      else if(dist === 'large'){ for(let i=0;i<n;i++) arr[i] = 1e8 + (randNormal() * 1e-2); }
+      return arr;
+    }
+
+    function timeFn(fn, arr, trials){
+      for(let i=0;i<4;i++) fn(arr);
+      const t0 = performance.now();
+      for(let i=0;i<trials;i++) fn(arr);
+      const t1 = performance.now();
+      return (t1 - t0) / trials;
+    }
+
+    $('runBench').addEventListener('click', ()=>{
+      const n = Math.max(1, Number($('benchN').value) || 100000);
+      const trials = Math.max(1, Number($('benchTrials').value) || 3);
+      const dist = $('benchDist').value;
+      $('benchResults').textContent = `Generating vector N=${n} (${dist})...`;
+      $('runBench').disabled = true;
+      setTimeout(()=>{
+        const arr = generateArray(n, dist);
+        $('benchResults').textContent = `Running benchmark on N=${n} (avg of ${trials} runs)...`;
+
+        const tTwo = timeFn(twoPass, arr, trials);
+        const tWelf = timeFn(welford, arr, trials);
+        const tNaive = timeFn(naive, arr, trials);
+
+        const rW = welford(arr);
+        const rT = twoPass(arr);
+        const rN = naive(arr);
+
+        const varDiffTwo = Number.isFinite(rT.variance) && Number.isFinite(rW.variance) ? Math.abs(rT.variance - rW.variance) : NaN;
+        const varDiffNaive = Number.isFinite(rN.variance) && Number.isFinite(rW.variance) ? Math.abs(rN.variance - rW.variance) : NaN;
+
+        timeChart.data.datasets[0].data = [ Number(tTwo.toFixed(3)), Number(tWelf.toFixed(3)), Number(tNaive.toFixed(3)) ];
+        timeChart.update();
+
+        errChart.data.datasets[0].data = [ (Number.isFinite(varDiffTwo) && varDiffTwo > 0) ? varDiffTwo : 1e-300, (Number.isFinite(varDiffNaive) && varDiffNaive > 0) ? varDiffNaive : 1e-300 ];
+        errChart.update();
+
+        $('benchResults').innerHTML = `
+          <table>
+            <thead><tr><th>Method</th><th>ms/run (avg)</th><th>Mean</th><th>Variance</th></tr></thead>
+            <tbody>
+              <tr><td>Two-pass (classic)</td><td>${tTwo.toFixed(3)}</td><td>${rT.mean}</td><td>${rT.variance}</td></tr>
+              <tr><td>Welford (online)</td><td>${tWelf.toFixed(3)}</td><td>${rW.mean}</td><td>${rW.variance}</td></tr>
+              <tr><td>Naive (sumsq - n*mean^2)</td><td>${tNaive.toFixed(3)}</td><td>${rN.mean}</td><td>${rN.variance}</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px" class="small muted">Differences: |Var_two - Var_welford| = ${varDiffTwo}; |Var_naive - Var_welford| = ${varDiffNaive}</div>
+        `;
+        $('runBench').disabled = false;
+      }, 50);
+    });
+
     // Initial UI
     updateUI();
-    document.addEventListener('DOMContentLoaded', ()=>{ if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{}); });
-    window.addEventListener('resize', ()=>{ if(cumChart) cumChart.resize(); if(histChart) histChart.resize(); });
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{});
+    });
+    window.addEventListener('resize', ()=>{
+      if(cumChart) cumChart.resize();
+      if(histChart) histChart.resize();
+      if(timeChart) timeChart.resize();
+      if(errChart) errChart.resize();
+      if(runningVarChart) runningVarChart.resize();
+    });
   </script>
 </body>
 </html>
