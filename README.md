@@ -39,7 +39,7 @@ Interactive simulations and theoretical notes illustrating the Weak/Strong Law o
 
 **Title:** *Measures of Location — Survey, Theory, and Practical Use*
 
-A page summarizing the main measures of location—including arithmetic mean, median, mode, geometric mean, harmonic mean, RMS, power/Lehmer means, trimmed/Winsorized means, and M-estimators. It provides formulas, practical guidance on when to use each measure, notes on robustness, and a few illustrative numerical examples.
+A web page presenting key measures of location and dispersion, including the mean, median, mode, and their variants (geometric, harmonic, RMS), along with spread measures such as range, variance, standard deviation, IQR, MAD, and CV. It features formal definitions and formulas (population vs. sample), practical guidance on usage and limitations, worked examples, reproducible code, reporting recommendations, and an interactive toolkit with histogram and boxplot diagnostics.
 
 ### Homework 6
 
