@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bernoulli process, LLN, Pascal & Fibonacci</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="University essay and interactive tools: Bernoulli process, LLN, CLT, Pascal's triangle, binomial expansion, Fibonacci.">
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf; --text:#e0e0e0 }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .wrap{max-width:1100px;margin:2rem auto;padding:2rem}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    h1{color:var(--accent);font-size:2.2rem;border-bottom:3px solid var(--accent);padding-bottom:.3rem}
+    .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:#dfffe0}
+    input, select{width:100%;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0b0c10;color:var(--text)}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
+    .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:260px;box-sizing:border-box;overflow:hidden}
+    .chartCard canvas{width:100%;height:180px;display:block}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
+    button{padding:8px 12px;border-radius:6px;background:var(--accent);border:0;color:#072;font-weight:700;cursor:pointer}
+    .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
+    .pascalRow{font-family:monospace;white-space:pre}
+    /* MathJax SVG styling for clarity */
+    .mjx-svg { fill: var(--text) !important; display:block; margin:.4rem 0; shape-rendering:geometricPrecision; }
+    .mjx-svg .mjx-mrow { font-size:1.22rem !important; }
+    @media(max-width:520px){ .mjx-svg .mjx-mrow { font-size:1.0rem !important } }
+  </style>
+
+  <!-- MathJax config (SVG output) -->
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/svg'] },
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']],
+        packages: {'[+]': ['ams']}
+      },
+      options: { skipHtmlTags: ['script','style','textarea','pre','code'] },
+      svg: { fontCache: 'none', scale: 1.3 }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
+</head>
+<body>
+  <div class="wrap">
+     <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+    <main>
+      <article class="card">
+        <h1>HMWK 2 — Bernoulli process, LLN and combinatorial connections</h1>
+        <p class="small">Theoretical discussion: Bernoulli, LLN, CLT, Pascal's triangle, binomial expansion, Fibonacci.</p>
+      </article>
+
+      <article class="card">
+        <h2>1. Bernoulli process and binomial</h2>
+        <div class="display-equation">
+          \[
+            \displaystyle S_n = \sum_{i=1}^n X_i \sim \mathrm{Binom}(n,p),\qquad
+            P(S_n=k)=\binom{n}{k} p^k (1-p)^{n-k}.
+          \]
+        </div>
+        <p>In HMWK1, the effective success parameter is \\(q=(1-p_{\\text{attacker}})^m\\), therefore the count of safe weeks follows \\(\mathrm{Binom}(n,q)\\).</p>
+      </article>
+
+      <article class="card">
+        <h2>2. Law of Large Numbers (LLN)</h2>
+        <div class="display-equation">
+          \[
+            \displaystyle \overline{X}_n=\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1].
+          \]
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>4. Pascal's triangle and binomial expansion</h2>
+        <div class="display-equation">
+          \[
+            \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}, \qquad
+            (a+b)^n = \sum_{k=0}^n \binom{n}{k} a^{n-k} b^{k}.
+          \]
+        </div>
+
+        <div class="controls" style="margin-top:8px">
+          <div style="flex:1"><label>Generate Pascal's triangle up to (row n)</label><input id="pascal_n" type="number" value="12" min="1" max="30"></div>
+          <button id="gen_pascal" class="btn">Generate Pascal</button>
+        </div>
+
+        <div id="pascal_box" class="code" style="margin-top:8px;max-height:220px;overflow:auto"></div>
+      </article>
+
+      <article class="card">
+        <h2>5. Fibonacci from Pascal's triangle</h2>
+        <p>Identity:</p>
+        <div class="display-equation">
+          \[
+            \displaystyle F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n-1-i}{i}.
+          \]
+        </div>
+        <pre id="fib_out" class="code">—</pre>
+      </article>
+
+      <article class="card">
+        <h2>7. Interactive demos: LLN & binomial</h2>
+        <div class="controls">
+          <div style="flex:1"><label>n (trials)</label><input id="n_lln" type="number" value="500" min="1" max="100000"></div>
+          <div style="flex:1"><label>m (paths)</label><input id="m_lln" type="number" value="50" min="1" max="200"></div>
+          <div style="flex:1"><label>p (Bernoulli)</label><input id="p_lln" type="number" step="0.01" value="0.6" min="0" max="1"></div>
+        </div>
+        <div class="controls" style="margin-top:8px"><button id="btn_lln" class="btn">Run LLN</button></div>
+
+        <div class="chartRow" style="margin-top:12px">
+          <div class="chartCard"><canvas id="llnChart"></canvas><div class="small">Evolution of sample means (multiple paths)</div></div>
+          <div class="chartCard"><canvas id="binomChart"></canvas><div class="small">Empirical distribution vs theoretical binomial</div></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>References</h2>
+        <ol class="small"><li>W. Feller, <em>An Introduction to Probability Theory and Its Applications</em>, Vol.1.</li><li>P. Billingsley, <em>Probability and Measure</em>.</li><li>G. Graham, D. Knuth, O. Patashnik, <em>Concrete Mathematics</em>.</li></ol>
+      </article>
+    </main>
+
+    <footer class="small">© 2025 Riccardo D'Annibale</footer>
+  </div>
+
+  <script>
+    // wait for Chart.js
+    function ready(){
+      if(typeof Chart === 'undefined'){ setTimeout(ready,50); return; }
+
+      function binomCoeff(n,k){
+        if(k<0||k>n) return 0;
+        k = Math.min(k, n-k);
+        let num=1, den=1;
+        for(let i=1;i<=k;i++){ num *= (n - (k - i)); den *= i; }
+        return Math.round(num/den);
+      }
+
+      function generatePascal(n){
+        const T = [];
+        for(let i=0;i<=n;i++){
+          T[i]=[];
+          for(let j=0;j<=i;j++){
+            if(j===0||j===i) T[i][j]=1; else T[i][j]=T[i-1][j-1]+T[i-1][j];
+          }
+        }
+        return T;
+      }
+
+      document.getElementById('gen_pascal').addEventListener('click', ()=>{
+        const n = Math.max(1, Math.min(30, Math.floor(Number(document.getElementById('pascal_n').value))));
+        const T = generatePascal(n);
+        const box = document.getElementById('pascal_box'); box.innerHTML='';
+        const maxLen = T[n].length * 4;
+        for(let i=0;i<T.length;i++){
+          const row = T[i].map(x=>String(x).padStart(3,' ')).join(' ');
+          const pad = ' '.repeat(Math.floor((maxLen - row.length)/2));
+          const div = document.createElement('div'); div.className='pascalRow'; div.textContent = pad + row;
+          box.appendChild(div);
+        }
+        const fib = [1,1];
+        for(let k=3;k<=n+2;k++){
+          let s=0;
+          for(let i=0;i<=Math.floor((k-1)/2);i++){ s += binomCoeff(k-1-i, i); }
+          fib.push(s);
+        }
+        document.getElementById('fib_out').textContent = 'Fibonacci (extracted from Pascal diagonals):\n' + fib.join(', ');
+      });
+
+      // LLN charts
+      const llnCtx = document.getElementById('llnChart').getContext('2d');
+      const binomCtx = document.getElementById('binomChart').getContext('2d');
+      let llnChart = new Chart(llnCtx, { type:'line', data:{ labels:[], datasets:[] }, options:{ responsive:true, plugins:{legend:{display:false}}, scales:{y:{min:0,max:1}} }});
+      let binomChart = new Chart(binomCtx, { type:'bar', data:{ labels:[], datasets:[] }, options:{ responsive:true, scales:{y:{beginAtZero:true}} }});
+
+      document.getElementById('btn_lln').addEventListener('click', ()=>{
+        const n = Math.max(1, Math.floor(Number(document.getElementById('n_lln').value)));
+        const m = Math.max(1, Math.floor(Number(document.getElementById('m_lln').value)));
+        const p = Math.max(0, Math.min(1, Number(document.getElementById('p_lln').value)));
+
+        const samplePoints = 200;
+        const step = Math.max(1, Math.floor(n / samplePoints));
+        const labels = []; for(let i=step;i<=n;i+=step) labels.push(i);
+
+        const datasets = [];
+        for(let path=0; path<m; path++){
+          let sum = 0; const data=[];
+          for(let i=1;i<=n;i++){
+            const X = Math.random() < p ? 1 : 0; sum += X;
+            if(i % step === 0) data.push(sum / i);
+          }
+          datasets.push({ label: 'path'+(path+1), data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false });
+        }
+        llnChart.data.labels = labels; llnChart.data.datasets = datasets; llnChart.update();
+
+        // binomial empirical vs theoretical
+        const trials = 2000; const counts = Array(n+1).fill(0);
+        for(let t=0;t<trials;t++){ let k=0; for(let i=0;i<n;i++) if(Math.random() < p) k++; counts[k]++; }
+        const freqs = counts.map(c=>c/trials);
+        const theo = counts.map((_,k) => binomCoeff(n,k) * Math.pow(p,k) * Math.pow(1-p,n-k));
+        const labelsK = counts.map((_,k)=>k);
+        binomChart.data.labels = labelsK;
+        binomChart.data.datasets = [{ label:'Empirical', data: freqs, backgroundColor:'rgba(76,175,80,0.45)' }, { label:'Theoretical', data: theo, type:'line', borderColor:'#fff', fill:false, pointRadius:2 }];
+        binomChart.update();
+      });
+
+    } // end ready
+    ready();
+  </script>
+</body>
+</html>
