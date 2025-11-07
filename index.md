@@ -31,7 +31,7 @@ Select Homework:
 - [Homework 4 – Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
 - [Homework 5 – Measures of Location and Dispersion](/HOMEWORK/homework5/index.html)
 - [Homework 6 –  Mean and Variance Simulator - Numerical Stability and Algorithm Comparison](/HOMEWORK/homework6/index.html)
-- [Homework 7 – Random Walk & Binomial Convergence ](/HOMEWORK/homework7/index.html)
+- [Homework 7 – Random Walk & Binomial Convergence](/HOMEWORK/homework7/index.html)
 - [Homework 8 – Bernoulli process, LLN, Pascal & Fibonacci](/HOMEWORK/homework8/index.html)
 
 ---
