@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <title>Bernoulli process, LLN, CLT, Pascal & Fibonacci — Confronto formale corretto</title>
+  <title>Bernoulli process, LLN, CLT, Pascal & Fibonacci — Confronto formale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="University essay and interactive tools: Bernoulli process, LLN, CLT, Pascal's triangle, binomial expansion, Fibonacci.">
   <style>
@@ -64,11 +64,11 @@
     <main>
       <article class="card">
         <h1>HMWK 2 — Processo di Bernoulli, LLN, CLT e connessioni combinatorie</h1>
-        <p class="small">Versione corretta: confronto formale, formule rese con MathJax, demo interattive.</p>
+        <p class="small">Versione finale: confronto formale in italiano, formule rese con MathJax e demo interattive.</p>
       </article>
 
       <article class="card">
-        <h2>Definizioni principali</h2>
+        <h2>1. Processo di Bernoulli e binomiale</h2>
         <div class="display-equation">
           \[
             X_1,X_2,\dots \overset{\text{iid}}{\sim} \mathrm{Bernoulli}(p),\qquad
@@ -80,104 +80,50 @@
             \mathbb{E}[S_n]=np,\qquad \mathrm{Var}(S_n)=np(1-p).
           \]
         </div>
+        <p class="small">(Nel compito precedente l'effettiva probabilità di successo per prova era \\(q=(1-p_{\text{attacker}})^m\\); sostituire \\(p\\) con \\(q\\) in tutte le formule quando si confrontano i due esercizi.)</p>
       </article>
 
       <article class="card">
-        <h2>Legge dei grandi numeri (LLN) — enunciato</h2>
+        <h2>2. Legge dei grandi numeri (LLN)</h2>
         <div class="display-equation">
           \[
             \overline{X}_n=\frac{S_n}{n}=\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]=p.
           \]
         </div>
-        <p class="formal">
-          Enunciato (versione forte): per la sequenza iid \\(X_i\\) con \\(\mathbb{E}[|X_1|]<\infty\\),
-          si ha \\(\displaystyle \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]\\).
-          Nel caso Bernoulli, la convergenza implica che per quasi ogni realizzazione la media campionaria tende a \\(p\\) al crescere di \\(n\\).
-        </p>
+        <p class="formal">Enunciato (forte): per \(X_i\) iid con \(\mathbb{E}[|X_1|]<\infty\),
+          \(\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]\).
+          Nel caso Bernoulli la convergenza implica che, per quasi ogni realizzazione, la media campionaria converge a \(p\) al crescere di \(n\).</p>
       </article>
 
       <article class="card">
-        <h2>Teorema del limite centrale (CLT) — enunciato</h2>
+        <h2>3. Teorema del limite centrale (CLT)</h2>
         <div class="display-equation">
           \[
             \sqrt{n}\,(\overline{X}_n - p) \xrightarrow{d} \mathcal{N}\big(0,\;p(1-p)\big).
           \]
         </div>
-        <p class="formal">
-          Enunciato (classico): per \\(X_i\\) iid con media \\(\mu\\) e varianza finita \\(\sigma^2\\),
-          la quantità \\(\sqrt{n}(\overline X_n - \mu)\\) converge in distribuzione a \\(N(0,\sigma^2)\\).
-          Nel caso Bernoulli, \\(\mu=p\\) e \\(\sigma^2 = p(1-p)\\).
-        </p>
+        <p class="formal">CLT: per \(X_i\) iid con media \(\mu\) e varianza \(\sigma^2\),
+          \(\sqrt{n}(\overline X_n - \mu)\xrightarrow{d} N(0,\sigma^2)\). Nel caso Bernoulli \(\mu=p\), \(\sigma^2=p(1-p)\).</p>
       </article>
 
       <article class="card">
-        <h2>Confronto formale: grafico LLN (percorsi) vs grafico binomiale (ensemble)</h2>
-
-        <div class="formal">
-          <h3 style="margin:0 0 .5rem 0; color:var(--accent)">Obiettivo</h3>
-          <p>Di seguito una formulazione rigorosa e priva di ambiguità delle differenze concettuali e matematiche fra le due rappresentazioni visive usate nella demo: il grafico delle medie campionarie (LLN) e il grafico che mostra la distribuzione di \\(S_n\\) (Binomiale) tramite ripetizioni.</p>
-
-          <h4 style="margin-top:0.6rem">1. Oggetto visualizzato</h4>
-          <ul>
-            <li><strong>Grafico LLN (pathwise)</strong>: ogni curva rappresenta una singola realizzazione (percorso) del processo di Bernoulli; l'asse orizzontale è il tempo/discreto \\(k=1,\dots,n\\), l'asse verticale è la media campionaria \\(\overline{X}_k\\). LLN garantisce che, per quasi ogni percorso, \\(\overline{X}_k\\to p\\) quando \\(k\to\infty\\).</li>
-            <li><strong>Grafico binomiale (ensemble)</strong>: per molte ripetizioni indipendenti dell'intero esperimento di lunghezza fissa \\(n\\) si registra il valore di \\(S_n\\) in ciascuna ripetizione; si plottano le frequenze relative dei valori possibili \\(k\\). Il grafico è quindi una stima empirica della distribuzione discreta \\(k\mapsto P(S_n=k)\\).</li>
-          </ul>
-
-          <h4 style="margin-top:0.6rem">2. Varianza vs deviazione standard — perché nessuna contraddizione</h4>
-          <p>
-            Per evitare ambiguità, usiamo la <em>deviazione standard</em> come misura di dispersione. Per \\(S_n\\) e per la media \\(\overline{X}_n=S_n/n\\) valgono:
-            \[
-              \mathrm{Var}(S_n)=np(1-p),\qquad \mathrm{SD}(S_n)=\sqrt{np(1-p)}\sim C\sqrt{n},
-            \]
-            mentre per la media campionaria
-            \[
-              \mathrm{Var}(\overline{X}_n)=\frac{p(1-p)}{n},\qquad \mathrm{SD}(\overline{X}_n)=\sqrt{\frac{p(1-p)}{n}}\sim \frac{C}{\sqrt{n}}.
-            \]
-            Quindi:
-            <ul>
-              <li>La deviazione standard assoluta di \\(S_n\\) cresce come \\(\sqrt{n}\\) (valori possibili di \\(S_n\\) si allargano in scala assoluta quando cresce \\(n\\)).</li>
-              <li>La deviazione standard della media campionaria \\(\overline{X}_n\\) invece diminuisce come \\(1/\sqrt{n}\\), perciò le curve nel grafico LLN si <em>aggregano</em> attorno a \\(p\\) al crescere di \\(n\\).</li>
-            </ul>
-            Se, al contrario, si considera la dispersione relativa (ad esempio la distribuzione di \\(S_n/n\\)), anche la variabilità di \\(S_n\\) rapportata a \\(n\\) si riduce e converge a zero (vedi LLN).
-          </p>
-
-          <h4 style="margin-top:0.6rem">3. LLN vs CLT: modalità di convergenza</h4>
-          <p>
-            LLN: convergenza quasi-sicura (pathwise) di \\(\overline X_n\\) verso \\(p\\):
-            \[
-              \Pr\Big(\lim_{n\to\infty}\overline X_n = p\Big)=1.
-            \]
-            CLT: convergenza in distribuzione della quantità standardizzata:
-            \[
-              \sqrt{n}(\overline X_n - p) \xrightarrow{d} \mathcal{N}(0,p(1-p)).
-            \]
-            In pratica il CLT descrive la forma (gaussiana) della dispersione su scala \\(1/\sqrt{n}\\).
-          </p>
-
-          <h4 style="margin-top:0.6rem">4. Linee guida per la relazione di laboratorio / tesi</h4>
-          <ol>
-            <li><strong>Figura A (pathwise)</strong>: mostrare i percorsi delle medie campionarie \\(\overline X_k\\), con la linea tratteggiata che rappresenta il valore teorico \\(p\\). Commentare come, al crescere di \\(k\\), le curve si raggruppino attorno a \\(p\\) — questo è il fenomeno garantito da LLN.</li>
-
-            <li><strong>Figura B (ensemble)</strong>: mostrare l'istogramma / bar chart delle frequenze empiriche di \\(S_n\\) ottenute da molte ripetizioni indipendenti dell'esperimento (stesso \\(n\\)). Sovrapporre la probabilità teorica \\(P(S_n=k)=\binom{n}{k}p^k(1-p)^{n-k}\\) per dimostrare l'accordo tra modello e dati.</li>
-
-            <li><strong>Collegamento LLN–CLT</strong>: aggiungere un pannello che mostra l'istogramma di
-              \[
-                Z_n \;=\; \sqrt{n}\,(\overline X_n - p)
-              \]
-              con sovrapposta la densità teorica \\(\mathcal{N}(0,p(1-p))\\). Questo rende evidente la convergenza in distribuzione prevista dal CLT e permette di valutare la bontà dell'approssimazione normale per il valore di \\(n\\) scelto.</li>
-
-            <li><strong>Parametri da riportare</strong>: per ogni figura documentare esplicitamente: \\(n\\), \\(p\\), numero di percorsi \\(m\\) (per LLN), numero di ripetizioni \\(R\\) (per il grafico binomiale), numero di campionamenti/box nel pannello CLT. Discutere come la scelta di \\(m\\) e \\(R\\) influisce sulla variabilità stimata e sull'accuratezza della stima empirica.</li>
-
-            <li><strong>Didascalie</strong>: usare frasi chiare e consistenti; esempi:
-              <blockquote>«Figura A — percorsi indipendenti di \\(\overline X_k\\) per \\(k=1,\dots,n\\); la linea tratteggiata rappresenta il valore atteso \\(p\\).»</blockquote>
-              <blockquote>«Figura B — frequenze empiriche di \\(S_n\\) (bar chart) con sovrapposta la probabilità teorica \\(\mathrm{Binom}(n,p)\\).»</blockquote>
-            </li>
-          </ol>
+        <h2>4. Triangolo di Pascal, espansione binomiale e Fibonacci</h2>
+        <div class="display-equation">
+          \[
+            \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k},\qquad
+            (a+b)^n=\sum_{k=0}^n\binom{n}{k}a^{n-k}b^k.
+          \]
         </div>
+        <div class="display-equation">
+          \[
+            F_n=\sum_{i=0}^{\lfloor (n-1)/2\rfloor} \binom{n-1-i}{i}.
+          \]
+        </div>
+        <p class="explain">L'identità per Fibonacci mostra come sommando opportune diagonali del triangolo di Pascal si ottengano i termini della successione di Fibonacci. L'espansione binomiale collega invece i coefficienti combinatori alle probabilità nel modello Bernoulli ponendo \(a=1-p\), \(b=p\).</p>
       </article>
 
       <article class="card">
-        <h2>Demo interattive: LLN, Binomiale e CLT</h2>
+        <h2>5. Demo interattive: LLN, Binomiale e CLT</h2>
         <div class="controls">
           <div style="flex:1"><label>n (prove)</label><input id="n_lln" type="number" value="500" min="2" max="200000"></div>
           <div style="flex:1"><label>m (percorsi LLN)</label><input id="m_lln" type="number" value="50" min="1" max="500"></div>
@@ -191,32 +137,88 @@
         <div class="chartRow" style="margin-top:12px" role="region" aria-label="Grafici interattivi">
           <div class="chartCard" aria-label="Grafico LLN">
             <canvas id="llnChart" role="img" aria-label="Evoluzione delle medie campionarie"></canvas>
-            <div class="small">Curva: medie campionarie \\(\overline X_k\\) per diversi percorsi. Linea tratteggiata = valore teorico \\(p\\).</div>
+            <div class="small">Curva: medie campionarie \(\overline X_k\) per diversi percorsi. Linea tratteggiata = valore teorico \(p\).</div>
             <div id="lln_metrics" class="metrics" aria-live="polite"></div>
           </div>
 
           <div class="chartCard" aria-label="Grafico binomiale">
             <canvas id="binomChart" role="img" aria-label="Distribuzione empirica vs binomiale teorica"></canvas>
-            <div class="small">Barre: frequenze empiriche di \\(S_n\\). Linea: probabilità teorica \\(\mathrm{Binom}(n,p)\\).</div>
+            <div class="small">Barre: frequenze empiriche di \(S_n\). Linea: probabilità teorica \(\mathrm{Binom}(n,p)\).</div>
             <div id="binom_metrics" class="metrics" aria-live="polite"></div>
           </div>
 
           <div class="chartCard" aria-label="Grafico CLT">
             <canvas id="cltChart" role="img" aria-label="Istogramma della quantità standardizzata e densità normale"></canvas>
-            <div class="small">Istogramma di \\(\sqrt{n}(\overline X_n - p)\\) con sovrapposta la densità teorica \\(\mathcal{N}(0,p(1-p))\\).</div>
+            <div class="small">Istogramma di \(\sqrt{n}(\overline X_n - p)\) con sovrapposta la densità teorica \(\mathcal{N}(0,p(1-p))\).</div>
             <div id="clt_metrics" class="metrics" aria-live="polite"></div>
           </div>
         </div>
       </article>
 
       <article class="card">
-        <h2>Triangolo di Pascal e Fibonacci</h2>
-        <div class="display-equation">
-          \[
-            \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k},\qquad
-            (a+b)^n=\sum_{k=0}^n\binom{n}{k}a^{n-k}b^k,
-          \]
+        <h2>6. Confronto formale e analogie con il compito precedente</h2>
+
+        <div class="formal">
+          <h3 style="margin:0 0 .5rem 0; color:var(--accent)">Obiettivo</h3>
+          <p>Questo paragrafo mette in relazione in modo esplicito l'esercizio corrente con il compito precedente (dove il parametro efficace per prova era \(q=(1-p_{\text{attacker}})^m\)). Si evidenziano analogie, differenze e i richiami combinatori rilevanti.</p>
+
+          <h4 style="margin-top:0.6rem">1. Perspektiva generale: pathwise vs ensemble</h4>
+          <p>
+            In entrambi i compiti l'unità fondamentale è la prova di Bernoulli con probabilità di successo fissata (nel compito precedente \(q\), qui \(p\)). Due prospettive complementari:
+          </p>
+          <ul>
+            <li><strong>Pathwise (LLN):</strong> si segue una singola realizzazione e si osserva la media campionaria \(\overline X_k\). Il risultato di LLN assicura che, per quasi ogni percorso, \(\overline X_n\to p\) (o \(\to q\)).</li>
+            <li><strong>Ensemble (Binomiale):</strong> si ripete l'intero esperimento di lunghezza fissa \(n\) molte volte e si costruisce la distribuzione empirica di \(S_n\). Questa distribuzione è governata dal PMF binomiale
+              \[
+                P(S_n=k)=\binom{n}{k}p^k(1-p)^{n-k},
+              \]
+              con \(p\) sostituito da \(q\) nel compito precedente.</li>
+          </ul>
+
+          <h4 style="margin-top:0.6rem">2. Sostituzione \(p \mapsto q\)</h4>
+          <p class="formal">
+            Tutte le formule e i teoremi si trasferiscono sostituendo \(p\) con \(q=(1-p_{\text{attacker}})^m\). In particolare:
+            \[
+              S_n\sim\mathrm{Binom}(n,q),\quad \mathbb{E}[S_n]=nq,\quad \mathrm{Var}(S_n)=nq(1-q),
+            \]
+            e
+            \[
+              \overline X_n \xrightarrow{a.s.} q,\qquad \sqrt{n}(\overline X_n - q)\xrightarrow{d}\mathcal{N}(0,q(1-q)).
+            \]
+            Questo mostra che la differenza fra i due compiti è prevalentemente numerica (valore della probabilità) e non strutturale.
+          </p>
+
+          <h4 style="margin-top:0.6rem">3. Relazioni combinatorie e ruolo di Pascal</h4>
+          <p>
+            La relazione ricorsiva dei coefficienti binomiali
+            \[
+              \binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}
+            \]
+            costruisce il triangolo di Pascal; l'espansione binomiale
+            \[
+              (1-p + p)^n = \sum_{k=0}^n \binom{n}{k}(1-p)^{n-k} p^k = 1
+            \]
+            collega direttamente i coefficienti combinatori alla probabilità degli eventi binomiali. Le somme su diagonali di Pascal producono, fra l'altro, la successione di Fibonacci:
+            \[
+              F_n=\sum_{i=0}^{\lfloor (n-1)/2\rfloor} \binom{n-1-i}{i}.
+            \]
+            Inserire un pannello grafico (Pascal con diagonali evidenziate) è utile in relazione alla parte combinatoria dell'esame.
+          </p>
+
+          <h4 style="margin-top:0.6rem">4. Interpretazione pratica e suggerimenti per la relazione</h4>
+          <ol>
+            <li>Includere le figure: (A) percorsi di \(\overline X_k\) con linea tratteggiata \(p\) (o \(q\)); (B) bar chart della distribuzione empirica di \(S_n\) con sovrapposta la curva teorica \(\mathrm{Binom}(n,p)\) (o \(\mathrm{Binom}(n,q)\)); (C) istogramma di \(\sqrt{n}(\overline X_n-p)\) con densità normale teorica; (D) triangolo di Pascal annotato per la Fibonacci.</li>
+            <li>Riportare sempre i parametri sperimentali: \(n\), \(p\) (o \(q\)), numero di percorsi \(m\), numero di ripetizioni \(R\) per la stima empirica, e numero di bin per gli istogrammi.</li>
+            <li>Discutere discrepanze a campione finito: errore Monte Carlo, skewness per \(p\) lontano da 0.5, accuratezza dell'approssimazione normale al crescere di \(n\) (velocità \(O(1/\sqrt{n})\)).</li>
+            <li>Nel testo esplicitare la sostituzione \(p\mapsto q\) quando si paragona al compito precedente e commentare i risultati numerici in questo contesto.</li>
+          </ol>
+
+          <p class="formal"><strong>Conclusione.</strong> L'esercizio corrente è direttamente riconducibile al precedente tramite la sostituzione della probabilità di successo; le connessioni combinatorie (coefficienti binomiali, Pascal, espansione binomiale e Fibonacci) forniscono un quadro matematico coerente che giustifica le osservazioni empiriche fornite dalle demo.</p>
         </div>
+      </article>
+
+      <article class="card">
+        <h2>7. Triangolo di Pascal e Fibonacci (tool)</h2>
         <div class="controls" style="margin-top:8px">
           <div style="flex:1"><label>Genera Pascal fino a riga n</label><input id="pascal_n" type="number" value="12" min="1" max="30"></div>
           <button id="gen_pascal" class="btn">Genera Pascal</button>
