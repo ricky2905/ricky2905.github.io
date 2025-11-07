@@ -47,6 +47,17 @@ A web page presenting key measures of location and dispersion, including the mea
 
 Interactive simulator that computes sample mean and variance using numerically stable Welford (online) updates and a naive incremental sum/sumsq comparator. Visualizations include cumulative mean with ±1 standard error, running sample variance, and histogram with KDE. Includes reproducible benchmarks, a catastrophic-cancellation demo, and automated merge-based tests to demonstrate numerical stability, efficiency, and how to aggregate statistics in parallel.
 
+### Homework 7
+
+**Title**: *Random Walk & Binomial Convergence*
+
+Interactive simulator modeling weekly server updates under repeated attack attempts. It visualizes the evolution of system status over time, the distribution of final outcomes, and how the simulated results align with the expected probabilistic model.
+
+### Homework 8
+
+**Title**: *Bernoulli process, LLN and combinatorial connections*
+
+Interactive page exploring the Bernoulli process, the Law of Large Numbers, and their links to combinatorics. It includes Pascal’s triangle, binomial relationships, and how Fibonacci numbers can be derived from Pascal’s diagonals, with visual and interactive tools
 
 ---
 
