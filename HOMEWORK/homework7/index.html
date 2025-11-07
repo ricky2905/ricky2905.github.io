@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Random Walk & Binomial Convergence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive simulator: server receiving weekly updates, m attackers with probability p. Trajectories, empirical mean, histograms and comparison with binomial distribution.">
+  <style>
+    :root{
+      --bg:#0f111a; --panel:#141622; --accent:#4CAF50;
+      --muted:#9fb89f; --text:#e6f4e6; --mono:#dfeee0;
+    }
+    * { box-sizing: border-box; }
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--text); font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+    .wrap{max-width:1100px;margin:2rem auto;padding:2rem;}
+    .topnav{display:flex;gap:.75rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    h1,h2,h3{color:var(--accent); margin:0}
+    h1{font-size:1.9rem;border-bottom:3px solid var(--accent);padding-bottom:.3rem;margin-bottom:.75rem}
+    .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:10px;padding:1.25rem;margin:1rem 0;box-shadow:0 8px 30px rgba(0,0,0,0.5);border:1px solid rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:var(--text)}
+    input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:#0b0c10;color:var(--text)}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .controls> *{flex:1 1 auto;min-width:140px}
+    .btn{padding:10px 14px;border-radius:8px;background:var(--accent);border:0;color:#072;font-weight:800;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+    .layout{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}}
+    .chart{background:#0b0c10;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-height:260px;max-height:260px;height:260px;box-sizing:border-box}
+    .code{background:#0b0c10;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);color:var(--mono);overflow:auto}
+    .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:8px 0;color:var(--mono)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:6px 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--mono)}
+    footer{opacity:.8;font-size:13px;margin-top:18px;text-align:center}
+    /* MathJax SVG specific tweaks for dark theme and size */
+    .mjx-svg-href, svg.mjx-svg { fill: var(--text) !important; color: var(--text) !important; }
+    .mjx-svg { background: transparent; display:block; margin:.4rem 0; }
+    /* forcing display formulas bigger */
+    .mjx-svg .mjx-mrow { font-size: 1.35rem !important; }
+    @media(max-width:520px){ .mjx-svg .mjx-mrow { font-size:1.05rem !important } }
+    /* minor visual sharpening */
+    svg.mjx-svg { shape-rendering: geometricPrecision; image-rendering: optimizeQuality; }
+  </style>
+
+  <!-- MathJax: load input/tex and output/svg for crisp vector formulas -->
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex', 'output/svg'] },
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']],
+        packages: {'[+]': ['ams']}
+      },
+      options: { skipHtmlTags: ['script','style','textarea','pre','code'] },
+      svg: {
+        fontCache: 'none',
+        scale: 1.35
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
+</head>
+<body>
+  <div class="wrap">
+      <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+    <main>
+      <article class="card" aria-labelledby="title">
+        <h1 id="title">HMWK 1 — Trajectories, random walk and binomial convergence</h1>
+      </article>
+
+      <article class="card">
+        <h2>Statement</h2>
+        <p>A server receives weekly updates for <strong>n</strong> weeks. Each week there are <strong>m</strong> independent attackers; each attacker has probability <strong>p</strong> of succeeding. If at least one succeeds, the week is a <strong>breach</strong> and counts as <code>-1</code>; if none succeed the week is <strong>secure</strong> and counts as <code>+1</code>.</p>
+
+        <div class="display-equation">
+          \[
+            \displaystyle q = (1-p)^m .
+          \]
+          \[
+            \displaystyle K\sim\mathrm{Binom}(n,q), \qquad S_n = 2K - n .
+          \]
+        </div>
+
+      </article>
+
+      <section class="card layout" aria-labelledby="simulator">
+        <div>
+          <h2 id="simulator">Interactive simulator</h2>
+          <div class="controls">
+            <div><label for="n_weeks">Weeks (n)</label><input id="n_weeks" type="number" value="50" min="1" max="2000"></div>
+            <div><label for="m_att">Attackers per week (m)</label><input id="m_att" type="number" value="3" min="1" max="500"></div>
+            <div><label for="p_att">Single attacker probability (p)</label><input id="p_att" type="number" step="0.01" value="0.2" min="0" max="1"></div>
+            <div><label for="n_sims">Simulations (sims)</label><input id="n_sims" type="number" value="2000" min="10" max="200000"></div>
+          </div>
+
+          <div class="controls" style="margin-top:12px">
+            <button class="btn" id="runSim">Run simulation</button>
+            <button class="btn ghost" id="resetSim">Reset charts</button>
+            <button class="btn ghost" id="exportCSV">Export counts (CSV)</button>
+          </div>
+
+          <div style="margin-top:12px" class="code">
+            <strong>Instructions</strong>
+            <ul>
+              <li>Choose parameters and click <strong>Run simulation</strong>.</li>
+              <li>The app will plot some sample trajectories, the empirical mean, ±sd bands and the theoretical expectation.</li>
+            </ul>
+          </div>
+        </div>
+
+        <aside>
+          <div class="chart" style="margin-bottom:12px">
+            <canvas id="trajChart" aria-label="Trajectories and mean"></canvas>
+            <div class="small" style="margin-top:6px">Sample trajectories, empirical mean (green), ±sd bands and theoretical expectation (white dashed).</div>
+          </div>
+
+          <div class="chart" style="margin-top:12px">
+            <canvas id="histChart" aria-label="Histogram of final scores"></canvas>
+            <div class="small" style="margin-top:6px">Histogram of final scores (bars) with theoretical binomial curve (line).</div>
+          </div>
+        </aside>
+      </section>
+
+      <article class="card">
+        <h2>Numerical results</h2>
+        <table id="resultsTable"><thead><tr><th>Score S<sub>n</sub></th><th>Count (sim)</th><th>Prob (sim)</th><th>Prob (theor)</th></tr></thead><tbody></tbody></table>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+          <div style="flex:1">
+            <h3>Metrics</h3>
+            <pre id="metrics" class="code">Run the simulation to see metrics here (final mean, variance, Chi², KL divergence).</pre>
+          </div>
+
+          <div style="flex:1">
+            <h3>Convergence sweep</h3>
+            <div class="small">Run a quick sweep to observe how Chi² behaves when varying n or the number of simulations.</div>
+            <div class="controls" style="margin-top:8px">
+              <div><label>n from</label><input id="sweep_n_from" type="number" value="10" min="1" max="1000"></div>
+              <div><label>to</label><input id="sweep_n_to" type="number" value="200" min="1" max="2000"></div>
+              <div><label>step</label><input id="sweep_n_step" type="number" value="30" min="1" max="500"></div>
+            </div>
+            <div class="controls" style="margin-top:8px">
+              <button class="btn" id="runSweepN">Chi² sweep vs n</button>
+              <button class="btn ghost" id="runSweepSims">Chi² sweep vs sims</button>
+            </div>
+            <div style="margin-top:12px"><canvas id="sweepChart" style="height:140px"></canvas></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Interpretation & final notes</h2>
+        <p>The empirical mean approaches E[S_k]=k(2q-1). Increasing sims and n makes the empirical distribution converge to the theoretical one; changing m modifies q and shifts the regime.</p>
+      </article>
+
+      <article class="card">
+        <h2>References</h2>
+        <ol class="small"><li>W. Feller, <em>An Introduction to Probability Theory and Its Applications</em>, Vol.1.</li><li>S. Ross, <em>Introduction to Probability Models</em>.</li><li>G. Grimmett & D. Stirzaker, <em>Probability and Random Processes</em>.</li></ol>
+      </article>
+
+    </main>
+
+    <footer class="small">© 2025 Riccardo D'Annibale</footer>
+  </div>
+
+  <!-- Simulation & charts script (runs after Chart.js loaded) -->
+  <script>
+    // Only run chart logic after Chart.js is available
+    function initWhenReady(){
+      if(typeof Chart === 'undefined') { setTimeout(initWhenReady, 50); return; }
+
+      // helper
+      const $ = id => document.getElementById(id);
+      function binomCoeff(n,k){
+        if(k<0||k>n) return 0;
+        k = Math.min(k, n-k);
+        let num=1, den=1;
+        for(let i=1;i<=k;i++){ num *= (n - (k - i)); den *= i; }
+        return Math.round(num/den);
+      }
+      function klDiv(p,q){
+        let s = 0;
+        for(let i=0;i<p.length;i++){
+          const pi = Math.max(1e-15, p[i]);
+          const qi = Math.max(1e-15, q[i]);
+          s += pi * Math.log(pi/qi);
+        }
+        return s;
+      }
+
+      // charts
+      const trajCtx = $('trajChart').getContext('2d');
+      const histCtx = $('histChart').getContext('2d');
+      const sweepCtx = document.getElementById('sweepChart').getContext('2d');
+
+      let trajChart = new Chart(trajCtx, { type: 'line', data: { labels: [], datasets: [] }, options:{ responsive:true, maintainAspectRatio:false, animation:false, plugins:{legend:{display:true}}, scales:{x:{title:{display:true,text:'week k'}}, y:{title:{display:true,text:'S_k'}} } } });
+      let histChart = new Chart(histCtx, { type: 'bar', data: { labels: [], datasets: [] }, options:{ responsive:true, maintainAspectRatio:false, animation:false, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}} } });
+      let sweepChart = new Chart(sweepCtx, { type: 'line', data: { labels: [], datasets: [{ label:'Chi²', data: [] }] }, options:{ responsive:true, maintainAspectRatio:false, animation:false, plugins:{legend:{display:false}}, scales:{x:{title:{display:true,text:'parameter'}}, y:{title:{display:true,text:'Chi²'}}} } });
+
+      $('runSim').addEventListener('click', ()=> {
+        const n = Math.max(1, Math.floor(Number($('n_weeks').value)));
+        const m = Math.max(1, Math.floor(Number($('m_att').value)));
+        const p = Math.max(0, Math.min(1, Number($('p_att').value)));
+        const sims = Math.max(1, Math.floor(Number($('n_sims').value)));
+        const q = Math.pow(1-p, m);
+
+        // accumulators
+        const sumAtK = new Array(n+1).fill(0);
+        const sumSqAtK = new Array(n+1).fill(0);
+        const samplePaths = []; const maxSample = 6;
+        const totals = new Array(sims);
+
+        for(let s=0;s<sims;s++){
+          let cum = 0;
+          sumAtK[0] += cum; sumSqAtK[0] += cum*cum;
+          const path = [0];
+          for(let k=1;k<=n;k++){
+            const secure = Math.random() < q;
+            cum += secure ? 1 : -1;
+            sumAtK[k] += cum; sumSqAtK[k] += cum*cum;
+            if(samplePaths.length < maxSample) path.push(cum);
+          }
+          totals[s] = cum;
+          if(samplePaths.length < maxSample) samplePaths.push(path);
+        }
+
+        const meanAtK = sumAtK.map(v=>v/sims);
+        const sdAtK = sumSqAtK.map((v,i)=>Math.sqrt(Math.max(0, v/sims - meanAtK[i]*meanAtK[i])));
+
+        // traj chart
+        const labels = Array.from({length:n+1}, (_,i)=>i);
+        trajChart.data.labels = labels;
+        trajChart.data.datasets = [];
+        samplePaths.forEach((pth,i)=>{
+          trajChart.data.datasets.push({ label:'sample '+(i+1), data:pth, borderColor:'rgba(255,255,255,0.12)', borderWidth:1, pointRadius:0, fill:false, tension:0.3 });
+        });
+        trajChart.data.datasets.push({ label:'empirical mean S̄_k', data: meanAtK, borderColor:'#4CAF50', borderWidth:2.5, pointRadius:0, fill:false, tension:0.25 });
+        trajChart.data.datasets.push({ label:'mean + sd', data: meanAtK.map((m,i)=>m+sdAtK[i]), borderColor:'rgba(76,175,80,0.45)', borderWidth:1, borderDash:[6,4], pointRadius:0, fill:false });
+        trajChart.data.datasets.push({ label:'mean - sd', data: meanAtK.map((m,i)=>m-sdAtK[i]), borderColor:'rgba(76,175,80,0.25)', borderWidth:1, borderDash:[6,4], pointRadius:0, fill:false });
+        trajChart.data.datasets.push({ label:'E[S_k] (theoretical)', data: labels.map(k=>k*(2*q-1)), borderColor:'#ffffff', borderWidth:2, borderDash:[4,6], pointRadius:0, fill:false });
+        trajChart.update();
+
+        // histogram
+        const possibleScores = [];
+        for(let s=-n;s<=n;s+=2) possibleScores.push(s);
+        const counts = possibleScores.map(score => totals.filter(x=>x===score).length);
+        const probsSim = counts.map(c => c / sims);
+        const theo = possibleScores.map(s => {
+          const k = (s + n)/2;
+          if(!Number.isInteger(k)) return 0;
+          return binomCoeff(n,k) * Math.pow(q,k) * Math.pow(1-q,n-k);
+        });
+
+        histChart.data.labels = possibleScores;
+        histChart.data.datasets = [
+          { label:'Frequencies (sim)', data: counts, backgroundColor:'rgba(76,175,80,0.5)' },
+          { label:'Theoretical (binom * sims)', data: theo.map(x=>x*sims), type:'line', borderColor:'#fff', borderWidth:2, fill:false, pointRadius:3 }
+        ];
+        histChart.update();
+
+        // table
+        const tbody = document.querySelector('#resultsTable tbody'); tbody.innerHTML='';
+        for(let i=0;i<possibleScores.length;i++){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${possibleScores[i]}</td><td>${counts[i]}</td><td>${(probsSim[i]).toFixed(4)}</td><td>${theo[i].toFixed(6)}</td>`;
+          tbody.appendChild(tr);
+        }
+
+        // metrics
+        const meanFinal = totals.reduce((a,b)=>a+b,0)/sims;
+        const varFinal = totals.reduce((a,b)=>a+(b-meanFinal)**2,0)/sims;
+        const meanTheo = n*(2*q-1);
+        const varTheo = 4*n*q*(1-q);
+
+        let chi2 = 0;
+        for(let i=0;i<possibleScores.length;i++){
+          const obs = counts[i];
+          const exp = Math.max(1e-9, theo[i]*sims);
+          chi2 += (obs - exp)*(obs - exp)/exp;
+        }
+        const kl = klDiv(probsSim, theo);
+
+        $('metrics').textContent =
+          `Parameters: n=${n}, m=${m}, p=${p}\nq=(1-p)^m = ${q.toFixed(6)}\nSimulations: ${sims}\n\n` +
+          `Final mean (sim) = ${meanFinal.toFixed(4)} | Theoretical mean = ${meanTheo.toFixed(4)}\n` +
+          `Final var (sim) = ${varFinal.toFixed(4)} | Theoretical var = ${varTheo.toFixed(4)}\n\n` +
+          `Chi² (observed vs expected) = ${chi2.toFixed(4)}\nKL divergence (sim || theor) ≈ ${kl.toFixed(6)}\n\n` +
+          `Note: increasing 'sims' and 'n' the empirical distribution converges to the theoretical one; changing 'm' alters q and shifts the regime (more attackers → more breaches).`;
+
+        window._hmwk1 = { n, m, p, q, sims, totals, possibleScores, counts, theo };
+      });
+
+      // sweeps and export/reset logic (same as previous)
+      $('runSweepN').addEventListener('click', async ()=>{
+        const from = Math.max(1, Math.floor(Number($('sweep_n_from').value)));
+        const to = Math.max(from, Math.floor(Number($('sweep_n_to').value)));
+        const step = Math.max(1, Math.floor(Number($('sweep_n_step').value)));
+        const m = Math.max(1, Math.floor(Number($('m_att').value)));
+        const p = Math.max(0, Math.min(1, Number($('p_att').value)));
+        const sims = Math.max(50, Math.floor(Number($('n_sims').value)));
+        const labels = []; const chis = [];
+        sweepChart.data.labels = []; sweepChart.data.datasets[0].data = [];
+        sweepChart.update();
+        for(let n=from; n<=to; n+=step){
+          const q = Math.pow(1-p, m);
+          const totals = [];
+          for(let t=0;t<sims;t++){
+            let cum = 0;
+            for(let k=1;k<=n;k++) cum += (Math.random() < q) ? 1 : -1;
+            totals.push(cum);
+          }
+          const possibleScores = [];
+          for(let s=-n;s<=n;s+=2) possibleScores.push(s);
+          const counts = possibleScores.map(score => totals.filter(x=>x===score).length);
+          const theo = possibleScores.map(s => {
+            const k = (s + n)/2;
+            if(!Number.isInteger(k)) return 0;
+            return binomCoeff(n,k) * Math.pow(q,k) * Math.pow(1-q,n-k);
+          });
+          let chi2 = 0;
+          for(let i=0;i<possibleScores.length;i++){
+            const obs = counts[i];
+            const exp = Math.max(1e-9, theo[i]*sims);
+            chi2 += (obs - exp)*(obs - exp)/exp;
+          }
+          labels.push(n); chis.push(chi2);
+          sweepChart.data.labels = labels; sweepChart.data.datasets[0].data = chis; sweepChart.update();
+          await new Promise(r=>setTimeout(r,40));
+        }
+      });
+
+      $('runSweepSims').addEventListener('click', async ()=>{
+        const n = Math.max(1, Math.floor(Number($('n_weeks').value)));
+        const m = Math.max(1, Math.floor(Number($('m_att').value)));
+        const p = Math.max(0, Math.min(1, Number($('p_att').value)));
+        const q = Math.pow(1-p, m);
+        const simsList = [50,100,200,500,1000,2000,5000];
+        const labels=[]; const chis=[];
+        sweepChart.data.labels=[]; sweepChart.data.datasets[0].data=[];
+        for(const sims of simsList){
+          const totals=[];
+          for(let t=0;t<sims;t++){
+            let cum=0;
+            for(let k=1;k<=n;k++){ cum += (Math.random() < q) ? 1 : -1; }
+            totals.push(cum);
+          }
+          const possibleScores=[]; for(let s=-n;s<=n;s+=2) possibleScores.push(s);
+          const counts = possibleScores.map(score => totals.filter(x=>x===score).length);
+          const theo = possibleScores.map(s => {
+            const k = (s + n)/2;
+            if(!Number.isInteger(k)) return 0;
+            return binomCoeff(n,k) * Math.pow(q,k) * Math.pow(1-q,n-k);
+          });
+          let chi2 = 0;
+          for(let i=0;i<possibleScores.length;i++){
+            const obs = counts[i];
+            const exp = Math.max(1e-9, theo[i]*sims);
+            chi2 += (obs - exp)*(obs - exp)/exp;
+          }
+          labels.push(sims); chis.push(chi2);
+          sweepChart.data.labels = labels; sweepChart.data.datasets[0].data = chis; sweepChart.update();
+          await new Promise(r=>setTimeout(r,40));
+        }
+      });
+
+      $('exportCSV').addEventListener('click', ()=>{
+        if(!window._hmwk1){ alert('Run a simulation first.'); return; }
+        const data = window._hmwk1;
+        const rows = [['Score S_n','Count (sim)','Prob (sim)','Prob (theor)']];
+        for(let i=0;i<data.possibleScores.length;i++){
+          rows.push([String(data.possibleScores[i]), String(data.counts[i]), String((data.counts[i]/data.sims).toFixed(6)), String(data.theo[i].toFixed(8))]);
+        }
+        const csv = rows.map(r=>r.map(c=>`"${c.replace(/"/g,'""')}"`).join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'hmwk1_counts.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      });
+
+      $('resetSim').addEventListener('click', ()=> {
+        trajChart.data.labels=[]; trajChart.data.datasets=[]; trajChart.update();
+        histChart.data.labels=[]; histChart.data.datasets=[]; histChart.update();
+        sweepChart.data.labels=[]; sweepChart.data.datasets[0].data=[]; sweepChart.update();
+        document.querySelector('#resultsTable tbody').innerHTML=''; $('metrics').textContent='Reset.';
+        window._hmwk1 = null;
+      });
+
+    } // end initWhenReady
+    initWhenReady();
+  </script>
+</body>
+</html>
