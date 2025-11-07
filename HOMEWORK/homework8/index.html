@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <title>Bernoulli process, LLN, Pascal & Fibonacci</title>
+  <title>Bernoulli process, LLN, CLT, Pascal & Fibonacci — Formal comparison</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="University essay and interactive tools: Bernoulli process, LLN, CLT, Pascal's triangle, binomial expansion, Fibonacci.">
   <style>
@@ -20,21 +20,22 @@
     .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
     .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
     .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:320px;box-sizing:border-box;overflow:hidden}
-    .chartCard canvas{width:100%;height:180px;display:block}
+    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:360px;box-sizing:border-box;overflow:hidden}
+    .chartCard canvas{width:100%;height:200px;display:block}
     pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
     button{padding:8px 12px;border-radius:6px;background:var(--accent);border:0;color:#072;font-weight:700;cursor:pointer}
     .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
     .pascalRow{font-family:monospace;white-space:pre}
     .explain { margin-top:10px; line-height:1.5 }
     .metrics { margin-top:8px; font-size:13px; color:var(--muted) }
+    .formal { margin-top:10px; padding:10px; background:rgba(255,255,255,0.015); border-radius:6px; border:1px solid rgba(255,255,255,0.02) }
     /* MathJax SVG styling for clarity */
     .mjx-svg { fill: var(--text) !important; display:block; margin:.4rem 0; shape-rendering:geometricPrecision; }
-    .mjx-svg .mjx-mrow { font-size:1.22rem !important; }
+    .mjx-svg .mjx-mrow { font-size:1.12rem !important; }
     @media(max-width:520px){ .mjx-svg .mjx-mrow { font-size:1.0rem !important } }
   </style>
 
-  <!-- MathJax config (SVG output) -->
+  <!-- MathJax (SVG output, scale tuned for legibility) -->
   <script>
     window.MathJax = {
       loader: { load: ['input/tex','output/svg'] },
@@ -44,7 +45,7 @@
         packages: {'[+]': ['ams']}
       },
       options: { skipHtmlTags: ['script','style','textarea','pre','code'] },
-      svg: { fontCache: 'none', scale: 1.25 }
+      svg: { fontCache: 'none', scale: 1.35 }
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
@@ -62,112 +63,143 @@
 
     <main>
       <article class="card">
-        <h1>HMWK 2 — Bernoulli process, LLN e connessioni combinatorie</h1>
-        <p class="small">Discussione teorica: processo di Bernoulli, Legge dei Grandi Numeri (LLN), Teorema del Limite Centrale (CLT), triangolo di Pascal, espansione binomiale, Fibonacci.</p>
+        <h1>HMWK 2 — Processo di Bernoulli, LLN, CLT e connessioni combinatorie</h1>
+        <p class="small">Versione con confronto formale, formule ben rese con MathJax e demo interattive.</p>
       </article>
 
       <article class="card">
-        <h2>1. Processo di Bernoulli e distribuzione binomiale</h2>
+        <h2>Definizioni principali</h2>
         <div class="display-equation">
           \[
-            \displaystyle S_n = \sum_{i=1}^n X_i \sim \mathrm{Binom}(n,p),\qquad
-            P(S_n=k)=\binom{n}{k} p^k (1-p)^{n-k}.
+            X_1,X_2,\dots \overset{\text{iid}}{\sim} \mathrm{Bernoulli}(p),\qquad
+            S_n=\sum_{i=1}^{n} X_i\sim\mathrm{Binom}(n,p).
           \]
         </div>
-        <p>Nel precedente compito (HMWK1) il parametro di successo effettivo è \\(q=(1-p_{\text{attacker}})^m\\), quindi il conteggio delle settimane sicure segue \\(\mathrm{Binom}(n,q)\\).</p>
-      </article>
-
-      <article class="card">
-        <h2>2. Legge dei grandi numeri (LLN)</h2>
         <div class="display-equation">
           \[
-            \displaystyle \overline{X}_n=\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]=p.
+            \mathbb{E}[S_n]=np,\qquad \mathrm{Var}(S_n)=np(1-p).
           \]
         </div>
-        <p class="explain">Intuitivamente, se osserviamo la media campionaria \\(\overline{X}_n\\) al crescere del numero di prove \\(n\\), questa si avvicina quasi certamente al valore atteso \\(p\\). LLN è un risultato «per percorso»: descrive il comportamento temporale di ogni realizzazione del processo (o di quasi tutte).</p>
       </article>
 
       <article class="card">
-        <h2>4. Triangolo di Pascal e espansione binomiale</h2>
+        <h2>Legge dei grandi numeri (LLN) — enunciato</h2>
         <div class="display-equation">
           \[
-            \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}, \qquad
-            (a+b)^n = \sum_{k=0}^n \binom{n}{k} a^{n-k} b^{k}.
+            \overline{X}_n=\frac{S_n}{n}=\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]=p.
           \]
         </div>
-
-        <div class="controls" style="margin-top:8px">
-          <div style="flex:1"><label>Genera il triangolo di Pascal fino alla riga n</label><input id="pascal_n" type="number" value="12" min="1" max="30" aria-label="Pascal n"></div>
-          <button id="gen_pascal" class="btn">Genera Pascal</button>
-        </div>
-
-        <div id="pascal_box" class="code" style="margin-top:8px;max-height:220px;overflow:auto" aria-live="polite"></div>
+        <p class="formal">
+          Enunciato (versione forte): per la sequenza iid \\(X_i\\) con \\(\mathbb{E}[|X_1|]<\infty\\),
+          si ha \\(\displaystyle \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]\\).
+          Nel caso Bernoulli, la convergenza implica che per quasi ogni realizzazione del processo la media campionaria si avvicina a \\(p\\) al crescere di \\(n\\).
+        </p>
       </article>
 
       <article class="card">
-        <h2>5. Fibonacci dal triangolo di Pascal</h2>
-        <p>Identità (estrazione delle diagonali):</p>
+        <h2>Teorema del limite centrale (CLT) — enunciato</h2>
         <div class="display-equation">
           \[
-            \displaystyle F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n-1-i}{i}.
+            \sqrt{n}\,(\overline{X}_n - p) \xrightarrow{d} \mathcal{N}\big(0,\;p(1-p)\big),
           \]
         </div>
-        <pre id="fib_out" class="code" aria-live="polite">—</pre>
+        <p class="formal">
+          Enunciato (classico): per \\(X_i\\) iid con media \\(\mu\\) e varianza finita \\(\sigma^2\\),
+          la variabile standardizzata \\(\sqrt{n}(\overline X_n - \mu)\\) converge in distribuzione a \\(N(0,\sigma^2)\\).
+          Per Bernoulli, \\(\mu=p\\) e \\(\sigma^2 = p(1-p)\\).
+        </p>
       </article>
 
       <article class="card">
-        <h2>7. Demo interattive: LLN & binomiale (spiegazione approfondita in basso)</h2>
+        <h2>Confronto formale: grafico LLN (percorsi) vs grafico binomiale (ensemble)</h2>
+
+        <div class="formal">
+          <h3 style="margin:0 0 .5rem 0; color:var(--accent)">Obiettivo</h3>
+          <p>Forniamo qui una formulazione rigorosa delle differenze concettuali e matematiche fra le due rappresentazioni visive usate nella demo: il grafico delle medie campionarie (LLN) e il grafico che mostra la distribuzione di \\(S_n\\) (Binomiale) tramite ripetizioni.</p>
+
+          <h4 style="margin-top:0.6rem">1. Oggetto statistico visualizzato</h4>
+          <ul>
+            <li><strong>Grafico LLN (pathwise)</strong>: ogni curva rappresenta una singola realizzazione (percorso) del processo di Bernoulli; l'asse orizzontale è il tempo/discreto \\(k=1,\dots,n\\), l'asse verticale è la media campionaria \\(\overline X_k\\). Osserviamo la convergenza quasi-sicura di ciascuna curva verso \\(p\\) quando \\(k\to\infty\\).</li>
+            <li><strong>Grafico binomiale (ensemble)</strong>: per un numero elevato di ripetizioni indipendenti dell'esperimento di lunghezza fissa \\(n\\), registriamo il valore di \\(S_n\\) in ciascuna ripetizione; plottiamo la frequenza relativa di ogni possibile conteggio \\(k\\). Questa è un'approssimazione empirica della distribuzione di probabilità \\(P(S_n=k)\\).</li>
+          </ul>
+
+          <h4 style="margin-top:0.6rem">2. Tipi di convergenza e loro ruolo</h4>
+          <p>
+            LLN fornisce una <em>convergenza quasi-sicura</em> (pathwise) di \\(\overline X_n\\) verso \\(p\\). Più formalmente:
+            \[
+              \Pr\Big(\lim_{n\to\infty}\overline X_n = p\Big)=1.
+            \]
+            CLT, invece, fornisce una <em>convergenza in distribuzione</em> per la quantità standardizzata; essa controlla la forma della dispersione attorno a \\(p\\) su scala \\(1/\sqrt n\\).
+          </p>
+
+          <h4 style="margin-top:0.6rem">3. Relazioni numeriche utili</h4>
+          <p>
+            Per memoria:
+            \[
+              \mathbb{E}[S_n]=np,\quad \mathrm{Var}(S_n)=np(1-p),
+              \qquad
+              \mathbb{E}[\overline X_n]=p,\quad \mathrm{Var}(\overline X_n)=\frac{p(1-p)}{n}.
+            \]
+            Queste relazioni spiegano perché le curve nel grafico LLN si aggregano attorno a \\(p\\) con dispersione che decresce ~\\(1/\sqrt n\\), mentre la dispersione dei possibili valori di \\(S_n\\) aumenta in valore assoluto come \\(\sqrt{n}\\) (cioè varianza \\(np(1-p)\\)) ma, rapportata a \\(n\\), si riduce.
+          </p>
+
+          <h4 style="margin-top:0.6rem">4. Linee guida per la relazione di laboratorio / tesi</h4>
+          <ol>
+            <li>Inserire entrambe le figure: (A) percorsi delle medie campionarie e (B) distribuzione di ensemble di \\(S_n\\) per lo stesso \\(n\\). Specificare chiaramente quale figura è pathwise e quale è ensemble.</li>
+            <li>Per collegare LLN e CLT: aggiungere un pannello che mostra l'istogramma di \\(\sqrt{n}(\overline X_n - p)\\) con sovrapposta la densità normale teorica \\(N(0,p(1-p))\\). Questo rende evidente la convergenza in distribuzione prevista dal CLT.</li>
+            <li>Quando riporti valori numerici, includi: n, p, numero di percorsi m, numero di ripetizioni per il grafico binomiale, e il numero di campionamenti per l'istogramma CLT. Spiega come la scelta di questi parametri influenza la varianza stimata.</li>
+            <li>Nelle didascalie: usa frasi del tipo «Figura X — percorsi indipendenti di \\(\overline X_k\\) per k=1,...,n; la linea tratteggiata rappresenta p» e «Figura Y — frequenze empiriche di \\(S_n\\) (bar chart) con sovrapposta la probabilità teorica Binom(n,p)».</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Demo interattive: LLN, Binomiale e CLT</h2>
         <div class="controls">
-          <div style="flex:1"><label>n (prove)</label><input id="n_lln" type="number" value="500" min="1" max="100000" aria-label="n trials"></div>
-          <div style="flex:1"><label>m (percorsi)</label><input id="m_lln" type="number" value="50" min="1" max="200" aria-label="m paths"></div>
-          <div style="flex:1"><label>p (Bernoulli)</label><input id="p_lln" type="number" step="0.01" value="0.6" min="0" max="1" aria-label="p bernoulli"></div>
+          <div style="flex:1"><label>n (prove)</label><input id="n_lln" type="number" value="500" min="1" max="200000"></div>
+          <div style="flex:1"><label>m (percorsi LLN)</label><input id="m_lln" type="number" value="50" min="1" max="500"></div>
+          <div style="flex:1"><label>p (Bernoulli)</label><input id="p_lln" type="number" step="0.01" value="0.6" min="0" max="1"></div>
         </div>
-        <div class="controls" style="margin-top:8px"><button id="btn_lln" class="btn">Esegui</button></div>
+        <div class="controls" style="margin-top:8px">
+          <button id="btn_lln" class="btn">Esegui LLN & Binom</button>
+          <button id="btn_clt" class="btn" style="background:#66bb6a">Mostra CLT (istogramma)</button>
+        </div>
 
         <div class="chartRow" style="margin-top:12px" role="region" aria-label="Grafici interattivi">
-          <div class="chartCard" aria-hidden="false" aria-label="Grafico LLN">
+          <div class="chartCard" aria-label="Grafico LLN">
             <canvas id="llnChart" role="img" aria-label="Evoluzione delle medie campionarie"></canvas>
-            <div class="small">Evoluzione delle medie campionarie (più percorsi). La linea tratteggiata indica il valore teorico \(p\).</div>
+            <div class="small">Curva: medie campionarie \\(\overline X_k\\) per diversi percorsi. Linea tratteggiata = valore teorico \\(p\\).</div>
             <div id="lln_metrics" class="metrics" aria-live="polite"></div>
           </div>
 
-          <div class="chartCard" aria-hidden="false" aria-label="Grafico binomiale">
+          <div class="chartCard" aria-label="Grafico binomiale">
             <canvas id="binomChart" role="img" aria-label="Distribuzione empirica vs binomiale teorica"></canvas>
-            <div class="small">Distribuzione empirica dei conteggi \(S_n\) (da molte ripetizioni) confrontata con la probabilità teorica Binom(n,p). La curva teorica è sovrapposta.</div>
+            <div class="small">Barre: frequenze empiriche di \\(S_n\\). Linea: probabilità teorica Binom(n,p).</div>
             <div id="binom_metrics" class="metrics" aria-live="polite"></div>
           </div>
-        </div>
 
-        <div class="card" style="margin-top:12px">
-          <h3 style="margin-top:0;color:var(--accent)">Spiegazione comparativa (da includere nell'esame/relazione)</h3>
-          <div class="explain">
-            <p><strong>Punti chiave — differenza concettuale tra i due grafici</strong></p>
-            <ol>
-              <li><strong>Modalità temporale vs modalità d'insieme</strong><br>
-                Il grafico <em>LLN</em> mostra la <em>storia</em> di alcune realizzazioni (percorsi) del processo di Bernoulli: per ciascun percorso osserviamo la media campionaria \\(\overline{X}_k\\) al variare di \\(k=1,\dots,n\\). È quindi una rappresentazione <em>pathwise</em>. LLN afferma che per (quasi) ogni percorso \\(\overline{X}_n\\) converge al valore atteso \\(p\\) quando \\(n\\to\infty\\).</li>
-              <li><strong>Distribuzione alla fine di n prove</strong><br>
-                Il grafico <em>binomiale</em> considera invece molte ripetizioni indipendenti dell'intero esperimento di lunghezza fissa \\(n\\) e mostra la frequenza / probabilità di avere \\(S_n=k\\). È una rappresentazione <em>ensemble</em> per un singolo valore di \\(n\\). Qui vediamo la forma della distribuzione di probabilità (Binomiale) — per grandi \\(n\\) assume una forma simile alla normale (CLT).</li>
-              <li><strong>LLN vs CLT (modalità di convergenza)</strong><br>
-                LLN: \\(\overline{X}_n \xrightarrow{a.s.} p\\) — convergenza quasi sicura della media campionaria al valore atteso (concetto pathwise).<br>
-                CLT: se standardizziamo la media, otteniamo la convergenza in distribuzione ad una normale:
-                \[
-                  \sqrt{n}\,(\overline{X}_n-p)\xrightarrow{d} N\big(0,\,p(1-p)\big).
-                \]
-                CLT spiega perché la distribuzione del conteggio \\(S_n\\) (o della media, opportunamente ri-scalata) appare gaussiana per \\(n\\) sufficientemente grande.</li>
-              <li><strong>Interpretazione pratica</strong><br>
-                - Se osservi molte curve nel grafico LLN, noterai che all'aumentare di \\(n\\) le curve si aggregano attorno a \\(p\\) (variabilità campionaria decrescente).<br>
-                - Se guardi il grafico binomiale per lo stesso \\(n\\), vedrai la dispersione dei possibili valori di \\(S_n\\): la posizione centrale è \\(np\\) e la varianza è \\(np(1-p)\\). Per la media campionaria la varianza è \\(p(1-p)/n\\).</li>
-              <li><strong>Relazione numerica</strong><br>
-                Media del conteggio: \\(\mathbb{E}[S_n]=np\\).<br>
-                Varianza del conteggio: \\(\mathrm{Var}(S_n)=np(1-p)\\).<br>
-                Media della media campionaria: \\(\mathbb{E}[\overline{X}_n]=p\\).<br>
-                Varianza della media campionaria: \\(\mathrm{Var}(\overline{X}_n)=\dfrac{p(1-p)}{n}\\).</li>
-            </ol>
-
-            <p class="small">Suggerimento per la relazione: nella sezione risultati includi entrambe le figure con didascalie che sottolineano se stai mostrando <em>percorsi individuali</em> (LLN) o la <em>distribuzione di ensemble</em> a \\(n\\) fissato (binomiale). Se vuoi collegare visivamente le due idee, mostra la distribuzione di \\(\sqrt{n}(\overline{X}_n-p)\\) e confrontala con la normale standardizzata per evidenziare il CLT.</p>
+          <div class="chartCard" aria-label="Grafico CLT">
+            <canvas id="cltChart" role="img" aria-label="Istogramma della quantità standardizzata e densità normale"></canvas>
+            <div class="small">Istogramma di \\(\sqrt{n}(\overline X_n - p)\\) con sovrapposta la densità teorica \\(N(0,p(1-p))\\).</div>
+            <div id="clt_metrics" class="metrics" aria-live="polite"></div>
           </div>
         </div>
+      </article>
 
+      <article class="card">
+        <h2>Triangolo di Pascal e Fibonacci</h2>
+        <div class="display-equation">
+          \[
+            \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k},\qquad
+            (a+b)^n=\sum_{k=0}^n\binom{n}{k}a^{n-k}b^k,
+          \]
+        </div>
+        <div class="controls" style="margin-top:8px">
+          <div style="flex:1"><label>Genera Pascal fino a riga n</label><input id="pascal_n" type="number" value="12" min="1" max="30"></div>
+          <button id="gen_pascal" class="btn">Genera Pascal</button>
+        </div>
+        <div id="pascal_box" class="code" style="margin-top:8px;max-height:220px;overflow:auto"></div>
+        <pre id="fib_out" class="code">—</pre>
       </article>
 
       <article class="card">
@@ -180,10 +212,11 @@
   </div>
 
   <script>
-    // wait for Chart.js
+    // Wait for Chart.js
     function ready(){
       if(typeof Chart === 'undefined'){ setTimeout(ready,50); return; }
 
+      // combinatorics helper
       function binomCoeff(n,k){
         if(k<0||k>n) return 0;
         k = Math.min(k, n-k);
@@ -203,6 +236,7 @@
         return T;
       }
 
+      // UI: Pascal
       document.getElementById('gen_pascal').addEventListener('click', ()=>{
         const n = Math.max(1, Math.min(30, Math.floor(Number(document.getElementById('pascal_n').value))));
         const T = generatePascal(n);
@@ -223,17 +257,18 @@
         document.getElementById('fib_out').textContent = 'Fibonacci (estratto dalle diagonali di Pascal):\n' + fib.join(', ');
       });
 
-      // LLN charts
+      // Charts setup
       const llnCtx = document.getElementById('llnChart').getContext('2d');
       const binomCtx = document.getElementById('binomChart').getContext('2d');
+      const cltCtx = document.getElementById('cltChart').getContext('2d');
+
       let llnChart = new Chart(llnCtx, {
         type:'line',
         data:{ labels:[], datasets:[] },
         options:{
           responsive:true,
-          plugins:{ legend:{ display:true, labels:{boxWidth:12} } },
-          scales:{ y:{ min:0, max:1, title:{ display:true, text:'media campionaria' } }, x:{ title:{ display:true, text:'numero di prove (k)' } } },
-          interaction: {mode:'nearest', intersect:false}
+          plugins:{ legend:{ display:true } },
+          scales:{ y:{ min:0, max:1, title:{display:true, text:'media campionaria' } }, x:{ title:{display:true, text:'k (numero di prove)' } } }
         }
       });
 
@@ -242,22 +277,56 @@
         data:{ labels:[], datasets:[] },
         options:{
           responsive:true,
-          plugins:{ legend:{ display:true, labels:{boxWidth:12} } },
-          scales:{ y:{ beginAtZero:true, title:{display:true, text:'probabilità / frequenza' } }, x:{ title:{display:true, text:'conteggio k' } } },
-          interaction: {mode:'nearest', intersect:false}
+          plugins:{ legend:{ display:true } },
+          scales:{ y:{ beginAtZero:true, title:{display:true, text:'probabilità / frequenza' } }, x:{ title:{display:true, text:'conteggio k' } } }
         }
       });
 
+      let cltChart = new Chart(cltCtx, {
+        type:'bar',
+        data:{ labels:[], datasets:[] },
+        options:{
+          responsive:true,
+          plugins:{ legend:{ display:true } },
+          scales:{ y:{ beginAtZero:true, title:{display:true, text:'densità/frequenza normalizzata' } }, x:{ title:{display:true, text:'valore standardizzato' } } }
+        }
+      });
+
+      // helper: normal pdf
+      function normalPdf(x, mu, sigma){
+        return (1/(Math.sqrt(2*Math.PI)*sigma)) * Math.exp(-0.5 * Math.pow((x-mu)/sigma,2));
+      }
+
+      // helper: histogram bins
+      function histogram(data, binCount){
+        const min = Math.min(...data);
+        const max = Math.max(...data);
+        const eps = (max - min) * 1e-6;
+        const width = (max - min + eps)/binCount;
+        const bins = Array(binCount).fill(0);
+        const edges = [];
+        for(let i=0;i<binCount;i++) edges.push(min + i*width);
+        for(const v of data){
+          let idx = Math.floor((v - min)/width);
+          if(idx<0) idx=0;
+          if(idx>=binCount) idx=binCount-1;
+          bins[idx]++;
+        }
+        const centers = edges.map((e,i)=> e + width/2);
+        const freqs = bins.map(b => b / data.length); // relative frequency
+        return {centers, freqs, width};
+      }
+
+      // LLN + Binomial button
       document.getElementById('btn_lln').addEventListener('click', ()=>{
         const n = Math.max(1, Math.floor(Number(document.getElementById('n_lln').value)));
         const m = Math.max(1, Math.floor(Number(document.getElementById('m_lln').value)));
         const p = Math.max(0, Math.min(1, Number(document.getElementById('p_lln').value)));
 
-        // Prepare labels for LLN chart (sample at most 200 points for performance)
+        // LLN: sample points (limit to 200 for performance)
         const samplePoints = 200;
         const step = Math.max(1, Math.floor(n / samplePoints));
-        const labels = [];
-        for(let i=step;i<=n;i+=step) labels.push(i);
+        const labels = []; for(let i=step;i<=n;i+=step) labels.push(i);
 
         const datasets = [];
         for(let path=0; path<m; path++){
@@ -266,35 +335,16 @@
             const X = Math.random() < p ? 1 : 0; sum += X;
             if(i % step === 0) data.push(sum / i);
           }
-          datasets.push({
-            label: 'percorso '+(path+1),
-            data,
-            borderColor:'rgba(255,255,255,0.12)',
-            pointRadius:0,
-            tension:0.3,
-            fill:false,
-            borderWidth:1
-          });
+          datasets.push({ label: 'percorso '+(path+1), data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false, borderWidth:1 });
         }
-        // Add theoretical p as a dashed line across labels
+        // add theoretical p
         const pLine = Array(labels.length).fill(p);
-        datasets.push({
-          label: 'p (valore atteso)',
-          data: pLine,
-          borderColor: 'rgba(76,175,80,0.95)',
-          borderWidth:2,
-          pointRadius:0,
-          tension:0,
-          borderDash: [6,6],
-          fill:false
-        });
+        datasets.push({ label: 'p (valore atteso)', data: pLine, borderColor: 'rgba(76,175,80,0.95)', borderWidth:2, pointRadius:0, tension:0, borderDash:[6,6], fill:false });
 
-        llnChart.data.labels = labels;
-        llnChart.data.datasets = datasets;
-        llnChart.update();
+        llnChart.data.labels = labels; llnChart.data.datasets = datasets; llnChart.update();
 
-        // binomial empirical vs theoretical
-        const trials = 2000; // numero di ripetizioni per stimare la distribuzione
+        // Binomial empirical vs theoretical
+        const trials = 2000;
         const counts = Array(n+1).fill(0);
         for(let t=0;t<trials;t++){
           let k=0;
@@ -312,20 +362,57 @@
         ];
         binomChart.update();
 
-        // Metrics and textual summaries
+        // metrics text
         const mean_count = n * p;
         const var_count = n * p * (1 - p);
-        const mean_bar = p;
         const var_bar = (p * (1 - p)) / n;
 
         document.getElementById('binom_metrics').textContent =
           `Media teorica S_n = np = ${mean_count.toFixed(3)} · Var(S_n) = np(1-p) = ${var_count.toFixed(3)}. (n=${n}, p=${p})`;
 
         document.getElementById('lln_metrics').textContent =
-          `Media teorica della media campionaria = p = ${mean_bar.toFixed(3)} · Var(\\overline{X}_n) = p(1-p)/n = ${var_bar.toFixed(6)}. (v. CLT: √n(\\overline{X}_n-p) → N(0,p(1-p)))`;
+          `Media teorica della media campionaria = p = ${p.toFixed(3)} · Var(\\overline{X}_n) = p(1-p)/n = ${var_bar.toFixed(6)}.`;
       });
 
-    } // end ready
+      // CLT demo button: histogram of sqrt(n)(Xbar - p)
+      document.getElementById('btn_clt').addEventListener('click', ()=>{
+        const n = Math.max(2, Math.floor(Number(document.getElementById('n_lln').value)));
+        const p = Math.max(0, Math.min(1, Number(document.getElementById('p_lln').value)));
+        const repetitions = 5000;
+
+        const zvals = [];
+        for(let t=0;t<repetitions;t++){
+          let k=0;
+          for(let i=0;i<n;i++) if(Math.random() < p) k++;
+          const xbar = k / n;
+          zvals.push(Math.sqrt(n) * (xbar - p));
+        }
+
+        // histogram
+        const bins = Math.min(50, Math.max(10, Math.round(Math.sqrt(repetitions))));
+        const hist = histogram(zvals, bins);
+        // theoretical normal density N(0, sigma^2) with sigma^2 = p(1-p)
+        const sigma = Math.sqrt(p * (1 - p));
+        // create density points on same centers
+        const dens = hist.centers.map(x => normalPdf(x, 0, sigma));
+        // Scale density to match histogram relative frequency (density * binWidth ≈ prob)
+        const densityScaled = dens.map(d => d * hist.width);
+
+        cltChart.data.labels = hist.centers.map(c => c.toFixed(3));
+        cltChart.data.datasets = [
+          { label: `Istogramma (repetitions=${repetitions})`, data: hist.freqs, backgroundColor:'rgba(120,144,156,0.45)' },
+          { label: `Densità teorica N(0,${(p*(1-p)).toFixed(5)})`, data: densityScaled, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.3 }
+        ];
+        cltChart.update();
+
+        // metrics
+        const sampleMean = zvals.reduce((a,b)=>a+b,0)/zvals.length;
+        const sampleVar = zvals.reduce((a,b)=>a + (b - sampleMean)*(b - sampleMean),0) / (zvals.length-1);
+        document.getElementById('clt_metrics').textContent =
+          `E[z] ≈ ${sampleMean.toFixed(4)} · Var[z] ≈ ${sampleVar.toFixed(4)} · var teorica = p(1-p) = ${(p*(1-p)).toFixed(4)}. (n=${n}, p=${p})`;
+      });
+
+    } // ready
     ready();
   </script>
 </body>
