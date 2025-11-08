@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>Bernoulli process, LLN, CLT, Pascal & Fibonacci</title>
@@ -65,11 +65,11 @@
 
     <main>
       <article class="card">
-        <h1>HMWK 2 — Processo di Bernoulli, LLN, CLT e connessioni combinatorie</h1>
+        <h1>HMWK 2 — Bernoulli Process, LLN, CLT and Combinatorial Connections</h1>
       </article>
 
       <article class="card">
-        <h2>1. Processo di Bernoulli e binomiale</h2>
+        <h2>1. Bernoulli process and binomial</h2>
         <div class="display-equation">
           \[
             X_1,X_2,\dots \overset{\text{iid}}{\sim} \mathrm{Bernoulli}(p),\qquad
@@ -84,30 +84,30 @@
       </article>
 
       <article class="card">
-        <h2>2. Legge dei grandi numeri (LLN)</h2>
+        <h2>2. Law of Large Numbers (LLN)</h2>
         <div class="display-equation">
           \[
             \overline{X}_n=\frac{S_n}{n}=\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]=p.
           \]
         </div>
-        <p class="formal">Enunciato (forte): per \(X_i\) iid con \(\mathbb{E}[|X_1|]<\infty\),
+        <p class="formal">Statement (strong): for iid \(X_i\) with \(\mathbb{E}[|X_1|]<\infty\),
           \(\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]\).
-          Nel caso Bernoulli la convergenza implica che, per quasi ogni realizzazione, la media campionaria converge a \(p\) al crescere di \(n\).</p>
+          In the Bernoulli case this means that, for almost every realization, the sample mean converges to \(p\) as \(n\) grows.</p>
       </article>
 
       <article class="card">
-        <h2>3. Teorema del limite centrale (CLT)</h2>
+        <h2>3. Central Limit Theorem (CLT)</h2>
         <div class="display-equation">
           \[
             \sqrt{n}\,(\overline{X}_n - p) \xrightarrow{d} \mathcal{N}\big(0,\;p(1-p)\big).
           \]
         </div>
-        <p class="formal">CLT: per \(X_i\) iid con media \(\mu\) e varianza \(\sigma^2\),
-          \(\sqrt{n}(\overline X_n - \mu)\xrightarrow{d} N(0,\sigma^2)\). Nel caso Bernoulli \(\mu=p\), \(\sigma^2=p(1-p)\).</p>
+        <p class="formal">CLT: for iid \(X_i\) with mean \(\mu\) and variance \(\sigma^2\),
+          \(\sqrt{n}(\overline X_n - \mu)\xrightarrow{d} N(0,\sigma^2)\). In the Bernoulli case \(\mu=p\), \(\sigma^2=p(1-p)\).</p>
       </article>
 
       <article class="card">
-        <h2>4. Triangolo di Pascal, espansione binomiale e Fibonacci</h2>
+        <h2>4. Pascal's triangle, binomial expansion and Fibonacci</h2>
         <div class="display-equation">
           \[
             \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k},\qquad
@@ -119,116 +119,116 @@
             F_n=\sum_{i=0}^{\lfloor (n-1)/2\rfloor} \binom{n-1-i}{i}.
           \]
         </div>
-        <p class="explain">L'identità per Fibonacci mostra come sommando opportune diagonali del triangolo di Pascal si ottengano i termini della successione di Fibonacci. L'espansione binomiale collega invece i coefficienti combinatori alle probabilità nel modello Bernoulli ponendo \(a=1-p\), \(b=p\).</p>
+        <p class="explain">The Fibonacci identity shows how summing appropriate diagonals of Pascal's triangle yields terms of the Fibonacci sequence. The binomial expansion connects combinatorial coefficients to probabilities in the Bernoulli model by taking \(a=1-p\), \(b=p\).</p>
       </article>
 
       <article class="card">
-        <h2>5. Demo interattive: LLN, Binomiale e CLT</h2>
+        <h2>5. Interactive demos: LLN, Binomial and CLT</h2>
         <div class="controls">
-          <div style="flex:1"><label>n (prove)</label><input id="n_lln" type="number" value="500" min="2" max="200000"></div>
-          <div style="flex:1"><label>m (percorsi LLN)</label><input id="m_lln" type="number" value="50" min="1" max="500"></div>
+          <div style="flex:1"><label>n (trials)</label><input id="n_lln" type="number" value="500" min="2" max="200000"></div>
+          <div style="flex:1"><label>m (LLN paths)</label><input id="m_lln" type="number" value="50" min="1" max="500"></div>
           <div style="flex:1"><label>p (Bernoulli)</label><input id="p_lln" type="number" step="0.01" value="0.6" min="0" max="1"></div>
         </div>
         <div class="controls" style="margin-top:8px">
-          <button id="btn_lln" class="btn">Esegui LLN & Binom</button>
-          <button id="btn_clt" class="btn" style="background:#66bb6a">Mostra CLT (istogramma)</button>
+          <button id="btn_lln" class="btn">Run LLN & Binom</button>
+          <button id="btn_clt" class="btn" style="background:#66bb6a">Show CLT (histogram)</button>
         </div>
 
-        <div class="chartRow" style="margin-top:12px" role="region" aria-label="Grafici interattivi">
-          <div class="chartCard" aria-label="Grafico LLN">
-            <canvas id="llnChart" role="img" aria-label="Evoluzione delle medie campionarie"></canvas>
-            <div class="small">Curva: medie campionarie \(\overline X_k\) per diversi percorsi. Linea tratteggiata = valore teorico \(p\).</div>
+        <div class="chartRow" style="margin-top:12px" role="region" aria-label="Interactive charts">
+          <div class="chartCard" aria-label="LLN Chart">
+            <canvas id="llnChart" role="img" aria-label="Evolution of sample means"></canvas>
+            <div class="small">Curves: sample means \(\overline X_k\) for several paths. Dashed line = theoretical value \(p\).</div>
             <div id="lln_metrics" class="metrics" aria-live="polite"></div>
           </div>
 
-          <div class="chartCard" aria-label="Grafico binomiale">
-            <canvas id="binomChart" role="img" aria-label="Distribuzione empirica vs binomiale teorica"></canvas>
-            <div class="small">Barre: frequenze empiriche di \(S_n\). Linea: probabilità teorica \(\mathrm{Binom}(n,p)\).</div>
+          <div class="chartCard" aria-label="Binomial chart">
+            <canvas id="binomChart" role="img" aria-label="Empirical distribution vs theoretical binomial"></canvas>
+            <div class="small">Bars: empirical frequencies of \(S_n\). Line: theoretical \(\mathrm{Binom}(n,p)\) probabilities.</div>
             <div id="binom_metrics" class="metrics" aria-live="polite"></div>
           </div>
 
-          <div class="chartCard" aria-label="Grafico CLT">
-            <canvas id="cltChart" role="img" aria-label="Istogramma della quantità standardizzata e densità normale"></canvas>
-            <div class="small">Istogramma di \(\sqrt{n}(\overline X_n - p)\) con sovrapposta la densità teorica \(\mathcal{N}(0,p(1-p))\).</div>
+          <div class="chartCard" aria-label="CLT chart">
+            <canvas id="cltChart" role="img" aria-label="Histogram of the standardized quantity and normal density"></canvas>
+            <div class="small">Histogram of \(\sqrt{n}(\overline X_n - p)\) with the theoretical density \(\mathcal{N}(0,p(1-p))\) overlaid.</div>
             <div id="clt_metrics" class="metrics" aria-live="polite"></div>
           </div>
         </div>
       </article>
 
       <article class="card">
-        <h2>6. Confronto formale e analogie con il compito precedente</h2>
+        <h2>6. Formal comparison and analogies with the previous assignment</h2>
 
         <div class="formal">
-          <h3 style="margin:0 0 .5rem 0; color:var(--accent)">Obiettivo</h3>
-          <p>Questo paragrafo mette in relazione l'esercizio corrente con il compito precedente (dove il parametro efficace per prova era \(q=(1-p_{\text{attacker}})^m\)). Si evidenziano analogie, differenze e i richiami combinatori rilevanti.</p>
+          <h3 style="margin:0 0 .5rem 0; color:var(--accent)">Objective</h3>
+          <p>This paragraph relates the current exercise to the previous assignment (where the effective success probability per trial was \(q=(1-p_{\text{attacker}})^m\)). It highlights analogies, differences and the relevant combinatorial remarks.</p>
 
-          <h4 style="margin-top:0.6rem">1. Perspektiva generale: pathwise vs ensemble</h4>
+          <h4 style="margin-top:0.6rem">1. General perspective: pathwise vs. ensemble</h4>
           <p>
-            In entrambi i compiti l'unità fondamentale è la prova di Bernoulli con probabilità di successo fissata (nel compito precedente \(q\), qui \(p\)). Due prospettive complementari:
+            In both assignments the fundamental unit is the Bernoulli trial with a fixed success probability (in the previous assignment \(q\), here \(p\)). Two complementary perspectives:
           </p>
           <ul>
-            <li><strong>Pathwise (LLN):</strong> si segue una singola realizzazione e si osserva la media campionaria \(\overline X_k\). Il risultato di LLN assicura che, per quasi ogni percorso, \(\overline X_n\to p\) (o \(\to q\)).</li>
-            <li><strong>Ensemble (Binomiale):</strong> si ripete l'intero esperimento di lunghezza fissa \(n\) molte volte e si costruisce la distribuzione empirica di \(S_n\). Questa distribuzione è governata dal PMF binomiale
+            <li><strong>Pathwise (LLN):</strong> follow a single realization and observe the sample mean \(\overline X_k\). The LLN guarantees that, for almost every path, \(\overline X_n\to p\) (or \(\to q\)).</li>
+            <li><strong>Ensemble (Binomial):</strong> repeat the entire experiment of fixed length \(n\) many times and build the empirical distribution of \(S_n\). This distribution is governed by the binomial PMF
               \[
                 P(S_n=k)=\binom{n}{k}p^k(1-p)^{n-k},
               \]
-              con \(p\) sostituito da \(q\) nel compito precedente.</li>
+              with \(p\) replaced by \(q\) in the previous assignment.</li>
           </ul>
 
-          <h4 style="margin-top:0.6rem">2. Sostituzione \(p \mapsto q\)</h4>
+          <h4 style="margin-top:0.6rem">2. Substitution \(p \mapsto q\)</h4>
           <p class="formal">
-            Tutte le formule e i teoremi si trasferiscono sostituendo \(p\) con \(q=(1-p_{\text{attacker}})^m\). In particolare:
+            All formulas and theorems transfer by substituting \(p\) with \(q=(1-p_{\text{attacker}})^m\). In particular:
             \[
               S_n\sim\mathrm{Binom}(n,q),\quad \mathbb{E}[S_n]=nq,\quad \mathrm{Var}(S_n)=nq(1-q),
             \]
-            e
+            and
             \[
               \overline X_n \xrightarrow{a.s.} q,\qquad \sqrt{n}(\overline X_n - q)\xrightarrow{d}\mathcal{N}(0,q(1-q)).
             \]
-            Questo mostra che la differenza fra i due compiti è prevalentemente numerica (valore della probabilità) e non strutturale.
+            This shows that the difference between the two assignments is mainly numerical (the value of the probability) rather than structural.
           </p>
 
-          <h4 style="margin-top:0.6rem">3. Relazioni combinatorie e ruolo di Pascal</h4>
+          <h4 style="margin-top:0.6rem">3. Combinatorial relations and the role of Pascal</h4>
           <p>
-            La relazione ricorsiva dei coefficienti binomiali
+            The recursive relation for binomial coefficients
             \[
               \binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}
             \]
-            costruisce il triangolo di Pascal; l'espansione binomiale
+            builds Pascal's triangle; the binomial expansion
             \[
               (1-p + p)^n = \sum_{k=0}^n \binom{n}{k}(1-p)^{n-k} p^k = 1
             \]
-            collega direttamente i coefficienti combinatori alla probabilità degli eventi binomiali. Le somme su diagonali di Pascal producono, fra l'altro, la successione di Fibonacci:
+            directly links combinatorial coefficients to binomial probabilities. Sums along diagonals of Pascal produce, among other things, the Fibonacci sequence:
             \[
               F_n=\sum_{i=0}^{\lfloor (n-1)/2\rfloor} \binom{n-1-i}{i}.
             \]
-            Inserire un pannello grafico (Pascal con diagonali evidenziate) è utile in relazione alla parte combinatoria dell'esame.
+            Adding a graphic panel (Pascal with highlighted diagonals) is useful relative to the combinatorial part of the exam.
           </p>
 
-          <h4 style="margin-top:0.6rem">4. Interpretazione pratica e suggerimenti per la relazione</h4>
+          <h4 style="margin-top:0.6rem">4. Practical interpretation and suggestions for the report</h4>
           <ol>
-            <li>Includere le figure: (A) percorsi di \(\overline X_k\) con linea tratteggiata \(p\) (o \(q\)); (B) bar chart della distribuzione empirica di \(S_n\) con sovrapposta la curva teorica \(\mathrm{Binom}(n,p)\) (o \(\mathrm{Binom}(n,q)\)); (C) istogramma di \(\sqrt{n}(\overline X_n-p)\) con densità normale teorica; (D) triangolo di Pascal annotato per la Fibonacci.</li>
-            <li>Riportare sempre i parametri sperimentali: \(n\), \(p\) (o \(q\)), numero di percorsi \(m\), numero di ripetizioni \(R\) per la stima empirica, e numero di bin per gli istogrammi.</li>
-            <li>Discutere discrepanze a campione finito: errore Monte Carlo, skewness per \(p\) lontano da 0.5, accuratezza dell'approssimazione normale al crescere di \(n\) (velocità \(O(1/\sqrt{n})\)).</li>
-            <li>Nel testo esplicitare la sostituzione \(p\mapsto q\) quando si paragona al compito precedente e commentare i risultati numerici in questo contesto.</li>
+            <li>Include figures: (A) paths of \(\overline X_k\) with dashed line \(p\) (or \(q\)); (B) bar chart of the empirical distribution of \(S_n\) with the theoretical \(\mathrm{Binom}(n,p)\) curve overlaid (or \(\mathrm{Binom}(n,q)\)); (C) histogram of \(\sqrt{n}(\overline X_n-p)\) with the theoretical normal density; (D) annotated Pascal triangle to illustrate Fibonacci.</li>
+            <li>Always report experimental parameters: \(n\), \(p\) (or \(q\)), number of paths \(m\), number of repetitions \(R\) for empirical estimates, and number of bins for histograms.</li>
+            <li>Discuss finite-sample discrepancies: Monte Carlo error, skewness for \(p\) far from 0.5, accuracy of the normal approximation as \(n\) grows (rate \(O(1/\sqrt{n})\)).</li>
+            <li>In the text explicitly state the substitution \(p\mapsto q\) when comparing to the previous assignment and comment on the numerical results in that context.</li>
           </ol>
 
-          <p class="formal"><strong>Conclusione.</strong> L'esercizio corrente è direttamente riconducibile al precedente tramite la sostituzione della probabilità di successo; le connessioni combinatorie (coefficienti binomiali, Pascal, espansione binomiale e Fibonacci) forniscono un quadro matematico coerente che giustifica le osservazioni empiriche fornite dalle demo.</p>
+          <p class="formal"><strong>Conclusion.</strong> The current exercise is directly reducible to the previous one via the substitution of the success probability; the combinatorial connections (binomial coefficients, Pascal, binomial expansion and Fibonacci) provide a coherent mathematical framework that justifies the empirical observations shown in the demos.</p>
         </div>
       </article>
 
       <article class="card">
-        <h2>7. Triangolo di Pascal e Fibonacci (tool)</h2>
+        <h2>7. Pascal's Triangle and Fibonacci (tool)</h2>
         <div class="controls" style="margin-top:8px">
-          <div style="flex:1"><label>Genera Pascal fino a riga n</label><input id="pascal_n" type="number" value="12" min="1" max="30"></div>
-          <button id="gen_pascal" class="btn">Genera Pascal</button>
+          <div style="flex:1"><label>Generate Pascal up to row n</label><input id="pascal_n" type="number" value="12" min="1" max="30"></div>
+          <button id="gen_pascal" class="btn">Generate Pascal</button>
         </div>
         <div id="pascal_box" class="code" style="margin-top:8px;max-height:220px;overflow:auto"></div>
         <pre id="fib_out" class="code">—</pre>
       </article>
 
       <article class="card">
-        <h2>Riferimenti</h2>
+        <h2>References</h2>
         <ol class="small"><li>W. Feller, <em>An Introduction to Probability Theory and Its Applications</em>, Vol.1.</li><li>P. Billingsley, <em>Probability and Measure</em>.</li><li>G. Graham, D. Knuth, O. Patashnik, <em>Concrete Mathematics</em>.</li></ol>
       </article>
     </main>
@@ -279,7 +279,7 @@
           for(let i=0;i<=Math.floor((k-1)/2);i++){ s += binomCoeff(k-1-i, i); }
           fib.push(s);
         }
-        document.getElementById('fib_out').textContent = 'Fibonacci (estratto dalle diagonali di Pascal):\n' + fib.join(', ');
+        document.getElementById('fib_out').textContent = 'Fibonacci (extracted from Pascal diagonals):\n' + fib.join(', ');
       });
 
       // Charts setup
@@ -293,7 +293,7 @@
         options:{
           responsive:true,
           plugins:{ legend:{ display:true } },
-          scales:{ y:{ min:0, max:1, title:{display:true, text:'media campionaria' } }, x:{ title:{display:true, text:'k (numero di prove)' } } }
+          scales:{ y:{ min:0, max:1, title:{display:true, text:'sample mean' } }, x:{ title:{display:true, text:'k (number of trials)' } } }
         }
       });
 
@@ -303,7 +303,7 @@
         options:{
           responsive:true,
           plugins:{ legend:{ display:true } },
-          scales:{ y:{ beginAtZero:true, title:{display:true, text:'probabilità / frequenza' } }, x:{ title:{display:true, text:'conteggio k' } } }
+          scales:{ y:{ beginAtZero:true, title:{display:true, text:'probability / frequency' } }, x:{ title:{display:true, text:'count k' } } }
         }
       });
 
@@ -313,7 +313,7 @@
         options:{
           responsive:true,
           plugins:{ legend:{ display:true } },
-          scales:{ y:{ beginAtZero:true, title:{display:true, text:'densità/frequenza normalizzata' } }, x:{ title:{display:true, text:'valore standardizzato' } } }
+          scales:{ y:{ beginAtZero:true, title:{display:true, text:'density/normalized frequency' } }, x:{ title:{display:true, text:'standardized value' } } }
         }
       });
 
@@ -360,11 +360,11 @@
             const X = Math.random() < p ? 1 : 0; sum += X;
             if(i % step === 0) data.push(sum / i);
           }
-          datasets.push({ label: 'percorso '+(path+1), data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false, borderWidth:1 });
+          datasets.push({ label: 'path '+(path+1), data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false, borderWidth:1 });
         }
         // add theoretical p
         const pLine = Array(labels.length).fill(p);
-        datasets.push({ label: 'p (valore atteso)', data: pLine, borderColor: 'rgba(76,175,80,0.95)', borderWidth:2, pointRadius:0, tension:0, borderDash:[6,6], fill:false });
+        datasets.push({ label: 'p (expected value)', data: pLine, borderColor: 'rgba(76,175,80,0.95)', borderWidth:2, pointRadius:0, tension:0, borderDash:[6,6], fill:false });
 
         llnChart.data.labels = labels; llnChart.data.datasets = datasets; llnChart.update();
 
@@ -382,8 +382,8 @@
 
         binomChart.data.labels = labelsK;
         binomChart.data.datasets = [
-          { label:'Empirico (frequenza)', data: freqs, backgroundColor:'rgba(76,175,80,0.45)' },
-          { label:'Teorico Binom(n,p)', data: theo, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:2, tension:0.2 }
+          { label:'Empirical (frequency)', data: freqs, backgroundColor:'rgba(76,175,80,0.45)' },
+          { label:'Theoretical Binom(n,p)', data: theo, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:2, tension:0.2 }
         ];
         binomChart.update();
 
@@ -393,10 +393,10 @@
         const var_bar = (p * (1 - p)) / n;
 
         document.getElementById('binom_metrics').textContent =
-          `Media teorica S_n = np = ${mean_count.toFixed(3)} · Var(S_n) = np(1-p) = ${var_count.toFixed(3)}. (n=${n}, p=${p})`;
+          `Theoretical mean S_n = np = ${mean_count.toFixed(3)} · Var(S_n) = np(1-p) = ${var_count.toFixed(3)}. (n=${n}, p=${p})`;
 
         document.getElementById('lln_metrics').textContent =
-          `Media teorica della media campionaria = p = ${p.toFixed(3)} · Var(\\overline{X}_n) = p(1-p)/n = ${var_bar.toFixed(6)}.`;
+          `Theoretical mean of the sample mean = p = ${p.toFixed(3)} · Var(\\overline{X}_n) = p(1-p)/n = ${var_bar.toFixed(6)}.`;
       });
 
       // CLT demo button: histogram of sqrt(n)(Xbar - p)
@@ -425,8 +425,8 @@
 
         cltChart.data.labels = hist.centers.map(c => c.toFixed(3));
         cltChart.data.datasets = [
-          { label: `Istogramma (repetitions=${repetitions})`, data: hist.freqs, backgroundColor:'rgba(120,144,156,0.45)' },
-          { label: `Densità teorica N(0,${(p*(1-p)).toFixed(5)})`, data: densityScaled, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.3 }
+          { label: `Histogram (repetitions=${repetitions})`, data: hist.freqs, backgroundColor:'rgba(120,144,156,0.45)' },
+          { label: `Theoretical density N(0,${(p*(1-p)).toFixed(5)})`, data: densityScaled, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.3 }
         ];
         cltChart.update();
 
@@ -434,7 +434,7 @@
         const sampleMean = zvals.reduce((a,b)=>a+b,0)/zvals.length;
         const sampleVar = zvals.reduce((a,b)=>a + (b - sampleMean)*(b - sampleMean),0) / (zvals.length-1);
         document.getElementById('clt_metrics').textContent =
-          `E[z] ≈ ${sampleMean.toFixed(4)} · Var[z] ≈ ${sampleVar.toFixed(4)} · var teorica = p(1-p) = ${(p*(1-p)).toFixed(4)}. (n=${n}, p=${p})`;
+          `E[z] ≈ ${sampleMean.toFixed(4)} · Var[z] ≈ ${sampleVar.toFixed(4)} · theoretical var = p(1-p) = ${(p*(1-p)).toFixed(4)}. (n=${n}, p=${p})`;
       });
 
     } // ready
