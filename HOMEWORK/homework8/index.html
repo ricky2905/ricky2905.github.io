@@ -12,7 +12,7 @@
     .wrap{max-width:1100px;margin:2rem auto;padding:2rem}
     .topnav{display:flex;gap:1rem;margin-bottom:1rem}
     .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
-    /* make all headings green */
+    /* headings in green */
     h1,h2,h3,h4,h5,h6{ color:var(--accent); }
     h1{font-size:2.2rem;border-bottom:3px solid var(--accent);padding-bottom:.3rem}
     .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
@@ -22,8 +22,10 @@
     .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
     .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
     .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:360px;box-sizing:border-box;overflow:hidden}
-    .chartCard canvas{width:100%;height:200px;display:block}
+    /* chart container: column so canvas can expand; overflow visible so axis labels are not clipped */
+    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:360px;box-sizing:border-box;display:flex;flex-direction:column;overflow:visible}
+    /* canvas fills most vertical space, leaving room for captions/metrics */
+    .chartCard canvas{width:100% !important; height: calc(100% - 64px) !important; display:block}
     pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
     button{padding:8px 12px;border-radius:6px;background:var(--accent);border:0;color:#072;font-weight:700;cursor:pointer}
     .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
@@ -100,7 +102,7 @@
         <div class="display-equation">
           \[
             \sqrt{n}\,(\overline{X}_n - p) \xrightarrow{d} \mathcal{N}\big(0,\;p(1-p)\big).
-          \]
+          </]
         </div>
         <p class="formal">CLT: for iid \(X_i\) with mean \(\mu\) and variance \(\sigma^2\),
           \(\sqrt{n}(\overline X_n - \mu)\xrightarrow{d} N(0,\sigma^2)\). In the Bernoulli case \(\mu=p\), \(\sigma^2=p(1-p)\).</p>
@@ -287,34 +289,47 @@
       const binomCtx = document.getElementById('binomChart').getContext('2d');
       const cltCtx = document.getElementById('cltChart').getContext('2d');
 
+      // common options to ensure ticks are visible and space is reserved
+      const commonOptions = {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:true, position:'top' }
+        },
+        layout:{ padding:{ bottom:28 } }, // reserve space for x-axis labels
+      };
+
       let llnChart = new Chart(llnCtx, {
         type:'line',
         data:{ labels:[], datasets:[] },
-        options:{
-          responsive:true,
-          plugins:{ legend:{ display:true } },
-          scales:{ y:{ min:0, max:1, title:{display:true, text:'sample mean' } }, x:{ title:{display:true, text:'k (number of trials)' } } }
-        }
+        options: Object.assign({}, commonOptions, {
+          scales:{
+            y:{ min:0, max:1, title:{display:true, text:'sample mean' } },
+            x:{ title:{display:true, text:'k (number of trials)' }, ticks:{ autoSkip:true, maxTicksLimit:10, maxRotation:45, minRotation:0 } }
+          }
+        })
       });
 
       let binomChart = new Chart(binomCtx, {
         type:'bar',
         data:{ labels:[], datasets:[] },
-        options:{
-          responsive:true,
-          plugins:{ legend:{ display:true } },
-          scales:{ y:{ beginAtZero:true, title:{display:true, text:'probability / frequency' } }, x:{ title:{display:true, text:'count k' } } }
-        }
+        options: Object.assign({}, commonOptions, {
+          scales:{
+            y:{ beginAtZero:true, title:{display:true, text:'probability / frequency' } },
+            x:{ title:{display:true, text:'count k' }, ticks:{ autoSkip:true, maxTicksLimit:12, maxRotation:45, minRotation:0 } }
+          }
+        })
       });
 
       let cltChart = new Chart(cltCtx, {
         type:'bar',
         data:{ labels:[], datasets:[] },
-        options:{
-          responsive:true,
-          plugins:{ legend:{ display:true } },
-          scales:{ y:{ beginAtZero:true, title:{display:true, text:'density/normalized frequency' } }, x:{ title:{display:true, text:'standardized value' } } }
-        }
+        options: Object.assign({}, commonOptions, {
+          scales:{
+            y:{ beginAtZero:true, title:{display:true, text:'density/normalized frequency' } },
+            x:{ title:{display:true, text:'standardized value' }, ticks:{ autoSkip:true, maxTicksLimit:10, maxRotation:45, minRotation:0 } }
+          }
+        })
       });
 
       // helper: normal pdf
@@ -423,11 +438,19 @@
         // Scale density to match histogram relative frequency (density * binWidth ≈ prob)
         const densityScaled = dens.map(d => d * hist.width);
 
-        cltChart.data.labels = hist.centers.map(c => c.toFixed(3));
+        // format labels and reduce displayed ticks
+        const labelsFormatted = hist.centers.map(c => c.toFixed(3));
+        cltChart.data.labels = labelsFormatted;
         cltChart.data.datasets = [
           { label: `Histogram (repetitions=${repetitions})`, data: hist.freqs, backgroundColor:'rgba(120,144,156,0.45)' },
           { label: `Theoretical density N(0,${(p*(1-p)).toFixed(5)})`, data: densityScaled, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.3 }
         ];
+
+        // ensure X ticks are not overcrowded and remain visible
+        cltChart.options.scales.x.ticks.autoSkip = true;
+        cltChart.options.scales.x.ticks.maxTicksLimit = 10;
+        cltChart.options.scales.x.ticks.maxRotation = 45;
+        cltChart.options.scales.x.ticks.minRotation = 0;
         cltChart.update();
 
         // metrics
