@@ -59,5 +59,13 @@ Interactive simulator modeling weekly server updates under repeated attack attem
 
 Interactive page exploring the Bernoulli process, the Law of Large Numbers, and their links to combinatorics. It includes Pascal’s triangle, binomial relationships, and how Fibonacci numbers can be derived from Pascal’s diagonals, with visual and interactive tools
 
+### Homework 9
+
+**Title**: **
+
+### Homework 10
+
+**Title**: **
+
 ---
 
