@@ -33,7 +33,7 @@ Select Homework:
 - [Homework 6 –  Mean and Variance Simulator - Numerical Stability and Algorithm Comparison](/HOMEWORK/homework6/index.html)
 - [Homework 7 – Random Walk & Binomial Convergence](/HOMEWORK/homework7/index.html)
 - [Homework 8 – Bernoulli process, LLN, Pascal & Fibonacci](/HOMEWORK/homework8/index.html)
-- [Homework 9 – ](/HOMEWORK/homework9/index.html)
+- [Homework 9 – Probability — Interpretations, Axiomatic Theory, Measure and Simulation](/HOMEWORK/homework9/index.html)
 - [Homework 10 – ](/HOMEWORK/homework10/index.html)
 
 
