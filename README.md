@@ -61,7 +61,9 @@ Interactive page exploring the Bernoulli process, the Law of Large Numbers, and 
 
 ### Homework 9
 
-**Title**: **
+**Title**: *Probability — Interpretations, Axiomatic Theory, Measure and Simulation*
+
+Survey of probability interpretations, Kolmogorov axioms and measure-theoretic foundations, plus a lightweight interactive simulator (Binomial discretization, exponential inter-arrivals, direct Poisson) with charts and basic goodness-of-fit tools.
 
 ### Homework 10
 
