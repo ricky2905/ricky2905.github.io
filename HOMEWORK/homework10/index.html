@@ -1,1 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Probability — Simulation: Counting process | Riccardo D'Annibale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:#e0e0e0;padding:2rem;max-width:1100px;margin:auto}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    h1,h2,h3{color:var(--accent)}
+    .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0}
+    p{max-width:100%;text-align:justify;margin:0 0 1rem}
+    .display-equation{background:rgba(255,255,255,0.02);padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
+    ol,ul{margin:0 0 1rem;padding-left:1.25rem}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow:auto;border:1px solid rgba(255,255,255,0.03)}
+    .muted{color:var(--muted)}
+    footer{font-size:0.9rem;color:var(--muted);margin-top:1rem}
+    .example{background:rgba(255,255,255,0.02);padding:10px;border-radius:6px;margin:8px 0;border:1px solid rgba(255,255,255,0.03)}
+
+    /* chart/layout tweaks adapted from original simulator */
+    .controls{display:flex;gap:12px;flex-wrap:wrap}
+    input, textarea, select, button{padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0b0c10;color:#e6f4e6;font-size:14px}
+    .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .mainChart{flex:1 1 640px;padding:18px;border-radius:8px;height:420px;background:transparent}
+    .sideChart{width:360px;padding:18px;border-radius:8px;height:420px;background:transparent}
+    @media(max-width:900px){ .mainChart,.sideChart{height:320px} .mainChart{flex-basis:100%} .sideChart{width:100%} .controls{flex-direction:column} }
+    .intro { font-size:0.98rem; color:#e9f6e9; margin-bottom:0.5rem }
+  </style>
+
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/chtml'] },
+      tex: { packages: {'[+]': ['ams','amsmath','amssymb']}, inlineMath:[['\\(','\\)']], displayMath:[['\\[','\\]']] },
+      chtml: { scale:1.06 }, startup:{ typeset:false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+   <div class="wrap">
+     <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+  <main>
+    <article class="card">
+      <h1>Simulator: counting process (Poisson)</h1>
+      <p class="intro">
+        This simulator generates sample paths of a counting process on the time interval \([0,T]\)
+        with a constant average rate \(\lambda\).
+        The goal is to demonstrate practically how the binomial discretization (simple method),
+        the inter-arrival method (exact) and direct sampling of the count (exact) behave
+        and how to compare the results with the theoretical predictions of the Poisson process.
+      </p>
+    </article>
+
+    <article class="card">
+      <h2>Interface</h2>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:160px"><label>m — number of trajectories<br><input id="mTraj" type="number" value="2000" min="1" max="200000"></label></div>
+        <div style="flex:1;min-width:160px"><label>n — subintervals (discretization)<br><input id="nSteps" type="number" value="5000" min="10" max="1000000"></label></div>
+        <div style="flex:1;min-width:160px"><label>λ — average rate<br><input id="lambdaRate" type="number" step="0.1" value="3" min="0" max="1e6"></label></div>
+        <div style="flex:1;min-width:120px"><label>T — duration<br><input id="Tdur" type="number" step="0.1" value="1" min="0.001" max="1e6"></label></div>
+      </div>
+
+      <div class="controls" role="toolbar" aria-label="Simulation controls" style="margin-top:12px">
+        <button id="runSim">Run — discretization (Binomial)</button>
+        <button id="runInter">Run — inter-arrival (Exact)</button>
+        <button id="runPoisson">Run — direct Poisson (Exact)</button>
+        <button id="clearBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">Clear</button>
+        <button id="exportCSV" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">Export CSV</button>
+        <label class="muted" style="align-self:center">Show first k trajectories</label>
+        <input id="kShow" type="number" value="30" min="1" style="width:80px">
+        <div id="status" class="muted" style="margin-left:8px;align-self:center">Ready</div>
+      </div>
+
+      <div class="chartRow" style="margin-top:12px">
+        <div class="mainChart"><canvas id="trajCanvas" aria-label="Trajectories N(t)"></canvas></div>
+        <div class="sideChart"><canvas id="histCanvas" aria-label="Histogram of final counts"></canvas></div>
+      </div>
+
+      <div class="chartRow" style="margin-top:12px">
+        <div class="mainChart" style="height:320px"><canvas id="iaCanvas" aria-label="Inter-arrival histogram"></canvas></div>
+      </div>
+
+      <pre id="report" class="muted">Results and statistics will appear here.</pre>
+    </article>
+
+    <footer class="muted">© 2025 Riccardo D'Annibale</footer>
+  </main>
+
+  <script>
+    // -------------------------
+    // SIMPLIFIED & ROBUST (same numerical engine as the previous version)
+    // -------------------------
+    const $ = id => document.getElementById(id);
+    let trajChart = null, histChart = null, iaChart = null, lastResult = null;
+
+    function initCharts(){
+      if(trajChart) trajChart.destroy();
+      if(histChart) histChart.destroy();
+      if(iaChart) iaChart.destroy();
+
+      const defaultOptions = {
+        responsive:true,
+        maintainAspectRatio:false,
+        animation:false,
+        plugins: {
+          legend: { labels: { color:'#e6f4e6' }, position:'top' },
+          tooltip: { mode:'index', intersect:false }
+        },
+        scales: {
+          x: { ticks:{ color:'#e0e0e0' }, grid:{ color:'rgba(255,255,255,0.03)' } },
+          y: { ticks:{ color:'#e0e0e0' }, grid:{ color:'rgba(255,255,255,0.03)' } }
+        }
+      };
+
+      const ctxT = $('trajCanvas').getContext('2d');
+      trajChart = new Chart(ctxT, {
+        type: 'line',
+        data: { labels: [], datasets: [] },
+        options: Object.assign({}, defaultOptions, { scales: { y: Object.assign({}, defaultOptions.scales.y, { title:{ display:true, text:'Cumulative count N(t)' } }) } })
+      });
+
+      const ctxH = $('histCanvas').getContext('2d');
+      histChart = new Chart(ctxH, {
+        type: 'bar',
+        data: { labels: [], datasets: [] },
+        options: Object.assign({}, defaultOptions, { scales: { x: Object.assign({}, defaultOptions.scales.x, { title:{ display:true, text:'k (count)' } }), y: Object.assign({}, defaultOptions.scales.y, { title:{ display:true, text:'Frequency' } }) } })
+      });
+
+      const ctxIA = $('iaCanvas').getContext('2d');
+      iaChart = new Chart(ctxIA, {
+        type: 'bar',
+        data: { labels: [], datasets: [] },
+        options: Object.assign({}, defaultOptions, { scales: { x: Object.assign({}, defaultOptions.scales.x, { title:{ display:true, text:'Inter-arrival (s)' } }), y: Object.assign({}, defaultOptions.scales.y, { title:{ display:true, text:'Frequency' } }) } })
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      initCharts();
+      if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{});
+    });
+
+    const palette = ['#4CAF50','#66bb6a','#8BC34A','#CDDC39','#FFC107','#FF9800','#FF5722','#E91E63','#9C27B0','#3F51B5'];
+
+    function poissonPmf(mu, maxk){
+      const a = new Array(maxk+1);
+      a[0] = Math.exp(-mu);
+      for(let k=1;k<=maxk;k++) a[k] = a[k-1] * mu / k;
+      return a;
+    }
+
+    function klDiv(empCounts, theoProbs){
+      const m = empCounts.reduce((s,x)=>s+x,0);
+      const eps = 1e-12;
+      let D=0;
+      for(let i=0;i<empCounts.length;i++){
+        const p = empCounts[i]/m;
+        const q = theoProbs[i] || eps;
+        if(p>0) D += p * Math.log(p/(q+eps));
+      }
+      return D;
+    }
+
+    function simulate_discretization(m,n,lambda,T,kShow){
+      const dt = T / n;
+      const p = Math.min(1, lambda * dt);
+      const kPlot = Math.min(kShow, m);
+      const trajectories = Array.from({length: kPlot}, ()=> new Float32Array(n));
+      const finalCounts = new Uint32Array(m);
+      const interarrivals = [];
+
+      for(let i=0;i<m;i++){
+        let cum = 0;
+        let lastTime = null;
+        for(let t=0;t<n;t++){
+          if(Math.random() < p){
+            cum++;
+            const time = (t + Math.random()) * dt;
+            if(lastTime !== null) interarrivals.push(time - lastTime);
+            lastTime = time;
+          }
+          if(i < kPlot) trajectories[i][t] = cum;
+        }
+        finalCounts[i] = cum;
+      }
+      return { trajectories, finalCounts: Array.from(finalCounts), interarrivals };
+    }
+
+    function simulate_interarrivals(m, lambda, T, kShow){
+      const trajectories = [];
+      const finalCounts = new Array(m);
+      const interarrivalsAll = [];
+      for(let i=0;i<m;i++){
+        let t=0, cum=0;
+        const times = [];
+        while(true){
+          const u = Math.random();
+          if(u===0) continue;
+          const tau = -Math.log(u)/Math.max(1e-12, lambda);
+          t += tau;
+          if(t > T) break;
+          times.push(t);
+          cum++;
+        }
+        finalCounts[i] = cum;
+        trajectories.push(times.slice(0,kShow));
+        for(let j=1;j<times.length;j++) interarrivalsAll.push(times[j]-times[j-1]);
+      }
+      return { trajectories, finalCounts, interarrivals: interarrivalsAll };
+    }
+
+    function simulate_direct_poisson(m, lambda, T, kShow){
+      const mu = lambda * T;
+      const trajectories = [];
+      const finalCounts = new Array(m);
+      const interarrivalsAll = [];
+      for(let i=0;i<m;i++){
+        // Knuth algorithm
+        const L = Math.exp(-mu);
+        let k=0, p=1;
+        while(p > L){
+          p *= Math.random();
+          k++;
+        }
+        k = Math.max(0, k-1);
+        finalCounts[i] = k;
+        if(k>0){
+          const times = Array.from({length:k}, ()=> Math.random()*T).sort((a,b)=>a-b);
+          trajectories.push(times.slice(0,kShow));
+          for(let j=1;j<times.length;j++) interarrivalsAll.push(times[j]-times[j-1]);
+        } else {
+          trajectories.push([]);
+        }
+      }
+      return { trajectories, finalCounts, interarrivals: interarrivalsAll };
+    }
+
+    function processAndRender(res, m, n, lambda, T){
+      const { trajectories, finalCounts, interarrivals } = res;
+      const mu = lambda * T;
+
+      // trajectories plot (only for discrete case we have arrays of length n)
+      if(n && trajectories.length>0 && trajectories[0].length === n){
+        const dt = T / n;
+        const labels = Array.from({length:n}, (_,i)=> ((i+1)*dt).toFixed(3));
+        trajChart.data.labels = labels;
+        trajChart.data.datasets = [];
+        const kShow = Math.min(trajectories.length, Number($('kShow').value));
+        for(let i=0;i<kShow;i++){
+          trajChart.data.datasets.push({ label: 'traj ' + (i+1), data: Array.from(trajectories[i]), borderColor: palette[i%palette.length], borderWidth:1, pointRadius:0, fill:false });
+        }
+        // expected line
+        trajChart.data.datasets.push({ label: 'expected λt', data: labels.map((_,idx)=> lambda * ((idx+1)*dt)), borderColor:'#ffffff', borderDash:[6,6], borderWidth:1.2, pointRadius:0, fill:false });
+        trajChart.update();
+      } else {
+        trajChart.data.labels = [];
+        trajChart.data.datasets = [];
+        trajChart.update();
+      }
+
+      // histogram of finalCounts
+      const msize = finalCounts.length;
+      const maxObserved = msize ? Math.max(...finalCounts) : 0;
+      const maxk = Math.max( Math.min(200, Math.ceil(Math.sqrt(msize))+10), maxObserved );
+      const bins = new Array(maxk+1).fill(0);
+      for(let i=0;i<msize;i++){ const k = Math.min(maxk, finalCounts[i]); bins[k]++; }
+      const binLabels = bins.map((_,i)=> String(i));
+
+      const pmf = poissonPmf(mu, maxk);
+      const pmfScaled = pmf.map(v => v * msize);
+
+      histChart.data.labels = binLabels;
+      histChart.data.datasets = [
+        { label:'observed counts', data: bins, backgroundColor:'rgba(76,175,80,0.6)' },
+        { type:'line', label:'Poisson pmf (scaled)', data: pmfScaled, borderColor:'#ffffff', borderWidth:1.6, pointRadius:2, fill:false, tension:0.2 }
+      ];
+      histChart.update();
+
+      // inter-arrival histogram (compare to exponential)
+      const iaSample = interarrivals.slice(0, Math.min(80000, interarrivals.length));
+      const iaBins = 50;
+      const iaMax = iaSample.length ? Math.max(...iaSample) : 1;
+      const iaCounts = new Array(iaBins).fill(0);
+      const iaEdges = new Array(iaBins+1).fill(0).map((_,i)=> (i/iaBins) * iaMax );
+      for(const v of iaSample){
+        let idx = Math.floor((v/iaMax)*iaBins);
+        if(isNaN(idx) || !isFinite(idx)) continue;
+        if(idx<0) idx=0;
+        if(idx>=iaBins) idx=iaBins-1;
+        iaCounts[idx]++;
+      }
+      const iaLabels = iaCounts.map((_,i)=> iaEdges[i].toFixed(3) + '–' + iaEdges[i+1].toFixed(3));
+      const densityCounts = [];
+      for(let i=0;i<iaBins;i++){
+        const left = iaEdges[i], right = iaEdges[i+1];
+        const center = (left + right)/2;
+        const width = right - left || 1e-9;
+        const dens = lambda * Math.exp(-lambda * center);
+        densityCounts.push(dens * iaSample.length * width);
+      }
+
+      iaChart.data.labels = iaLabels;
+      iaChart.data.datasets = [
+        { label:'inter-arrivals (freq)', data: iaCounts, backgroundColor:'rgba(66,165,245,0.6)' },
+        { type:'line', label:'Exp density (scaled)', data: densityCounts, borderColor:'#ffffff', borderWidth:1.4, pointRadius:0, fill:false, tension:0.2 }
+      ];
+      iaChart.update();
+
+      // stats
+      const meanEmp = msize ? (finalCounts.reduce((a,b)=>a+b,0) / msize) : NaN;
+      let ss = 0;
+      for(let i=0;i<msize;i++){ const d = finalCounts[i]-meanEmp; ss += d*d; }
+      const varEmp = (msize>1) ? ss/(msize-1) : 0;
+      const kl = klDiv(bins, pmf);
+      let chi2 = 0;
+      for(let i=0;i<bins.length;i++){
+        const expected = pmfScaled[i] || 0;
+        if(expected > 0) chi2 += Math.pow(bins[i] - expected, 2) / expected;
+      }
+
+      const iaMean = iaSample.length ? (iaSample.reduce((a,b)=>a+b,0)/iaSample.length) : NaN;
+      const iaTheo = 1/Math.max(1e-12, lambda);
+
+      $('report').textContent =
+        'Simulation completed — m=' + m + (n?(', n=' + n):'') + ', λ=' + lambda.toFixed(6) + ', T=' + T + '\n\n' +
+        (n?('Δt = ' + (T/n).toExponential(3) + ', p = λΔt ≈ ' + (lambda*(T/n)).toExponential(3) + '\n\n') : '') +
+        'Final counts N(T):\n' +
+        '- Empirical mean = ' + (isNaN(meanEmp)? 'n/a' : meanEmp.toFixed(6)) + '\n' +
+        '- Empirical variance = ' + (isNaN(varEmp)? 'n/a' : varEmp.toFixed(6)) + '\n' +
+        '- Theoretical mean = λT = ' + mu.toFixed(6) + '\n' +
+        '- Theoretical variance = ' + mu.toFixed(6) + '\n\n' +
+        'Goodness-of-fit (discrete):\n' +
+        '- χ² statistic (aggregation not applied) = ' + chi2.toFixed(4) + ' (no p-value computed here)\n' +
+        '- KL divergence (emp||theo) = ' + kl.toExponential(6) + ' (nats)\n\n' +
+        'Inter-arrivals (sample size = ' + iaSample.length + '):\n' +
+        '- Empirical mean inter-arrival = ' + (isNaN(iaMean)? 'n/a' : iaMean.toFixed(6)) + '\n' +
+        '- Theoretical mean inter-arrival = 1/λ = ' + iaTheo.toFixed(6) + '\n\n' +
+        'Notes:\n' +
+        "- If n is large and p = λT/n is small, Bin(n,p) → Poisson(λT).\n" +
+        "- The inter-arrival method is exact and is often preferable for numerically stable simulations.\n" +
+        "- The simulator saves only the first k trajectories for plotting: increase kShow if you want to see more trajectories.\n";
+
+      $('status').textContent = 'Ready';
+      lastResult = { m, n, lambda, T, finalCounts: Array.from(finalCounts), interarrivals: iaSample };
+    }
+
+    // UI handlers (same as before)
+    $('runSim').addEventListener('click', ()=>{
+      try{
+        const m = Math.max(1, Math.min(200000, Number($('mTraj').value)||2000));
+        const n = Math.max(1, Math.min(1000000, Number($('nSteps').value)||5000));
+        let lambda = Number($('lambdaRate').value); if(isNaN(lambda)||lambda<0) lambda=1;
+        let T = Number($('Tdur').value); if(isNaN(T)||T<=0) T=1;
+        const kShow = Math.max(1, Math.min(m, Number($('kShow').value)||30));
+        $('status').textContent = 'Running discretization... (this may take a moment)';
+        if(m*n > 6e7){
+          if(!confirm('Warning: m*n = ' + (m*n) + '. This operation could be very slow or consume a lot of memory. Continue?')){ $('status').textContent='Canceled'; return; }
+        }
+        setTimeout(()=>{
+          const res = simulate_discretization(m,n,lambda,T,kShow);
+          processAndRender(res, m, n, lambda, T);
+        }, 20);
+      }catch(err){
+        $('status').textContent = 'Error: ' + String(err);
+        console.error(err);
+      }
+    });
+
+    $('runInter').addEventListener('click', ()=>{
+      try{
+        const m = Math.max(1, Math.min(200000, Number($('mTraj').value)||2000));
+        let lambda = Number($('lambdaRate').value); if(isNaN(lambda)||lambda<=0) lambda=1;
+        let T = Number($('Tdur').value); if(isNaN(T)||T<=0) T=1;
+        const kShow = Math.max(1, Math.min(m, Number($('kShow').value)||30));
+        $('status').textContent = 'Running inter-arrival simulation...';
+        setTimeout(()=>{
+          const res = simulate_interarrivals(m,lambda,T,kShow);
+          processAndRender(res, m, null, lambda, T);
+        }, 20);
+      }catch(err){
+        $('status').textContent = 'Error: ' + String(err);
+        console.error(err);
+      }
+    });
+
+    $('runPoisson').addEventListener('click', ()=>{
+      try{
+        const m = Math.max(1, Math.min(200000, Number($('mTraj').value)||2000));
+        let lambda = Number($('lambdaRate').value); if(isNaN(lambda)||lambda<0) lambda=1;
+        let T = Number($('Tdur').value); if(isNaN(T)||T<=0) T=1;
+        const kShow = Math.max(1, Math.min(m, Number($('kShow').value)||30));
+        $('status').textContent = 'Running direct Poisson simulation...';
+        setTimeout(()=>{
+          const res = simulate_direct_poisson(m,lambda,T,kShow);
+          processAndRender(res, m, null, lambda, T);
+        }, 20);
+      }catch(err){
+        $('status').textContent = 'Error: ' + String(err);
+        console.error(err);
+      }
+    });
+
+    $('clearBtn').addEventListener('click', ()=>{ initCharts(); $('report').textContent='Charts cleared.'; $('status').textContent='Ready'; lastResult=null; });
+
+    $('exportCSV').addEventListener('click', ()=>{
+      if(!lastResult){ alert('Run a simulation before exporting.'); return; }
+      const { m,n,lambda,T, finalCounts } = lastResult;
+      let csv = 'trajectory_index,N_T\n';
+      for(let i=0;i<finalCounts.length;i++) csv += (i+1) + ',' + finalCounts[i] + '\n';
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'poisson_m' + m + '_n' + (n||'na') + '_lambda' + lambda.toFixed(2) + '_T' + T + '.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    window.addEventListener('resize', ()=>{ if(trajChart) trajChart.resize(); if(histChart) histChart.resize(); if(iaChart) iaChart.resize(); });
+
+  </script>
+</body>
+</html>
+
 
