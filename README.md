@@ -61,13 +61,15 @@ Interactive page exploring the Bernoulli process, the Law of Large Numbers, and 
 
 ### Homework 9
 
-**Title**: *Probability — Interpretations, Axiomatic Theory, Measure and Simulation*
+**Title**: *Foundations of Probability Theory*
 
-Survey of probability interpretations, Kolmogorov axioms and measure-theoretic foundations, plus a lightweight interactive simulator (Binomial discretization, exponential inter-arrivals, direct Poisson) with charts and basic goodness-of-fit tools.
+This homework reviews the main interpretations of probability—classical, frequentist, Bayesian, and geometric—and shows how the axiomatic approach provides a unified and consistent formal framework. It also introduces the connection between probability and measure theory, covering sigma-algebras, probability measures, and random variables. Finally, using the axioms, it derives key results such as subadditivity and the inclusion–exclusion principle.
 
 ### Homework 10
 
-**Title**: **
+**Title**: *Simulating a Counting Process*
+
+This homework simulates a counting process over a time interval by dividing it into many small subintervals and generating events with probability λ/n.The resulting process is analyzed and shown to approximate a Poisson process, a fundamental model in stochastic theory. The parameter λ is interpreted as the average rate of occurrence of events over time.
 
 ---
 
