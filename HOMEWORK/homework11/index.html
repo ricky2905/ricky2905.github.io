@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wiener Process: Interactive Simulators, Scale Tests, and Statistical Diagnostics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Engineer-oriented guide to the Wiener process: introduction, definition, deeper insights, interactive simulator and automatic diagnostics (MSD fit, KS, QQ).">
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf; --text:#e0e0e0 }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .wrap{max-width:1100px;margin:2rem auto;padding:2rem}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    h1,h2,h3,h4,h5,h6{ color:var(--accent); }
+    h1{font-size:2.0rem;border-bottom:3px solid var(--accent);padding-bottom:.3rem}
+    .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:var(--accent)}
+    input, select{width:100%;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0b0c10;color:var(--text)}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
+    .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:360px;box-sizing:border-box;display:flex;flex-direction:column;overflow:visible}
+    .chartCard canvas{width:100% !important; height: calc(100% - 72px) !important; display:block}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
+    button{padding:8px 12px;border-radius:6px;background:var(--accent);border:0;color:#072;font-weight:700;cursor:pointer}
+    .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
+    .explain { margin-top:10px; line-height:1.6; color:#dfeee0 }
+    .metrics { margin-top:8px; font-size:13px; color:var(--muted) }
+    .formal { margin-top:10px; padding:10px; background:rgba(255,255,255,0.015); border-radius:6px; border:1px solid rgba(255,255,255,0.02) }
+    code.inline { background: rgba(255,255,255,0.03); padding:2px 6px; border-radius:4px; color: #d0f0d0 }
+    .report { margin-top:10px; background:#081018; padding:10px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); color:#dfeee0; font-size:13px }
+    .good { color:#9be29b }
+    .warn { color:#ffd08a }
+    .bad { color:#ff8a8a }
+
+    /* MathJax / SVG adjustments to improve readability */
+    .mjx-svg { fill: var(--text) !important; display:block; margin:.4rem 0; shape-rendering:geometricPrecision; font-size:1.05rem !important; line-height:1.2 !important; }
+    /* ensure scripts/code/pre don't get typeset */
+    @media(max-width:520px){ .mjx-svg .mjx-mrow { font-size:1.0rem !important } }
+  </style>
+
+  <!-- MathJax -->
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/svg'] },
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]'], ['$$','$$']],
+        packages: {'[+]': ['ams']}
+      },
+      options: { skipHtmlTags: ['script','style','textarea','pre','code'] },
+      svg: { fontCache: 'none', scale: 1.2 }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+    <main>
+
+      <!-- 1 INTRO -->
+      <article class="card">
+        <h1>Wiener Process: Interactive Simulators, Scale Tests, and Statistical Diagnostics</h1>
+    <p class="explain">This page provides a compact and rigorous presentation of the <strong>Wiener process</strong> (Brownian motion): mathematical definition and main properties, practical guidance for numerical simulation, and tools for statistical verification. Interactive simulations are available to generate paths, compute the mean-squared displacement (MSD) and analyze the distribution of increments, accompanied by automated diagnostic tests (MSD log-log fit, KS test, QQ preparation). A simple agent-based model (ABM) is also included to compare interaction effects with Gaussian diffusion; the material is intended for teaching and engineering applications, with guidelines for reproducibility and numerical validation.</p>
+      </article>
+
+      <!-- 2 DEFINITION & EXPLANATION -->
+      <article class="card">
+        <h2>Definition</h2>
+        <div class="display-equation">
+          \[
+            W_0 = 0,\qquad W_t - W_s \sim \mathcal{N}(0,\,t-s),\quad\text{(independent increments)}.
+          \]
+        </div>
+        <p class="explain">
+          Practical meaning:
+        </p>
+        <ul class="explain">
+          <li><strong>Gaussian increments:</strong> the amount the process changes over an interval of length \( \tau \) is \( \sim \mathcal{N}(0,\tau) \).</li>
+          <li><strong>Independence:</strong> increments on disjoint intervals are independent — useful to sum variances.</li>
+          <li><strong>Time scaling:</strong> \(\mathrm{Var}(W_t)=t\) → standard deviation ≈ \(\sqrt{t}\). In practice uncertainty grows with the square root of time.</li>
+        </ul>
+        <p class="explain">
+          To simulate: pick a step \(\Delta t\), generate \(\Delta W_i = \sqrt{\Delta t}\,Z_i\) with \(Z_i\sim N(0,1)\) independent, and accumulate.
+        </p>
+      </article>
+
+  <!-- 3 FUNDAMENTAL PROPERTIES AND INTUITIONS -->
+<!-- 3 PROPERTIES OF THE WIENER PROCESS (INTUITIONS AND KEY RESULTS) -->
+<article class="card">
+  <h2>Properties of the Wiener process</h2>
+<p class="explain">
+  The Wiener process has structural properties that determine its behavior both theoretically (Gaussian process, martingale, random-walk limit)
+  and in applications, where it serves as the basic diffusion model and as the stochastic term in SDEs. The items below — linear variance, irregularity, quadratic variation,
+  approximation by random walks and role in stochastic equations — form the core of results explaining why Wiener is the fundamental "noise" in continuous modelling.
+</p>
+
+  <h3>Linear variance in time</h3>
+  <p class="explain">
+    For a Wiener process the increments on disjoint intervals are independent and have variance equal to the interval length.
+    Splitting \([0,t]\) into \(n\) intervals of width \(\Delta t = t/n\), each increment has variance \(\Delta t\).
+    Summing variances by independence yields \(\mathrm{Var}(W_t)=t\).
+    This is the diffusion property with scaling \(\sqrt{t}\).
+  </p>
+
+  <h3>Irregularity and non-differentiability</h3>
+  <p class="explain">
+    Trajectories of the Wiener process are continuous but almost surely non-differentiable.
+    Intuitively, the ratio \(\dfrac{W_{t+\Delta t}-W_t}{\Delta t}\) has variance of order \(1/\Delta t\), which diverges as \(\Delta t\to 0\).
+    The local "acceleration" is thus too irregular to admit a classical derivative.
+  </p>
+
+  <h3>Unit quadratic variation</h3>
+  <div class="display-equation">
+    \[
+      \sum_{i}(W_{t_{i+1}} - W_{t_i})^2 \xrightarrow{|\Pi|\to 0} T.
+    \]
+  </div>
+  <p class="explain">
+    The Wiener process has quadratic variation exactly equal to the interval length.
+    This property is characteristic: it distinguishes Wiener from regular functions and underlies Itô calculus,
+    where terms \((\Delta W)^2\) produce contributions of order \(\Delta t\).
+  </p>
+
+  <h3>Approximation by random walk (Donsker's theorem)</h3>
+  <p class="explain">
+    A Wiener process can be obtained as the scaled limit of a random walk.
+    Donsker's theorem extends the CLT to entire processes: the interpolated path of a random walk, rescaled in time and amplitude,
+    converges in distribution to the Wiener process.  
+    This justifies simulations based on sums of Gaussian or binary increments.
+  </p>
+
+  <h3>Connection with SDEs and Euler–Maruyama</h3>
+  <p class="explain">
+    Wiener is the fundamental "noise" in stochastic differential equations
+    \[
+      dX_t = a(X_t,t)\,dt + b(X_t,t)\,dW_t.
+    \]
+    The Euler–Maruyama scheme
+    \[
+      X_{n+1} = X_n + a(X_n,t_n)\,\Delta t + b(X_n,t_n)\,\Delta W_n
+    \]
+    uses Wiener increments directly, \( \Delta W_n \sim \mathcal{N}(0,\Delta t) \).
+    The structural properties of Wiener also determine convergence orders: strong \(O(\Delta t^{1/2})\), weak \(O(\Delta t)\).
+  </p>
+</article>
+
+
+
+      <!-- 4 GRAPH / SIMULATOR -->
+      <article class="card">
+        <h2>Interactive simulator</h2>
+        <div id="diagnostics_report" class="report" aria-live="polite">Diagnostic report: run <strong>Simulate</strong> then <strong>Run diagnostics</strong>.</div>
+
+        <div class="controls">
+          <div style="flex:1"><label>H (horizon T)</label><input id="T" type="number" value="1" min="0.01" step="0.01"></div>
+          <div style="flex:1"><label>n (steps)</label><input id="n_steps" type="number" value="1000" min="10" max="20000"></div>
+          <div style="flex:1"><label>m (paths)</label><input id="m_paths" type="number" value="200" min="1" max="1000"></div>
+          <div style="flex:1"><label>μ (drift)</label><input id="mu" type="number" value="0" step="0.01"></div>
+          <div style="flex:1"><label>σ (volatility)</label><input id="sigma" type="number" value="1" step="0.01" min="0"></div>
+          <div style="flex:1"><label>ABM: N agents</label><input id="abm_N" type="number" value="150" min="1" max="2000"></div>
+        </div>
+
+        <div class="controls" style="margin-top:8px">
+          <button id="btn_sim" class="btn">Simulate paths & MSD</button>
+          <button id="btn_clt" class="btn" style="background:#66bb6a">Increments histogram</button>
+          <button id="btn_abm" class="btn" style="background:#ffb74d">Run ABM</button>
+          <button id="btn_diag" class="btn" style="background:#8ecbff">Run diagnostics</button>
+        </div>
+
+        <div class="chartRow" style="margin-top:12px">
+          <div class="chartCard">
+            <canvas id="pathsChart"></canvas>
+            <div class="small">Paths: \(X_t=\mu t + \sigma W_t\); dashed line = theoretical mean \(\mu t\).</div>
+            <div id="paths_metrics" class="metrics"></div>
+          </div>
+
+          <div class="chartCard">
+            <canvas id="msdChart"></canvas>
+            <div class="small">Empirical MSD (average over paths) with theoretical reference \(\sigma^2 t\).</div>
+            <div id="msd_metrics" class="metrics"></div>
+          </div>
+
+          <div class="chartCard">
+            <canvas id="histChart"></canvas>
+            <div class="small">Histogram of increments \(\Delta X\) and scaled theoretical normal density.</div>
+            <div id="hist_metrics" class="metrics"></div>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- 5 EXPLANATION: step-by-step tests -->
+      <article class="card">
+        <h2>Charts explanation</h2>
+
+        <h3>Objectives </h3>
+        <ul class="explain">
+          <li>Check that paths are centered on \(\mu t\) (correct mean).</li>
+          <li>Verify time scaling: the <strong>MSD</strong> should grow like \(\sigma^2 t\) (log-log fit with slope ≈ 1).</li>
+          <li>Check that increments \(\Delta X\) are Gaussian with mean \(\mu\Delta t\) and variance \(\sigma^2\Delta t\) (histogram, KS, QQ).</li>
+        </ul>
+
+        <h4>1) Initial settings (example)</h4>
+        <p class="explain">For a quick check: set <code>μ = 0</code>, <code>σ = 1</code>, <code>T = 1</code>, <code>n = 1000</code>, <code>m = 200</code>. Then click <code>Simulate paths &amp; MSD</code>.</p>
+
+        <h4>2) Interpretation of the three charts</h4>
+        <ul class="explain">
+          <li><strong>Paths:</strong> the cloud of paths should be symmetric around the dashed line \(\mu t\). Systematic offsets indicate incorrect drift or RNG/seed issues.</li>
+          <li><strong>MSD (mean squared displacement):</strong> the empirical curve (mean over paths) should follow the reference line \(\sigma^2 t\). In log-log scale the expected slope is ≈ 1.</li>
+          <li><strong>Increments histogram:</strong> the histogram shape should overlap the scaled theoretical normal density. Localized differences or heavy tails suggest departures from Gaussianity.</li>
+        </ul>
+
+        <h4>3) Automated numerical diagnostics (the <code>Run diagnostics</code> button)</h4>
+        <p class="explain">After simulation, the automatic report runs the following tests and produces readable indicators:</p>
+        <ul class="explain">
+          <li><strong>MSD log-log fit:</strong> estimates the slope and the coefficient of determination R². Quick interpretation:
+            <ul>
+              <li><span class="good">|slope−1| ≤ 0.05</span> → slope consistent with normal diffusion.</li>
+              <li><span class="warn">0.05 &lt; |slope−1| ≤ 0.12</span> → moderate deviation; consider increasing m or reducing Δt.</li>
+              <li><span class="bad">|slope−1| &gt; 0.12</span> → anomaly (possible ABM interactions or numerical error).</li>
+            </ul>
+          </li>
+          <li><strong>Mean/variance comparison of increments:</strong> numeric comparison between empirical mean and \(\mu\Delta t\), empirical variance and \(\sigma^2\Delta t\). Small differences are expected for finite samples.</li>
+          <li><strong>KS test:</strong> computes the statistic D comparing the increments' distribution to the theoretical normal; the report shows D and the critical threshold (α = 0.05). If D ≤ crit → do not reject Gaussianity.</li>
+          <li><strong>QQ data:</strong> a set of theoretical vs empirical points is prepared and logged to the console for visual inspection (useful to observe tails or systematic deviations).</li>
+        </ul>
+
+        <h4>4) What to do if results are unexpected</h4>
+        <ul class="explain">
+          <li><strong>If the mean of the paths is shifted</strong>: check the value of <code>μ</code> and the RNG seed; repeat the simulation with a larger <code>m</code>.</li>
+          <li><strong>If the MSD slope is too low/high</strong>: try increasing the number of paths <code>m</code> (reduces MSD noise) or reducing the time step Δt (reduces numerical error). For the ABM expect deviations due to interactions.</li>
+          <li><strong>If the histogram shows heavy tails</strong>: check for outliers, verify that <code>σ</code> and <code>Δt</code> are correct; use more samples for the KS test.</li>
+        </ul>
+
+        <h4>5) Best practices</h4>
+        <ul class="explain">
+          <li>Expected MSD slope ≈ <code>1</code> in log-log; practical tolerance ±0.05 for moderate samples.</li>
+          <li>KS: approximate 5% critical threshold is \( \dfrac{1.36}{\sqrt{N}} \) (where <code>N</code> is the number of sampled increments).</li>
+          <li>For reliable tests gather at least a few hundreds of increments (preferably 1000+ when possible).</li>
+        </ul>
+
+      </article>
+
+      <article class="card">
+        <h2>References</h2>
+        <ol class="small">
+          <li>Karatzas &amp; Shreve — <em>Brownian Motion and Stochastic Calculus</em>.</li>
+          <li>Kloeden &amp; Platen — <em>Numerical Solution of Stochastic Differential Equations</em>.</li>
+          <li>Billingsley — <em>Convergence of Probability Measures</em> (Donsker theorem).</li>
+        </ol>
+      </article>
+
+    </main>
+
+    <footer class="small">© 2025 Riccardo D'Annibale</footer>
+  </div>
+
+  <!-- SCRIPT: simulator + diagnostics -->
+  <script>
+    // ========== Utilities ==========
+    // Box–Muller: standard normal
+    function randn_bm(){
+      let u=0,v=0;
+      while(u===0) u=Math.random();
+      while(v===0) v=Math.random();
+      return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+    }
+
+    // Error function approximation (Abramowitz-Stegun)
+    function erf(x){
+      // numerical approximation
+      const sign = (x >= 0) ? 1 : -1;
+      x = Math.abs(x);
+      const a1 =  0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+      const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+      const t = 1/(1 + p*x);
+      const y = 1 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-x*x);
+      return sign * y;
+    }
+
+    // inverse normal CDF (Beasley-Springer/Acklam approximation)
+    function inverseNormalCdf(p){
+      if(p <= 0 || p >= 1) throw new Error("p out of bounds");
+      // coefficients
+      const a = [ -3.969683028665376e+01,  2.209460984245205e+02, -2.759285104469687e+02,  1.383577518672690e+02, -3.066479806614716e+01,  2.506628277459239 ];
+      const b = [ -5.447609879822406e+01,  1.615858368580409e+02, -1.556989798598866e+02,  6.680131188771972e+01, -1.328068155288572e+01 ];
+      const c = [ -7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783 ];
+      const d = [ 7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996, 3.754408661907416 ];
+
+      const plow = 0.02425;
+      const phigh = 1 - plow;
+      let q, r;
+      if (p < plow) {
+        q = Math.sqrt(-2*Math.log(p));
+        return (((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) /
+               ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1);
+      }
+      if (phigh < p) {
+        q = Math.sqrt(-2*Math.log(1-p));
+        return -(((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]) /
+                 ((((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1);
+      }
+      q = p - 0.5;
+      r = q*q;
+      return (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5])*q /
+             (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1);
+    }
+
+    // normal CDF
+    function normalCdf(x, mu=0, sigma=1){
+      return 0.5 * (1 + erf((x - mu) / (Math.sqrt(2)*sigma)));
+    }
+
+    // linear regression (x,y arrays)
+    function linearRegression(x, y){
+      const n = x.length;
+      const xm = x.reduce((a,b)=>a+b,0)/n;
+      const ym = y.reduce((a,b)=>a+b,0)/n;
+      let num=0, den=0, ssTot=0, ssRes=0;
+      for(let i=0;i<n;i++){
+        num += (x[i]-xm)*(y[i]-ym);
+        den += (x[i]-xm)*(x[i]-xm);
+        ssTot += Math.pow(y[i]-ym,2);
+      }
+      const slope = num/den;
+      const intercept = ym - slope*xm;
+      for(let i=0;i<n;i++){
+        const pred = intercept + slope*x[i];
+        ssRes += Math.pow(y[i]-pred,2);
+      }
+      const r2 = (ssTot === 0) ? 1 : 1 - (ssRes/ssTot);
+      return {slope, intercept, r2};
+    }
+
+    // histogram helper
+    function histogram(data, binCount){
+      const min = Math.min(...data), max = Math.max(...data);
+      const eps = (max - min) * 1e-6 || 1e-6;
+      const width = (max - min + eps)/binCount;
+      const bins = Array(binCount).fill(0);
+      const edges = [];
+      for(let i=0;i<binCount;i++) edges.push(min + i*width);
+      for(const v of data){
+        let idx = Math.floor((v - min)/width);
+        if(idx<0) idx=0; if(idx>=binCount) idx=binCount-1;
+        bins[idx]++;
+      }
+      const centers = edges.map((e,i)=> e + width/2);
+      const freqs = bins.map(b => b / data.length);
+      return {centers, freqs, width};
+    }
+
+    // KS statistic against N(mu,sigma)
+    function ksStatisticAgainstNormal(data, mu, sigma){
+      const sorted = data.slice().sort((a,b)=>a-b);
+      const n = sorted.length;
+      let D = 0;
+      for(let i=0;i<n;i++){
+        const x = sorted[i];
+        const Femp = (i+1)/n;
+        const Ftheo = normalCdf(x, mu, sigma);
+        D = Math.max(D, Math.abs(Femp - Ftheo));
+      }
+      return D;
+    }
+
+    // ========= Simulation and charts =========
+    function ready(){
+      if(typeof Chart === 'undefined'){ setTimeout(ready,50); return; }
+
+      const pathsCtx = document.getElementById('pathsChart').getContext('2d');
+      const msdCtx = document.getElementById('msdChart').getContext('2d');
+      const histCtx = document.getElementById('histChart').getContext('2d');
+
+      const commonOptions = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, position:'top' } }, layout:{ padding:{ bottom:28 } } };
+
+      let pathsChart = new Chart(pathsCtx, { type:'line', data:{ labels:[], datasets:[] }, options: Object.assign({}, commonOptions, { scales:{ y:{ title:{display:true, text:'X_t' } }, x:{ title:{display:true, text:'t' } } } }) });
+      let msdChart = new Chart(msdCtx, { type:'line', data:{ labels:[], datasets:[] }, options: Object.assign({}, commonOptions, { scales:{ y:{ title:{display:true, text:'MSD (t)' } }, x:{ title:{display:true, text:'t' } } } }) });
+      let histChart = new Chart(histCtx, { type:'bar', data:{ labels:[], datasets:[] }, options: Object.assign({}, commonOptions, { scales:{ y:{ title:{display:true, text:'rel.freq / scaled density' } }, x:{ title:{display:true, text:'increment value' } } } }) });
+
+      // store last sim data for diagnostics
+      let lastSim = { times: [], msd: [], increments: [], params: {} };
+
+      function simulateWiener(m, n, T, mu, sigma){
+        const dt = T / n;
+        const sqrtDt = Math.sqrt(dt);
+        const datasets = [];
+        const msd = Array(n+1).fill(0);
+        const increments = []; // collect increments for diagnostics
+        for(let path=0; path<m; path++){
+          const data = [];
+          let x = 0;
+          data.push(x);
+          for(let i=1;i<=n;i++){
+            const dW = randn_bm() * sqrtDt;
+            const dx = mu*dt + sigma * dW;
+            x = x + dx;
+            data.push(x);
+            msd[i] += Math.pow(x - 0, 2); // X0 = 0
+            increments.push(dx);
+          }
+          datasets.push({ label:'path '+(path+1), data: data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false, borderWidth:1 });
+        }
+        const msdAvg = msd.map(v => v / m);
+        const theoMSD = msdAvg.map((_,i) => sigma*sigma*(i*(T/n)));
+        const times = Array.from({length:n+1}, (_,i)=> i*(T/n));
+        return {datasets, msdAvg, theoMSD, times, increments};
+      }
+
+      document.getElementById('btn_sim').addEventListener('click', ()=>{
+        const T = Math.max(1e-6, Number(document.getElementById('T').value));
+        const n = Math.max(10, Math.min(20000, Math.floor(Number(document.getElementById('n_steps').value))));
+        const m = Math.max(1, Math.min(1000, Math.floor(Number(document.getElementById('m_paths').value))));
+        const mu = Number(document.getElementById('mu').value);
+        const sigma = Math.max(0, Number(document.getElementById('sigma').value));
+
+        const sampleMax = 500;
+        const step = Math.max(1, Math.floor(n / sampleMax));
+
+        const sim = simulateWiener(m, n, T, mu, sigma);
+        lastSim = { times: sim.times, msd: sim.msdAvg, increments: sim.increments, params: {T,n,m,mu,sigma} };
+
+        // prepare labels sampled
+        const labels = [];
+        for(let i=0;i<=n;i+=step) labels.push((i*(T/n)).toFixed(4));
+        const reducedDatasets = sim.datasets.map(ds => {
+          const dataReduced = ds.data.filter((_,i)=> i % step === 0);
+          return Object.assign({}, ds, { data: dataReduced });
+        });
+
+        // add mean line
+        const meanLine = labels.map((l,i)=> (mu * (i*(T/n))));
+        reducedDatasets.push({ label:'mean μt', data: meanLine, borderColor:'rgba(76,175,80,0.95)', borderWidth:2, pointRadius:0, tension:0, borderDash:[6,6], fill:false });
+
+        pathsChart.data.labels = labels;
+        pathsChart.data.datasets = reducedDatasets;
+        pathsChart.update();
+
+        // MSD sampled
+        const msdSampled = [];
+        const theoSampled = [];
+        for(let i=0;i<sim.msdAvg.length;i+=step){
+          msdSampled.push(Number(sim.msdAvg[i].toFixed(8)));
+          theoSampled.push(Number(sim.theoMSD[i].toFixed(8)));
+        }
+        msdChart.data.labels = labels;
+        msdChart.data.datasets = [
+          { label:`MSD (emp, m=${m})`, data: msdSampled, borderColor:'rgba(120,144,156,0.7)', pointRadius:0, fill:false },
+          { label:'ref σ^2 t', data: theoSampled, borderColor:'#ffffff', borderWidth:2, pointRadius:0, fill:false, tension:0.1 }
+        ];
+        msdChart.update();
+
+        document.getElementById('paths_metrics').textContent = `Simulated ${m} paths, n=${n}, T=${T}, μ=${mu}, σ=${sigma}.`;
+        document.getElementById('msd_metrics').textContent = `Empirical MSD vs σ^2 t. Press 'Run diagnostics' for numerical tests.`;
+
+        // clear previous diagnosis report
+        document.getElementById('diagnostics_report').textContent = 'Diagnostic report: run Run diagnostics now.';
+      });
+
+      document.getElementById('btn_clt').addEventListener('click', ()=>{
+        // create increments sample based on current params
+        const T = Math.max(1e-6, Number(document.getElementById('T').value));
+        const n = Math.max(2, Math.min(20000, Math.floor(Number(document.getElementById('n_steps').value))));
+        const m = Math.max(1, Math.min(1000, Math.floor(Number(document.getElementById('m_paths').value))));
+        const mu = Number(document.getElementById('mu').value);
+        const sigma = Math.max(0, Number(document.getElementById('sigma').value));
+        const dt = T / n;
+        const increments = [];
+        const reps = Math.min(5000, Math.max(500, Math.floor(m * Math.min(n,100))));
+        for(let i=0;i<reps;i++){
+          const Z = randn_bm();
+          const dX = mu*dt + sigma * Math.sqrt(dt) * Z;
+          increments.push(dX);
+        }
+        lastSim.increments = increments; lastSim.params = {T,n,m,mu,sigma};
+
+        const bins = Math.min(80, Math.max(10, Math.round(Math.sqrt(increments.length))));
+        const hist = histogram(increments, bins);
+        const centers = hist.centers.map(c => c.toFixed(5));
+        const dens = hist.centers.map(x => (1/(Math.sqrt(2*Math.PI)*sigma*Math.sqrt(dt))) * Math.exp(-0.5*Math.pow((x - mu*dt)/(sigma*Math.sqrt(dt)),2)));
+        const scaledDensity = dens.map(d => d * hist.width);
+
+        histChart.data.labels = centers;
+        histChart.data.datasets = [
+          { label:`Histogram (samples=${increments.length})`, data: hist.freqs, backgroundColor:'rgba(76,175,80,0.45)' },
+          { label:`Gaussian N(μdt,σ√dt) scaled`, data: scaledDensity, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.2 }
+        ];
+        histChart.update();
+
+        const meanEmp = increments.reduce((a,b)=>a+b,0)/increments.length;
+        const varEmp = increments.reduce((a,b)=> a + (b-meanEmp)*(b-meanEmp),0)/(increments.length-1);
+        const theoMean = mu*dt;
+        const theoVar = sigma*sigma*dt;
+        document.getElementById('hist_metrics').textContent =
+          `ΔX mean emp=${meanEmp.toExponential(3)} (theo=${theoMean.toExponential(3)}), var emp=${varEmp.toExponential(3)} (theo=${theoVar.toExponential(3)}).`;
+        // store params
+        lastSim.increments = increments; lastSim.params = {T,n,m,mu,sigma};
+      });
+
+      document.getElementById('btn_abm').addEventListener('click', ()=>{
+        const T = Math.max(1e-6, Number(document.getElementById('T').value));
+        const n = Math.max(10, Math.min(2000, Math.floor(Number(document.getElementById('n_steps').value))));
+        const N = Math.max(1, Math.min(2000, Math.floor(Number(document.getElementById('abm_N').value))));
+        const sigma = Math.max(0, Number(document.getElementById('sigma').value));
+        const dt = T / n;
+        const sqrtDt = Math.sqrt(dt);
+
+        const K_repulse = 0.05, r_neigh = 0.04;
+        let positions = Array.from({length:N}, ()=> (Math.random()*2 - 1));
+        const msd = Array(n+1).fill(0);
+        const initial = positions.slice();
+
+        for(let step=1; step<=n; step++){
+          const newPos = new Array(N);
+          for(let i=0;i<N;i++){
+            const dW = randn_bm() * sqrtDt;
+            let dx = sigma * dW;
+            let rep = 0;
+            for(let j=0;j<N;j++){
+              if(i===j) continue;
+              const dist = positions[i] - positions[j];
+              if(Math.abs(dist) < r_neigh){
+                rep += (dist > 0 ? 1 : -1) * (1 - Math.abs(dist)/r_neigh);
+              }
+            }
+            dx += K_repulse * rep * dt;
+            newPos[i] = positions[i] + dx;
+            msd[step] += Math.pow(newPos[i] - initial[i], 2);
+          }
+          positions = newPos;
+        }
+
+        const msdAvg = msd.map(v => v / N);
+        const labels = Array.from({length:n+1}, (_,i)=> (i*dt).toFixed(4));
+        msdChart.data.labels = labels;
+        msdChart.data.datasets = [
+          { label:`ABM MSD (N=${N})`, data: msdAvg, borderColor:'rgba(255,193,7,0.9)', pointRadius:0, fill:false },
+          { label:'ref σ^2 t', data: msdAvg.map((_,i)=> sigma*sigma*(i*dt)), borderColor:'#ffffff', borderWidth:2, pointRadius:0, fill:false, tension:0.1 }
+        ];
+        msdChart.update();
+
+        document.getElementById('msd_metrics').textContent =
+          `ABM: N=${N}, K_repulse=${K_repulse}, r_neigh=${r_neigh}, sigma=${sigma}. Deviations from the line may indicate interactions.`;
+        lastSim = { times: labels.map(x=>Number(x)), msd: msdAvg, increments: [], params: {T,n,N,sigma,K_repulse,r_neigh} };
+        document.getElementById('diagnostics_report').textContent = 'Run diagnostics to analyze ABM MSD (slope) and compare with Brownian motion.';
+      });
+
+      // Diagnostics
+      document.getElementById('btn_diag').addEventListener('click', ()=>{
+        const reportNode = document.getElementById('diagnostics_report');
+        if(!lastSim.times || lastSim.times.length === 0){
+          reportNode.innerHTML = '<span class="warn">No simulation available: click <strong>Simulate</strong> or <strong>Increments histogram</strong> first.</span>';
+          return;
+        }
+        // prepare MSD log-log fit (exclude t=0)
+        const times = lastSim.times.slice(1).map(t=>Number(t));
+        const msd = lastSim.msd.slice(1).map(v=>Number(v));
+        // guard for zeros
+        const positiveIdx = times.map((t,i)=> (t>0 && msd[i]>0) ? i : -1).filter(i=>i>=0);
+        if(positiveIdx.length < 3){
+          reportNode.innerHTML = '<span class="warn">Insufficient data for MSD log-log fit.</span>';
+          return;
+        }
+        const logt = positiveIdx.map(i=>Math.log(times[i]));
+        const logmsd = positiveIdx.map(i=>Math.log(msd[i]));
+        const fit = linearRegression(logt, logmsd);
+        const slope = fit.slope;
+        const r2 = fit.r2;
+
+        // increments diagnostics if present
+        const increments = lastSim.increments || [];
+        let ksD = null, ksCrit = null, meanInc = null, varInc = null, theoMean = null, theoVar = null;
+        if(increments.length >= 50){
+          meanInc = increments.reduce((a,b)=>a+b,0)/increments.length;
+          varInc = increments.reduce((a,b)=> a + (b-meanInc)*(b-meanInc),0)/(increments.length-1);
+          const p = lastSim.params;
+          const dt = (p && p.n) ? (p.T / p.n) : null;
+          if(dt && p && p.sigma !== undefined){
+            theoMean = (p.mu !== undefined) ? p.mu * dt : 0;
+            theoVar = p.sigma*p.sigma*dt;
+            ksD = ksStatisticAgainstNormal(increments, theoMean, Math.sqrt(theoVar));
+            ksCrit = 1.36 / Math.sqrt(increments.length); // alpha 0.05 approx
+          }
+        }
+
+        // assemble report
+        let html = `<strong>MSD log-log fit</strong><br/>slope = <strong>${slope.toFixed(4)}</strong> (expected ≈ 1); R² = ${r2.toFixed(4)}.<br/>`;
+        if(Math.abs(slope - 1) <= 0.05) html += `<span class="good">Slope OK (≈1): normal diffusion.</span><br/>`;
+        else if(Math.abs(slope - 1) <= 0.12) html += `<span class="warn">Slope moderately away from 1; consider increasing m or reducing Δt.</span><br/>`;
+        else html += `<span class="bad">Slope far from 1: possible anomaly (ABM/interactions) or numerical error.</span><br/>`;
+
+        if(increments.length >= 50){
+          html += `<hr/><strong>Increments (ΔX) diagnostics</strong><br/>samples = ${increments.length} · mean_emp = ${meanInc.toExponential(3)} · var_emp = ${varInc.toExponential(3)}.<br/>`;
+          if(theoMean !== null){
+            html += `theo mean = ${theoMean.toExponential(3)} · theo var = ${theoVar.toExponential(3)}.<br/>`;
+            html += `KS statistic D = ${ksD.toFixed(4)} · critical(α=0.05) ≈ ${ksCrit.toFixed(4)}. `;
+            if(ksD <= ksCrit) html += `<span class="good">KS: do not reject Gaussianity.</span>`;
+            else html += `<span class="warn">KS: possible deviation from Gaussianity (attention).</span>`;
+          }
+        } else {
+          html += `<hr/><span class="warn">Few increments collected (n<50): run 'Increments histogram' with larger parameters for more reliable tests.</span>`;
+        }
+
+        reportNode.innerHTML = html;
+        // also log basic QQ data to console for inspection
+        if(increments.length >= 10){
+          const sorted = increments.slice().sort((a,b)=>a-b);
+          const qq = [];
+          for(let i=0;i<sorted.length;i++){
+            const p = (i+0.5)/sorted.length;
+            const z = inverseNormalCdf(p);
+            const theo = (lastSim.params.mu || 0) * (lastSim.params.T/lastSim.params.n) + (Math.sqrt((lastSim.params.sigma||1)**2 * (lastSim.params.T/lastSim.params.n))) * z;
+            qq.push([theo, sorted[i]]);
+          }
+          console.log("QQ sample (theoretical, empirical) first 20:", qq.slice(0,20));
+        }
+      });
+
+    } // ready
+    ready();
+  </script>
+</body>
+</html>
