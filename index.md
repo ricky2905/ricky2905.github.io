@@ -35,6 +35,7 @@ Select Homework:
 - [Homework 8 – Bernoulli process, LLN, Pascal & Fibonacci](/HOMEWORK/homework8/index.html)
 - [Homework 9 – Foundations of Probability Theory](/HOMEWORK/homework9/index.html)
 - [Homework 10 – Simulating a Counting Process](/HOMEWORK/homework10/index.html)
+- [Homework 11 – Wiener Process: Interactive Simulators, Scale Tests, and Statistical Diagnostics](/HOMEWORK/homework11/index.html)
 
 
 
