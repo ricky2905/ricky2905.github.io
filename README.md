@@ -71,5 +71,11 @@ This homework reviews the main interpretations of probability—classical, frequ
 
 This homework simulates a counting process over a time interval by dividing it into many small subintervals and generating events with probability λ/n.The resulting process is analyzed and shown to approximate a Poisson process, a fundamental model in stochastic theory. The parameter λ is interpreted as the average rate of occurrence of events over time.
 
+### Homework 11
+
+**Title**: *Wiener Process: Interactive Simulators, Scale Tests, and Statistical Diagnostics*
+
+This page provides an interactive introduction to the Wiener process (Brownian motion). It includes step-by-step simulations, path visualizations, and tools to empirically verify the process’s key properties: independent increments, Gaussian distribution of increments, self-similarity, and √t time scaling. The page also offers automated statistical diagnostics (MSD log-log fit, KS test, QQ preparation), comparisons with non-Wiener/agent-based dynamics, and an interactive panel to generate, analyze, and compare multiple realizations of the process.
+
 ---
 
