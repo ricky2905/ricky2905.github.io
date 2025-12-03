@@ -267,14 +267,40 @@
     <footer class="small">© 2025 Riccardo D'Annibale</footer>
   </div>
 
-  <!-- SCRIPT: simulator + diagnostics -->
+  <!-- SCRIPT: simulator + diagnostics (modificato per MSD varianza, seed, KS two-sided, SDE opzionale via query string) -->
   <script>
     // ========== Utilities ==========
-    // Box–Muller: standard normal
+    // seedable RNG (mulberry32). If URL contains ?seed=123 use it.
+    function mulberry32(seed){
+      let t = seed >>> 0;
+      return function(){
+        t += 0x6D2B79F5;
+        let r = Math.imul(t ^ (t >>> 15), 1 | t);
+        r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
+        return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    // default randn uses Math.random; if seed present we swap to rng-based
+    let globalRng = null; // function() -> uniform [0,1)
+    function getUrlParams(){
+      const params = {};
+      const q = window.location.search.substring(1);
+      if(!q) return params;
+      q.split('&').forEach(kv=>{
+        const [k,v] = kv.split('=');
+        if(!k) return;
+        try { params[decodeURIComponent(k)] = decodeURIComponent(v||''); } catch(e){ params[k]=v; }
+      });
+      return params;
+    }
+
+    // Box–Muller with optional rng
     function randn_bm(){
       let u=0,v=0;
-      while(u===0) u=Math.random();
-      while(v===0) v=Math.random();
+      const rnd = globalRng || Math.random;
+      while(u===0) u=rnd();
+      while(v===0) v=rnd();
       return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
     }
 
@@ -318,8 +344,9 @@
              (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1);
     }
 
-    // normal CDF
+    // normal CDF (with sigma handling)
     function normalCdf(x, mu=0, sigma=1){
+      if(sigma <= 0) return x < mu ? 0 : 1;
       return 0.5 * (1 + erf((x - mu) / (Math.sqrt(2)*sigma)));
     }
 
@@ -362,23 +389,65 @@
       return {centers, freqs, width};
     }
 
-    // KS statistic against N(mu,sigma)
+    // KS statistic against N(mu,sigma) -- two-sided version
     function ksStatisticAgainstNormal(data, mu, sigma){
       const sorted = data.slice().sort((a,b)=>a-b);
       const n = sorted.length;
       let D = 0;
       for(let i=0;i<n;i++){
         const x = sorted[i];
-        const Femp = (i+1)/n;
+        const FempLeft = (i)/n;
+        const FempRight = (i+1)/n;
         const Ftheo = normalCdf(x, mu, sigma);
-        D = Math.max(D, Math.abs(Femp - Ftheo));
+        D = Math.max(D, Math.abs(FempLeft - Ftheo), Math.abs(FempRight - Ftheo));
       }
       return D;
+    }
+
+    // helper: build a(x,t) and b(x,t) from query params (optional). If not provided use constants mu/sigma
+    function buildABFromQuery(mu, sigma){
+      const params = getUrlParams();
+      let aExpr = params.a || null;
+      let bExpr = params.b || null;
+      let aFn = (x,t) => mu;
+      let bFn = (x,t) => sigma;
+      let ok = false;
+      if(aExpr || bExpr){
+        try{
+          if(aExpr){
+            const f = new Function('x','t','mu','sigma','return ('+aExpr+');');
+            aFn = (x,t) => Number(f(x,t,mu,sigma));
+          }
+          if(bExpr){
+            const g = new Function('x','t','mu','sigma','return ('+bExpr+');');
+            bFn = (x,t) => Number(g(x,t,mu,sigma));
+          }
+          ok = true;
+        }catch(e){
+          console.warn('Could not parse a/b from query string, using constants.', e);
+          aFn = (x,t) => mu;
+          bFn = (x,t) => sigma;
+          ok = false;
+        }
+      }
+      return {aFn, bFn, ok};
     }
 
     // ========= Simulation and charts =========
     function ready(){
       if(typeof Chart === 'undefined'){ setTimeout(ready,50); return; }
+
+      // check url params for seed or a/b
+      const qparams = getUrlParams();
+      if(qparams.seed){
+        // derive 32-bit int from string seed deterministically
+        let s = 0;
+        for(let i=0;i<qparams.seed.length;i++) s = (s*31 + qparams.seed.charCodeAt(i)) >>> 0;
+        globalRng = mulberry32(s);
+        console.info('Using seedable RNG (seed=', qparams.seed, ')');
+      } else {
+        globalRng = null;
+      }
 
       const pathsCtx = document.getElementById('pathsChart').getContext('2d');
       const msdCtx = document.getElementById('msdChart').getContext('2d');
@@ -393,30 +462,59 @@
       // store last sim data for diagnostics
       let lastSim = { times: [], msd: [], increments: [], params: {} };
 
+      // simulate Wiener or general SDE (Euler–Maruyama). Returns empirical variance (var(X_t)) per time
       function simulateWiener(m, n, T, mu, sigma){
+        // check if query-provided a/b exist
+        const ab = buildABFromQuery(mu, sigma);
+        const aFn = ab.aFn;
+        const bFn = ab.bFn;
+
         const dt = T / n;
         const sqrtDt = Math.sqrt(dt);
         const datasets = [];
-        const msd = Array(n+1).fill(0);
+
+        // We'll accumulate sums and sums of squares to compute empirical variance at each time
+        const sums = Array(n+1).fill(0);
+        const sumsSq = Array(n+1).fill(0);
         const increments = []; // collect increments for diagnostics
+
         for(let path=0; path<m; path++){
           const data = [];
           let x = 0;
           data.push(x);
+          sums[0] += x; sumsSq[0] += x*x;
           for(let i=1;i<=n;i++){
-            const dW = randn_bm() * sqrtDt;
-            const dx = mu*dt + sigma * dW;
+            const Z = randn_bm();
+            const dW = Z * sqrtDt;
+            // generic EM step
+            const dx = aFn(x, (i-1)*dt) * dt + bFn(x, (i-1)*dt) * dW;
             x = x + dx;
             data.push(x);
-            msd[i] += Math.pow(x - 0, 2); // X0 = 0
+            sums[i] += x;
+            sumsSq[i] += x*x;
             increments.push(dx);
           }
           datasets.push({ label:'path '+(path+1), data: data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false, borderWidth:1 });
         }
-        const msdAvg = msd.map(v => v / m);
-        const theoMSD = msdAvg.map((_,i) => sigma*sigma*(i*(T/n)));
+
+        // compute empirical variance (MSD as var(X_t))
+        const msdVar = [];
+        for(let i=0;i<=n;i++){
+          const mean = sums[i]/m;
+          const meanSq = sumsSq[i]/m;
+          let variance = meanSq - mean*mean;
+          if(variance < 0 && Math.abs(variance) < 1e-12) variance = 0;
+          msdVar.push(variance);
+        }
+
+        // theoretical MSD reference using b at zero if constant; fallback: sigma^2 * t
+        const theoMSD = [];
+        let b0 = sigma;
+        try { const testb = bFn(0,0); if(!isNaN(testb)) b0 = testb; } catch(e){ b0 = sigma; }
+        for(let i=0;i<=n;i++) theoMSD.push(b0*b0*(i*dt));
+
         const times = Array.from({length:n+1}, (_,i)=> i*(T/n));
-        return {datasets, msdAvg, theoMSD, times, increments};
+        return {datasets, msdVar, theoMSD, times, increments};
       }
 
       document.getElementById('btn_sim').addEventListener('click', ()=>{
@@ -430,7 +528,8 @@
         const step = Math.max(1, Math.floor(n / sampleMax));
 
         const sim = simulateWiener(m, n, T, mu, sigma);
-        lastSim = { times: sim.times, msd: sim.msdAvg, increments: sim.increments, params: {T,n,m,mu,sigma} };
+        // keep compatibility: lastSim.msd contains the array used later (we put variance)
+        lastSim = { times: sim.times, msd: sim.msdVar, theo: sim.theoMSD, increments: sim.increments, params: {T,n,m,mu,sigma} };
 
         // prepare labels sampled
         const labels = [];
@@ -440,37 +539,42 @@
           return Object.assign({}, ds, { data: dataReduced });
         });
 
-        // add mean line
-        const meanLine = labels.map((l,i)=> (mu * (i*(T/n))));
+        // add mean line (empirical mean)
+        const meanLine = [];
+        // compute empirical mean quickly from msd/variance? we didn't store sums; approximate mean line with mu*t for display
+        for(let i=0;i<labels.length;i++){
+          const t = Number(labels[i]);
+          meanLine.push((mu * t).toFixed(6));
+        }
         reducedDatasets.push({ label:'mean μt', data: meanLine, borderColor:'rgba(76,175,80,0.95)', borderWidth:2, pointRadius:0, tension:0, borderDash:[6,6], fill:false });
 
         pathsChart.data.labels = labels;
         pathsChart.data.datasets = reducedDatasets;
         pathsChart.update();
 
-        // MSD sampled
+        // MSD sampled (we use empirical variance)
         const msdSampled = [];
         const theoSampled = [];
-        for(let i=0;i<sim.msdAvg.length;i+=step){
-          msdSampled.push(Number(sim.msdAvg[i].toFixed(8)));
+        for(let i=0;i<sim.msdVar.length;i+=step){
+          msdSampled.push(Number(sim.msdVar[i].toFixed(8)));
           theoSampled.push(Number(sim.theoMSD[i].toFixed(8)));
         }
         msdChart.data.labels = labels;
         msdChart.data.datasets = [
-          { label:`MSD (emp, m=${m})`, data: msdSampled, borderColor:'rgba(120,144,156,0.7)', pointRadius:0, fill:false },
-          { label:'ref σ^2 t', data: theoSampled, borderColor:'#ffffff', borderWidth:2, pointRadius:0, fill:false, tension:0.1 }
+          { label:`MSD (emp var, m=${m})`, data: msdSampled, borderColor:'rgba(120,144,156,0.7)', pointRadius:0, fill:false },
+          { label:'ref σ^2 t (or b(0,0)^2 t)', data: theoSampled, borderColor:'#ffffff', borderWidth:2, pointRadius:0, fill:false, tension:0.1 }
         ];
         msdChart.update();
 
         document.getElementById('paths_metrics').textContent = `Simulated ${m} paths, n=${n}, T=${T}, μ=${mu}, σ=${sigma}.`;
-        document.getElementById('msd_metrics').textContent = `Empirical MSD vs σ^2 t. Press 'Run diagnostics' for numerical tests.`;
+        document.getElementById('msd_metrics').textContent = `Empirical MSD (var across paths) vs reference. Press 'Run diagnostics' for numerical tests.`;
 
         // clear previous diagnosis report
         document.getElementById('diagnostics_report').textContent = 'Diagnostic report: run Run diagnostics now.';
       });
 
       document.getElementById('btn_clt').addEventListener('click', ()=>{
-        // create increments sample based on current params
+        // create increments sample based on current params (approx using local mu/sigma)
         const T = Math.max(1e-6, Number(document.getElementById('T').value));
         const n = Math.max(2, Math.min(20000, Math.floor(Number(document.getElementById('n_steps').value))));
         const m = Math.max(1, Math.min(1000, Math.floor(Number(document.getElementById('m_paths').value))));
@@ -479,6 +583,7 @@
         const dt = T / n;
         const increments = [];
         const reps = Math.min(5000, Math.max(500, Math.floor(m * Math.min(n,100))));
+
         for(let i=0;i<reps;i++){
           const Z = randn_bm();
           const dX = mu*dt + sigma * Math.sqrt(dt) * Z;
@@ -489,14 +594,25 @@
         const bins = Math.min(80, Math.max(10, Math.round(Math.sqrt(increments.length))));
         const hist = histogram(increments, bins);
         const centers = hist.centers.map(c => c.toFixed(5));
-        const dens = hist.centers.map(x => (1/(Math.sqrt(2*Math.PI)*sigma*Math.sqrt(dt))) * Math.exp(-0.5*Math.pow((x - mu*dt)/(sigma*Math.sqrt(dt)),2)));
-        const scaledDensity = dens.map(d => d * hist.width);
+
+        // density only if sigma>0
+        const scaledDensity = [];
+        if(sigma > 0){
+          const dens = hist.centers.map(x => (1/(Math.sqrt(2*Math.PI)*sigma*Math.sqrt(dt))) * Math.exp(-0.5*Math.pow((x - mu*dt)/(sigma*Math.sqrt(dt)),2)));
+          for(const d of dens) scaledDensity.push(d * hist.width);
+        }
 
         histChart.data.labels = centers;
-        histChart.data.datasets = [
-          { label:`Histogram (samples=${increments.length})`, data: hist.freqs, backgroundColor:'rgba(76,175,80,0.45)' },
-          { label:`Gaussian N(μdt,σ√dt) scaled`, data: scaledDensity, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.2 }
+        const datasets = [
+          { label:`Histogram (samples=${increments.length})`, data: hist.freqs, backgroundColor:'rgba(76,175,80,0.45)' }
         ];
+        if(scaledDensity.length > 0){
+          datasets.push({ label:`Gaussian N(μdt,σ√dt) scaled`, data: scaledDensity, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.2 });
+        } else {
+          // indicate no density plotted due to sigma==0
+          console.info('sigma == 0: theoretical density not plotted.');
+        }
+        histChart.data.datasets = datasets;
         histChart.update();
 
         const meanEmp = increments.reduce((a,b)=>a+b,0)/increments.length;
@@ -590,8 +706,13 @@
           if(dt && p && p.sigma !== undefined){
             theoMean = (p.mu !== undefined) ? p.mu * dt : 0;
             theoVar = p.sigma*p.sigma*dt;
-            ksD = ksStatisticAgainstNormal(increments, theoMean, Math.sqrt(theoVar));
-            ksCrit = 1.36 / Math.sqrt(increments.length); // alpha 0.05 approx
+            // use two-sided KS if variance>0
+            if(theoVar > 0) {
+              ksD = ksStatisticAgainstNormal(increments, theoMean, Math.sqrt(theoVar));
+              ksCrit = 1.36 / Math.sqrt(increments.length); // alpha 0.05 approx
+            } else {
+              ksD = null; ksCrit = null;
+            }
           }
         }
 
@@ -605,9 +726,13 @@
           html += `<hr/><strong>Increments (ΔX) diagnostics</strong><br/>samples = ${increments.length} · mean_emp = ${meanInc.toExponential(3)} · var_emp = ${varInc.toExponential(3)}.<br/>`;
           if(theoMean !== null){
             html += `theo mean = ${theoMean.toExponential(3)} · theo var = ${theoVar.toExponential(3)}.<br/>`;
-            html += `KS statistic D = ${ksD.toFixed(4)} · critical(α=0.05) ≈ ${ksCrit.toFixed(4)}. `;
-            if(ksD <= ksCrit) html += `<span class="good">KS: do not reject Gaussianity.</span>`;
-            else html += `<span class="warn">KS: possible deviation from Gaussianity (attention).</span>`;
+            if(ksD !== null){
+              html += `KS statistic D = ${ksD.toFixed(4)} · critical(α=0.05) ≈ ${ksCrit.toFixed(4)}. `;
+              if(ksD <= ksCrit) html += `<span class="good">KS: do not reject Gaussianity.</span>`;
+              else html += `<span class="warn">KS: possible deviation from Gaussianity (attention).</span>`;
+            } else {
+              html += `<span class="warn">KS: theoretical variance is zero or undefined (cannot compute KS).</span>`;
+            }
           }
         } else {
           html += `<hr/><span class="warn">Few increments collected (n<50): run 'Increments histogram' with larger parameters for more reliable tests.</span>`;
