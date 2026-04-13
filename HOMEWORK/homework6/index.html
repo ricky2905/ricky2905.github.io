@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Mean & Variance Simulator — Online Algorithms (Welford)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive simulator and didactic page about Welford's online mean/variance algorithm, comparisons, proofs and benchmarks."/>
+  <style>
+    :root{
+      --bg:#0f111a;
+      --panel:#141622;
+      --accent:#4CAF50;
+      --muted:#9fb89f;
+      --glass: rgba(255,255,255,0.03);
+      --card-border: rgba(76,175,80,0.08);
+      --text:#e6f4e6;
+      --mono:#dfeee0;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Skip link for accessibility */
+    .skip { position: absolute; left: -999px; top: -999px; }
+    .skip:focus { left: 1rem; top: 1rem; background:#fff;color:#000;padding:6px 10px;border-radius:6px; z-index: 1000; }
+
+    .wrap { width:100%; padding: 0; }
+    .topnav { display:flex; gap:0.75rem; margin-bottom:1rem; align-items:center; flex-wrap:wrap; }
+    .topnav a { color: var(--accent); text-decoration: none; font-weight: 700; }
+    .topnav a:hover { color: #66bb6a; }
+    h1,h2,h3 { color: var(--accent); margin: 0; }
+    h1 { font-size: 1.9rem; border-bottom: 3px solid var(--accent); padding-bottom: 0.3rem; margin-bottom: 0.75rem; }
+    .card { background-color: var(--panel); border-left: 5px solid var(--accent); border-radius: 10px; padding: 1.25rem; margin: 1rem 0; box-shadow: 0 8px 30px rgba(0,0,0,0.5); border: 1px solid var(--card-border); }
+    .small { font-size: 13px; color: var(--muted); }
+    label { display:block; margin-top:10px; font-weight:700; color:var(--text); }
+    input, textarea, select, button.secondary {
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background:#0b0c10; color:var(--text); font-size:14px;
+    }
+    textarea { resize: vertical; }
+    .controls { display:flex; gap:12px; margin-top:12px; flex-wrap:wrap; }
+    .controls > * { flex: 1 1 auto; min-width:140px; }
+    .btn {
+      padding:10px 14px; border-radius:8px; background:var(--accent); border:0; color:#072; font-weight:800; cursor:pointer;
+      box-shadow: 0 6px 18px rgba(76,175,80,0.07);
+    }
+    .btn.ghost { background: transparent; color: var(--muted); border:1px solid rgba(255,255,255,0.04); font-weight:700; box-shadow:none; }
+    .muted { color: var(--muted); }
+
+    .layout { display:grid; grid-template-columns: 1fr 360px; gap:16px; align-items:start; }
+    @media(max-width:980px){ .layout{ grid-template-columns:1fr } }
+
+    .chart {
+      background:#0b0c10;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      min-height:260px;
+      max-height:260px;
+      height:260px;
+      box-sizing:border-box;
+      overflow:auto;
+    }
+    .chart canvas { display:block; width:100% !important; height:100% !important; }
+    .values-list { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; color:var(--mono); background: rgba(255,255,255,0.02); padding:8px; border-radius:6px; margin-top:8px; white-space:pre-wrap; word-break:break-word; }
+    .code { background:#0b0c10; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); color:var(--mono); overflow:auto; }
+    .display-equation { background: rgba(255,255,255,0.02); padding:10px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03); margin:8px 0; font-size:1rem; color:var(--mono); }
+    footer { opacity:0.8; font-size:13px; margin-top:18px; text-align:center; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:6px 8px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.03); color:var(--mono); font-size:0.95rem; }
+    pre { background:#0b0c10; padding:12px; border-radius:6px; overflow:auto; color:var(--mono); }
+
+    /* simple spinner for benchmark */
+    .spinner { display:inline-block; width:18px; height:18px; border:3px solid rgba(255,255,255,0.08); border-top-color: var(--accent); border-radius:50%; animation: spin 0.8s linear infinite; margin-left:8px; vertical-align:middle;}
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+
+  <!-- MathJax for equations -->
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/chtml'] },
+      tex: { inlineMath: [['\\(','\\)'], ['$', '$']] },
+      chtml: { scale: 1 }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <a href="#main" class="skip">Skip to content</a>
+
+  <div class="wrap">
+    <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+    <main id="main">
+
+      <article class="card" aria-labelledby="explain-title">
+        <h1 id="explain-title">Mean and Variance Simulator — Numerical Stability and Algorithm Comparison</h1>
+        <h2>What this page does</h2>
+        <p>
+          This page implements two methods for computing mean and variance:
+          <strong>classical full-vector</strong> (sum &amp; sumsq) and
+          <strong>incremental (Welford)</strong>. The goals are:
+        </p>
+        <ul>
+          <li>show the recurrences and derive them formally;</li>
+          <li>implement interactive demos where values can be entered one-by-one (streaming) or pasted as a vector;</li>
+          <li>benchmark accuracy and timings to illustrate the trade-off between speed and numerical stability.</li>
+        </ul>
+      </article>
+
+      <article class="card" aria-labelledby="theory-title">
+        <h2 id="theory-title">Theory: recurrences, definitions and initialization</h2>
+
+        <h3>Mean recurrence (simple proof)</h3>
+        <p>The arithmetic mean after <em>n</em> observations is</p>
+        <div class="display-equation">\(\displaystyle \mu_n = \frac{1}{n}\sum_{i=1}^n x_i.\)</div>
+        <p>Separating the last term and rearranging gives the incremental update:</p>
+        <div class="display-equation">\(\displaystyle \mu_n = \mu_{n-1} + \frac{x_n - \mu_{n-1}}{n}.\)</div>
+        <p>This requires only the previous mean and the new value (O(1) work per element) and is algebraically equivalent to recomputing the mean from scratch.</p>
+
+        <h3>Variance recurrence (Welford) — definition of <code>M2</code></h3>
+        <p>Define the corrected second moment</p>
+        <div class="display-equation">\(\displaystyle M2_n = \sum_{i=1}^n (x_i - \mu_n)^2,\)</div>
+        <p>so that the unbiased sample variance is</p>
+        <div class="display-equation">\(\displaystyle s^2 = \frac{M2_n}{n-1},\quad n\ge2.\)</div>
+
+        <h4>Compact update used in code</h4>
+        <div class="display-equation">\(\displaystyle M2_n = M2_{n-1} + \delta\cdot(x_n - \mu_n),\qquad\delta = x_n - \mu_{n-1}.\)</div>
+        <p>This leads to the standard Welford update implemented in the script.</p>
+
+        <h4>Step-by-step derivation (recommended for learning)</h4>
+        <p>
+          For completeness: for \(i<n\) we write
+        </p>
+        <div class="display-equation">\[
+          x_i-\mu_n=(x_i-\mu_{n-1})+(\mu_{n-1}-\mu_n).
+        \]</div>
+        <p>
+          Expanding \((x_i-\mu_n)^2\) and summing over \(i=1\ldots n-1\), the cross term in \((x_i-\mu_{n-1})\) vanishes because \(\sum_{i=1}^{n-1}(x_i-\mu_{n-1})=0\). After algebraic simplification and using \(\mu_n=\mu_{n-1}+\delta/n\) one obtains
+        </p>
+        <div class="display-equation">\[
+          M2_n = M2_{n-1} + \delta\,(x_n-\mu_n).
+        \]</div>
+
+        <h4>Initialization (streaming)</h4>
+        <pre>
+n = 0
+mean = 0
+M2 = 0
+
+-- on first element x1:
+n = 1
+mean = x1
+M2 = 0
+        </pre>
+        <p>From then on apply the incremental updates above for every new observation.</p>
+
+        <h4>Numerical note (concrete example)</h4>
+        <p>
+          Suppose data are around \(10^8\) with very small variance (e.g. variance ≈ \(10^{-2}\)). The naive formula
+          \(\frac{1}{n-1}\big(\sum x_i^2 - n\bar x^2\big)\) subtracts two large numbers (order \(10^{16}\)) that differ by a small quantity , this causes catastrophic cancellation and large relative errors. Welford's updates avoid that subtraction and keep rounding error small relative to the data scale.
+        </p>
+      </article>
+
+      <article class="card" aria-labelledby="howto-title">
+        <h2 id="howto-title">How to use (modes)</h2>
+        <ol>
+          <li><strong>Step-by-step </strong>: enter values one at a time with <em>Add value</em> to see incremental updates.</li>
+          <li><strong>Vector mode</strong>: paste a comma-separated list; the page processes values element-by-element (keeps streaming semantics but stores values for plotting).</li>
+          <li><strong>Benchmark</strong>: compare Welford (stable) vs sum/sumsq (fast but numerically fragile).</li>
+        </ol>
+      </article>
+
+      <section class="card layout" aria-labelledby="sim-title">
+        <div>
+          <h2 id="sim-title">Simulator — Input & Controls (online)</h2>
+
+          <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn" id="btnWhole" aria-pressed="true">Enter Vector</button>
+            <button class="btn ghost" id="btnStep" aria-pressed="false">Enter Values</button>
+            <button class="btn ghost" id="btnResetAll">Reset All</button>
+          </div>
+
+          <div id="wholePanel" style="margin-top:12px;">
+            <label for="vectorInput">Paste numbers separated by commas</label>
+            <textarea id="vectorInput" rows="3" placeholder="e.g. 1, 2, 3.5, 4"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="calcVector">Process (as stream)</button>
+              <button class="btn ghost" id="clearVector">Clear</button>
+            </div>
+          </div>
+
+          <div id="stepPanel" style="margin-top:12px; display:none;">
+            <label for="singleValue">Single value</label>
+            <input id="singleValue" type="number" inputmode="decimal" placeholder="Enter a number and press Add" />
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="addValue">Add value</button>
+              <button class="btn ghost" id="resetValues">Reset values</button>
+              <button class="btn ghost" id="exportCSV">Export CSV</button>
+            </div>
+            <div class="values-list" id="valuesList" aria-live="polite">Current data: []</div>
+          </div>
+
+          <div style="margin-top:12px" class="code" id="resultBox">
+            <strong>Results:</strong>
+            <div id="results" style="margin-top:8px;color:var(--mono)">No calculation performed yet.</div>
+          </div>
+
+          <h3 style="margin-top:12px">Implementation notes</h3>
+          <p class="small muted">This page implements Welford's algorithm precisely as derived above (delta-based updates) and compares it with the classical sum/sumsq formula. Inputs are filtered to finite numbers only.</p>
+        </div>
+
+        <aside>
+          <h3>Charts</h3>
+          <div class="chart" style="margin-top:8px">
+            <canvas id="cumMeanChart" aria-label="Cumulative mean chart"></canvas>
+            <div class="small muted" style="margin-top:6px">Cumulative mean with ±1 standard error (dashed lines).</div>
+          </div>
+
+          <div class="chart" style="margin-top:12px">
+            <canvas id="runningVarChart" aria-label="Running variance chart"></canvas>
+            <div class="small muted" style="margin-top:6px">Running (sample) variance vs n — useful to check stability.</div>
+          </div>
+
+          <div class="chart" style="margin-top:12px">
+            <canvas id="histChart" aria-label="Histogram of values"></canvas>
+            <div class="small muted" style="margin-top:6px">Histogram with kernel density estimate overlay.</div>
+          </div>
+        </aside>
+      </section>
+
+      <article class="card" aria-labelledby="hw-title">
+        <h2 id="hw-title">Optional Homework — comparing online methods</h2>
+        <p class="small muted">Goal: prove the recurrences, test online algorithms, and show the numerical advantages of Welford over simple incremental <code>sum</code> &amp; <code>sumsq</code>.</p>
+
+        <div class="code" style="margin-top:12px">
+          <label>Benchmark parameters</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <input id="benchN" type="number" value="200000" />
+            <input id="benchTrials" type="number" value="3" />
+            <select id="benchDist">
+              <option value="normal">Normal(0,1)</option>
+              <option value="uniform">Uniform(0,1)</option>
+              <option value="large">Large magnitude (1e8 + small noise)</option>
+            </select>
+            <button class="btn" id="runBench">Run benchmark</button>
+          </div>
+          <div style="margin-top:10px" class="small muted">N = number of elements, Trials = how many runs to average. The benchmark reports <em>ms per run</em> and the absolute difference in variance: |Var_sum − Var_welford|.</div>
+        </div>
+
+        <div style="margin-top:12px" class="card">
+          <h3>Benchmark results (online methods)</h3>
+          <div id="benchResults">Press <strong>Run benchmark</strong> to execute. Charts show timings and numeric differences against Welford.</div>
+          <div style="margin-top:8px" class="chart"><canvas id="timeChart"></canvas></div>
+          <div style="margin-top:8px" class="chart"><canvas id="errChart"></canvas></div>
+        </div>
+      </article>
+
+      <article class="card" aria-labelledby="desc-title">
+        <h2 id="desc-title">Numerical discussion & summary</h2>
+        <p>Main advantages of Welford's online algorithm:</p>
+        <ul>
+          <li><strong>Numerical stability</strong>: avoids cancellation and overflow/underflow issues typical of the naive sums formula.</li>
+          <li><strong>Low memory</strong>: O(1) extra space — ideal for streams.</li>
+          <li><strong>Mergeability</strong>: partial summaries (n, mean, M2) can be combined for distributed computation.</li>
+          <li><strong>Efficiency</strong>: O(1) per update and O(n) overall.</li>
+        </ul>
+
+        <h3>Comparison table</h3>
+        <table>
+          <thead><tr><th>Mode</th><th>Formula type</th><th>Requires all data?</th><th>Numerical stability</th><th>Typical use</th></tr></thead>
+          <tbody>
+            <tr><td>Full Vector</td><td>classical mean & variance</td><td>Yes</td><td>Moderate</td><td>Small, static datasets</td></tr>
+            <tr><td>Incremental (Welford)</td><td>recurrence using δ, M2</td><td>No</td><td>Excellent</td><td>Streaming or large datasets</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Complexity</h3>
+        <table style="margin-top:8px">
+          <thead><tr><th>Operation</th><th>Time</th><th>Space</th></tr></thead>
+          <tbody>
+            <tr><td>Classical mean/variance</td><td>O(n)</td><td>O(n) (if storing data)</td></tr>
+            <tr><td>Welford incremental update</td><td>O(1) per element, O(n) total</td><td>O(1)</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+    </main>
+
+    <footer class="small muted">© 2025 Riccardo D'Annibale</footer>
+  </div>
+
+  <script>
+    // Helper short selector
+    const $ = id => document.getElementById(id);
+
+    // State
+    let values = [];
+    let cumChart = null, histChart = null, timeChart = null, errChart = null, runningVarChart = null, lastExport = null;
+
+    // Simple Gaussian kernel density
+    function kernelDensity(xs, data, bandwidth){
+      const out = new Array(xs.length).fill(0);
+      const n = data.length;
+      if(n === 0) return out;
+      const invSqrt2pi = 1/Math.sqrt(2*Math.PI);
+      for(let i=0;i<xs.length;i++){
+        const x = xs[i];
+        let s = 0;
+        for(let j=0;j<n;j++){
+          const u = (x - data[j]) / bandwidth;
+          s += Math.exp(-0.5*u*u) * invSqrt2pi;
+        }
+        out[i] = s / (n * bandwidth);
+      }
+      return out;
+    }
+
+    function initCharts(){
+      if(cumChart) cumChart.destroy();
+      if(histChart) histChart.destroy();
+      if(timeChart) timeChart.destroy();
+      if(errChart) errChart.destroy();
+      if(runningVarChart) runningVarChart.destroy();
+
+      const ctx1 = $('cumMeanChart').getContext('2d');
+      cumChart = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Cumulative mean', data: [], borderWidth: 2, tension: 0.18, fill: false, pointRadius: 0, borderColor: 'rgba(76,175,80,0.9)' },
+            { label: '±1 SE (upper)', data: [], borderWidth: 1, tension: 0.18, pointRadius: 0, borderDash: [6,4], fill: false, borderColor: 'rgba(159,184,159,0.7)' },
+            { label: '±1 SE (lower)', data: [], borderWidth: 1, tension: 0.18, pointRadius: 0, borderDash: [6,4], fill: false, borderColor: 'rgba(159,184,159,0.7)' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Index (k)' } }, y: { title: { display: true, text: 'Cumulative mean' } } } }
+      });
+
+      const ctxRv = $('runningVarChart').getContext('2d');
+      runningVarChart = new Chart(ctxRv, {
+        type: 'line',
+        data: { labels: [], datasets: [ { label: 'Running sample variance (s^2)', data: [], borderWidth: 2, tension: 0.18, pointRadius: 0 } ] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Index (k)' } }, y: { title: { display: true, text: 'Running sample variance' }, beginAtZero: true } } }
+      });
+
+      const ctx2 = $('histChart').getContext('2d');
+      histChart = new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: [], datasets: [ { label: 'Count', data: [], barThickness: 'flex' }, { label: 'KDE', data: [], type: 'line', borderWidth: 2, pointRadius: 0, tension: 0.35 } ] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'count / density' } } } }
+      });
+
+      const ctx3 = $('timeChart').getContext('2d');
+      timeChart = new Chart(ctx3, {
+        type: 'bar',
+        data: { labels: ['Welford (online stable)','Sum/Sumsq (online unstable)'], datasets: [{ label: 'ms per run (avg)', data: [0,0], barThickness: 36 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.formattedValue} ms` } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'milliseconds' } } } }
+      });
+
+      const ctx4 = $('errChart').getContext('2d');
+      errChart = new Chart(ctx4, {
+        type: 'bar',
+        data: { labels: ['|Var_sum - Var_welford|'], datasets: [{ label: 'absolute difference', data: [1e-300], barThickness: 40 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'absolute value' }, type: 'logarithmic', ticks: { callback: function(value){ try { return Number(value).toExponential(1); } catch(e){ return value; } } } } } }
+      });
+    }
+    initCharts();
+
+    // Welford: online implementation (correct recurrence)
+    function welfordOnlineFromArray(arr){
+      let n = 0, mu = 0, M2 = 0;
+      for(const x of arr){
+        n++;
+        const delta = x - mu;
+        mu += delta / n;
+        M2 += delta * (x - mu);
+      }
+      return { mean: n ? mu : NaN, variance: n > 1 ? (M2 / (n - 1)) : NaN };
+    }
+
+    // Simple sum & sumsq online (naive)
+    function sumSumsqOnlineFromArray(arr){
+      let n = 0, s = 0, ss = 0;
+      for(const x of arr){
+        n++;
+        s += x;
+        ss += x * x;
+      }
+      if(n === 0) return { mean: NaN, variance: NaN };
+      const m = s / n;
+      return { mean: m, variance: n > 1 ? ((ss - n * m * m) / (n - 1)) : NaN };
+    }
+
+    function runningStatsWelford(arr){
+      const n = arr.length;
+      const means = new Array(n);
+      const vars = new Array(n);
+      let count = 0, mu = 0, M2 = 0;
+      for(let i=0;i<n;i++){
+        const x = arr[i];
+        count++;
+        const delta = x - mu;
+        mu += delta / count;
+        M2 += delta * (x - mu);
+        means[i] = mu;
+        vars[i] = (count > 1) ? (M2 / (count - 1)) : NaN;
+      }
+      return { means, vars };
+    }
+
+    function updateUI(){
+      $('valuesList').textContent = `Current data: [${values.slice(0,200).join(', ')}${values.length > 200 ? ', ...' : ''}]`;
+
+      if(values.length === 0){
+        $('results').innerHTML = `<em>No data available.</em>`;
+        updateCharts([], [], { labels: [], counts: [] }, null);
+        lastExport = null;
+        return;
+      }
+
+      const rW = welfordOnlineFromArray(values);
+      const m = rW.mean;
+      const s2 = rW.variance;
+      const n = values.length;
+      const mStr = Number.isFinite(m) ? m.toFixed(6) : 'N/A';
+      const vStr = Number.isFinite(s2) ? s2.toExponential(6) : 'N/A (needs n≥2)';
+      $('results').innerHTML = `<div><strong>n</strong>: ${n}</div><div><strong>Mean</strong>: ${mStr}</div><div><strong>Sample variance</strong>: ${vStr}</div>`;
+
+      const run = runningStatsWelford(values);
+      const cumMeans = run.means;
+      const runVars = run.vars;
+
+      const se = cumMeans.map((_, i) => { const v = runVars[i]; return (i+1 > 1 && Number.isFinite(v)) ? Math.sqrt(v / (i+1)) : NaN; });
+
+      const bins = Math.min(40, Math.max(6, Math.ceil(Math.sqrt(values.length))));
+      const minV = Math.min(...values);
+      const maxV = Math.max(...values);
+      const range = (maxV - minV) || 1;
+      const counts = new Array(bins).fill(0);
+      const binCenters = new Array(bins);
+      for(let x of values){
+        let idx = Math.floor(((x - minV) / range) * bins);
+        if(idx < 0) idx = 0;
+        if(idx >= bins) idx = bins - 1;
+        counts[idx]++;
+      }
+      for(let i=0;i<bins;i++){
+        const a = (minV + (i / bins) * range);
+        const b = (minV + ((i + 1) / bins) * range);
+        binCenters[i] = (a + b) / 2;
+      }
+
+      // Reduce KDE grid size for very large datasets to avoid blocking the UI
+      const gridSize = (values.length > 5000) ? 120 : 200;
+      const grid = new Array(gridSize);
+      for(let i=0;i<gridSize;i++) grid[i] = minV + (i / (gridSize - 1)) * range;
+
+      const bandwidth = (function(){
+        const n = values.length;
+        if(n < 2) return 0.1;
+        const meanVal = values.reduce((a,b)=>a+b,0)/n;
+        let s = 0;
+        for(const v of values) s += (v - meanVal) * (v - meanVal);
+        const sd = Math.sqrt(s / (n - 1));
+        return Math.max(sd * Math.pow(n, -1/5), 1e-6);
+      })();
+
+      const kde = kernelDensity(grid, values, Math.max(bandwidth, 1e-6));
+      const histLabels = binCenters.map(c => c.toFixed(2));
+
+      updateCharts(cumMeans, runVars, { labels: histLabels, counts }, { grid, kde, gridMin: grid[0], gridMax: grid[grid.length - 1] }, se);
+      lastExport = { values: values.slice(), mean: m, variance: s2 };
+    }
+
+    function updateCharts(cumMeans, runVars, hist, kdeData, se){
+      cumChart.data.labels = cumMeans.map((_, i) => i + 1);
+      cumChart.data.datasets[0].data = cumMeans.map(v => Number.isFinite(v) ? v : null);
+
+      const upper = cumMeans.map((m, i) => (Number.isFinite(m) && se && Number.isFinite(se[i])) ? (m + se[i]) : null);
+      const lower = cumMeans.map((m, i) => (Number.isFinite(m) && se && Number.isFinite(se[i])) ? (m - se[i]) : null);
+
+      cumChart.data.datasets[1].data = upper;
+      cumChart.data.datasets[2].data = lower;
+      cumChart.update();
+
+      if(runningVarChart){
+        runningVarChart.data.labels = cumMeans.map((_, i) => i + 1);
+        runningVarChart.data.datasets[0].data = runVars.map(v => Number.isFinite(v) ? v : null);
+        runningVarChart.update();
+      }
+
+      if(histChart){
+        histChart.data.labels = hist.labels;
+        histChart.data.datasets[0].data = hist.counts;
+        if(kdeData && kdeData.kde && kdeData.kde.length){
+          const maxCount = Math.max(...hist.counts, 1);
+          const kdeMax = Math.max(...kdeData.kde, 1e-12);
+          const scale = maxCount / kdeMax;
+          const sampled = hist.labels.map((lab, i) => {
+            const center = Number(lab);
+            const idx = Math.round((center - kdeData.gridMin) / (kdeData.gridMax - kdeData.gridMin) * (kdeData.kde.length - 1));
+            const clamped = Math.max(0, Math.min(kdeData.kde.length - 1, idx));
+            return kdeData.kde[clamped] * scale;
+          });
+          histChart.data.datasets[1].data = sampled;
+        } else {
+          histChart.data.datasets[1].data = [];
+        }
+        histChart.update();
+      }
+    }
+
+    // UI events and input validation
+    $('btnWhole').addEventListener('click', ()=>{
+      $('wholePanel').style.display = 'block';
+      $('stepPanel').style.display = 'none';
+      $('btnWhole').classList.remove('ghost');
+      $('btnStep').classList.add('ghost');
+      $('btnWhole').setAttribute('aria-pressed','true');
+      $('btnStep').setAttribute('aria-pressed','false');
+    });
+    $('btnStep').addEventListener('click', ()=>{
+      $('wholePanel').style.display = 'none';
+      $('stepPanel').style.display = 'block';
+      $('btnStep').classList.remove('ghost');
+      $('btnWhole').classList.add('ghost');
+      $('btnStep').setAttribute('aria-pressed','true');
+      $('btnWhole').setAttribute('aria-pressed','false');
+    });
+
+    $('clearVector').addEventListener('click', ()=>{ $('vectorInput').value = ''; });
+    $('calcVector').addEventListener('click', ()=>{
+      const raw = $('vectorInput').value.trim();
+      if(!raw){ alert('Please enter some numbers separated by commas.'); return; }
+      const parts = raw.split(',').map(s => s.trim()).filter(s => s !== '');
+      // filter only finite numbers (excludes NaN, Infinity)
+      const arr = parts.map(s => Number(s.replace(',', '.'))).filter(x => Number.isFinite(x));
+      if(arr.length === 0){ alert('No valid finite numbers found. Check syntax (use commas to separate).'); return; }
+      // Process as a stream: store values for plotting, compute stats online
+      values = [];
+      for(const x of arr){ values.push(x); }
+      updateUI();
+    });
+
+    $('addValue').addEventListener('click', ()=>{
+      const v = $('singleValue').value;
+      if(v === '') { alert('Please enter a number before adding.'); return; }
+      const num = Number(String(v).replace(',', '.'));
+      if(!Number.isFinite(num)){ alert('Invalid or non-finite value.'); return; }
+      values.push(num);
+      $('singleValue').value = '';
+      updateUI();
+    });
+
+    $('resetValues').addEventListener('click', ()=>{ values = []; updateUI(); });
+    $('btnResetAll').addEventListener('click', ()=>{
+      if(!confirm('Reset the simulator and delete all data?')) return;
+      values = [];
+      $('vectorInput').value = '';
+      $('singleValue').value = '';
+      updateUI();
+    });
+
+    $('exportCSV').addEventListener('click', ()=>{
+      if(!lastExport || !lastExport.values || lastExport.values.length === 0){ alert('Run at least one input / calculation before exporting.'); return; }
+      let csv = 'index,value\n';
+      for(let i=0;i<lastExport.values.length;i++){ csv += `${i+1},${lastExport.values[i]}\n`; }
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      const now = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.download = `values_export_${now}.csv`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // Benchmark utilities (compare two online methods)
+    function randNormal(){
+      let u = 0, v = 0;
+      while(u === 0) u = Math.random();
+      while(v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    function generateArray(n, dist){
+      const arr = new Array(n);
+      if(dist === 'normal'){ for(let i=0;i<n;i++) arr[i] = randNormal(); }
+      else if(dist === 'uniform'){ for(let i=0;i<n;i++) arr[i] = Math.random(); }
+      else if(dist === 'large'){ for(let i=0;i<n;i++) arr[i] = 1e8 + (randNormal() * 1e-2); }
+      return arr;
+    }
+
+    function timeFn(fn, arr, trials){
+      for(let i=0;i<4;i++) fn(arr); // warm-up
+      const t0 = performance.now();
+      for(let i=0;i<trials;i++) fn(arr);
+      const t1 = performance.now();
+      return (t1 - t0) / trials;
+    }
+
+    $('runBench').addEventListener('click', ()=>{
+      const n = Math.max(1, Number($('benchN').value) || 100000);
+      const trials = Math.max(1, Number($('benchTrials').value) || 3);
+      const dist = $('benchDist').value;
+      $('benchResults').innerHTML = `Generating vector N=${n} (${dist})...`;
+      $('runBench').disabled = true;
+
+      // show spinner next to button (simple visual feedback)
+      const spinner = document.createElement('span');
+      spinner.className = 'spinner';
+      $('runBench').appendChild(spinner);
+
+      // defer heavy work slightly so UI updates
+      setTimeout(()=>{
+        const arr = generateArray(n, dist);
+        $('benchResults').textContent = `Running benchmark on N=${n} (avg of ${trials} runs)...`;
+
+        // time functions (may be heavy)
+        const tWelf = timeFn(welfordOnlineFromArray, arr, trials);
+        const tSum = timeFn(sumSumsqOnlineFromArray, arr, trials);
+
+        const rW = welfordOnlineFromArray(arr);
+        const rS = sumSumsqOnlineFromArray(arr);
+
+        const varDiff = Number.isFinite(rS.variance) && Number.isFinite(rW.variance) ? Math.abs(rS.variance - rW.variance) : NaN;
+
+        timeChart.data.datasets[0].data = [ Number(tWelf.toFixed(3)), Number(tSum.toFixed(3)) ];
+        timeChart.update();
+
+        errChart.data.datasets[0].data = [ (Number.isFinite(varDiff) && varDiff > 0) ? varDiff : 1e-300 ];
+        errChart.update();
+
+        $('benchResults').innerHTML = `
+          <table>
+            <thead><tr><th>Method</th><th>ms/run (avg)</th><th>Mean</th><th>Variance</th></tr></thead>
+            <tbody>
+              <tr><td>Welford (online, stable)</td><td>${tWelf.toFixed(3)}</td><td>${rW.mean}</td><td>${rW.variance}</td></tr>
+              <tr><td>Sum &amp; SumSq (online, unstable)</td><td>${tSum.toFixed(3)}</td><td>${rS.mean}</td><td>${rS.variance}</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px" class="small muted">Difference in variance: |Var_sum - Var_welford| = ${varDiff}</div>
+        `;
+
+        $('runBench').disabled = false;
+        if(spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+      }, 60);
+    });
+
+    // Initial UI
+    updateUI();
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{});
+    });
+    window.addEventListener('resize', ()=>{
+      if(cumChart) cumChart.resize();
+      if(histChart) histChart.resize();
+      if(timeChart) timeChart.resize();
+      if(errChart) errChart.resize();
+      if(runningVarChart) runningVarChart.resize();
+    });
+  </script>
+</body>
+</html>

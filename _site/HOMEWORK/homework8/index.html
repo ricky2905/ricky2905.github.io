@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bernoulli process, LLN, CLT, Pascal & Fibonacci</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="University essay and interactive tools: Bernoulli process, LLN, CLT, Pascal's triangle, binomial expansion, Fibonacci.">
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf; --text:#e0e0e0 }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .wrap{max-width:1100px;margin:2rem auto;padding:2rem}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    /* headings in green */
+    h1,h2,h3,h4,h5,h6{ color:var(--accent); }
+    h1{font-size:2.2rem;border-bottom:3px solid var(--accent);padding-bottom:.3rem}
+    .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0;box-shadow:0 6px 24px rgba(76,175,80,0.06)}
+    .small{font-size:13px;color:var(--muted)}
+    label{display:block;margin-top:10px;font-weight:700;color:var(--accent)}
+    input, select{width:100%;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0b0c10;color:var(--text)}
+    .controls{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+    .code{background:#0b0c10;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);color:#dfeee0;overflow:auto}
+    .chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    /* chart container: column so canvas can expand; overflow visible so axis labels are not clipped */
+    .chartCard{flex:1 1 360px;background:#0f111a;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-width:260px;height:360px;box-sizing:border-box;display:flex;flex-direction:column;overflow:visible}
+    /* canvas fills most vertical space, leaving room for captions/metrics */
+    .chartCard canvas{width:100% !important; height: calc(100% - 64px) !important; display:block}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid rgba(255,255,255,0.03)}
+    button{padding:8px 12px;border-radius:6px;background:var(--accent);border:0;color:#072;font-weight:700;cursor:pointer}
+    .display-equation{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
+    .pascalRow{font-family:monospace;white-space:pre}
+    .explain { margin-top:10px; line-height:1.5 }
+    .metrics { margin-top:8px; font-size:13px; color:var(--muted) }
+    .formal { margin-top:10px; padding:10px; background:rgba(255,255,255,0.015); border-radius:6px; border:1px solid rgba(255,255,255,0.02) }
+    /* MathJax SVG styling for clarity */
+    .mjx-svg { fill: var(--text) !important; display:block; margin:.4rem 0; shape-rendering:geometricPrecision; }
+    .mjx-svg .mjx-mrow { font-size:1.18rem !important; }
+    @media(max-width:520px){ .mjx-svg .mjx-mrow { font-size:1.0rem !important } }
+  </style>
+
+  <!-- MathJax (SVG output, scale tuned for legibility) -->
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/svg'] },
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]']],
+        packages: {'[+]': ['ams']}
+      },
+      options: { skipHtmlTags: ['script','style','textarea','pre','code'] },
+      svg: { fontCache: 'none', scale: 1.35 }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
+</head>
+<body>
+  <div class="wrap">
+     <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+    <main>
+      <article class="card">
+        <h1>Bernoulli Process, LLN, CLT and Combinatorial Connections</h1>
+      </article>
+
+      <article class="card">
+        <h2>1. Bernoulli process and binomial</h2>
+        <div class="display-equation">
+          \[
+            X_1,X_2,\dots \overset{\text{iid}}{\sim} \mathrm{Bernoulli}(p),\qquad
+            S_n=\sum_{i=1}^{n} X_i\sim\mathrm{Binom}(n,p).
+          \]
+        </div>
+        <div class="display-equation">
+          \[
+            \mathbb{E}[S_n]=np,\qquad \mathrm{Var}(S_n)=np(1-p).
+          \]
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>2. Law of Large Numbers (LLN)</h2>
+        <div class="display-equation">
+          \[
+            \overline{X}_n=\frac{S_n}{n}=\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]=p.
+          \]
+        </div>
+        <p class="formal">Statement (strong): for iid \(X_i\) with \(\mathbb{E}[|X_1|]<\infty\),
+          \(\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mathbb{E}[X_1]\).
+          In the Bernoulli case this means that, for almost every realization, the sample mean converges to \(p\) as \(n\) grows.</p>
+      </article>
+
+      <article class="card">
+        <h2>3. Central Limit Theorem (CLT)</h2>
+        <div class="display-equation">
+          \[
+            \sqrt{n}\,(\overline{X}_n - p) \xrightarrow{d} \mathcal{N}\big(0,\;p(1-p)\big).
+          </]
+        </div>
+        <p class="formal">CLT: for iid \(X_i\) with mean \(\mu\) and variance \(\sigma^2\),
+          \(\sqrt{n}(\overline X_n - \mu)\xrightarrow{d} N(0,\sigma^2)\). In the Bernoulli case \(\mu=p\), \(\sigma^2=p(1-p)\).</p>
+      </article>
+
+      <article class="card">
+        <h2>4. Pascal's triangle, binomial expansion and Fibonacci</h2>
+        <div class="display-equation">
+          \[
+            \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k},\qquad
+            (a+b)^n=\sum_{k=0}^n\binom{n}{k}a^{n-k}b^k.
+          \]
+        </div>
+        <div class="display-equation">
+          \[
+            F_n=\sum_{i=0}^{\lfloor (n-1)/2\rfloor} \binom{n-1-i}{i}.
+          \]
+        </div>
+        <p class="explain">The Fibonacci identity shows how summing appropriate diagonals of Pascal's triangle yields terms of the Fibonacci sequence. The binomial expansion connects combinatorial coefficients to probabilities in the Bernoulli model by taking \(a=1-p\), \(b=p\).</p>
+      </article>
+
+      <article class="card">
+        <h2>5. Interactive demos: LLN, Binomial and CLT</h2>
+        <div class="controls">
+          <div style="flex:1"><label>n (trials)</label><input id="n_lln" type="number" value="500" min="2" max="200000"></div>
+          <div style="flex:1"><label>m (LLN paths)</label><input id="m_lln" type="number" value="50" min="1" max="500"></div>
+          <div style="flex:1"><label>p (Bernoulli)</label><input id="p_lln" type="number" step="0.01" value="0.6" min="0" max="1"></div>
+        </div>
+        <div class="controls" style="margin-top:8px">
+          <button id="btn_lln" class="btn">Run LLN & Binom</button>
+          <button id="btn_clt" class="btn" style="background:#66bb6a">Show CLT (histogram)</button>
+        </div>
+
+        <div class="chartRow" style="margin-top:12px" role="region" aria-label="Interactive charts">
+          <div class="chartCard" aria-label="LLN Chart">
+            <canvas id="llnChart" role="img" aria-label="Evolution of sample means"></canvas>
+            <div class="small">Curves: sample means \(\overline X_k\) for several paths. Dashed line = theoretical value \(p\).</div>
+            <div id="lln_metrics" class="metrics" aria-live="polite"></div>
+          </div>
+
+          <div class="chartCard" aria-label="Binomial chart">
+            <canvas id="binomChart" role="img" aria-label="Empirical distribution vs theoretical binomial"></canvas>
+            <div class="small">Bars: empirical frequencies of \(S_n\). Line: theoretical \(\mathrm{Binom}(n,p)\) probabilities.</div>
+            <div id="binom_metrics" class="metrics" aria-live="polite"></div>
+          </div>
+
+          <div class="chartCard" aria-label="CLT chart">
+            <canvas id="cltChart" role="img" aria-label="Histogram of the standardized quantity and normal density"></canvas>
+            <div class="small">Histogram of \(\sqrt{n}(\overline X_n - p)\) with the theoretical density \(\mathcal{N}(0,p(1-p))\) overlaid.</div>
+            <div id="clt_metrics" class="metrics" aria-live="polite"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>6. Formal comparison and analogies with the previous assignment</h2>
+
+        <div class="formal">
+          <h3 style="margin:0 0 .5rem 0; color:var(--accent)">Objective</h3>
+          <p>This paragraph relates the current exercise to the previous assignment (where the effective success probability per trial was \(q=(1-p_{\text{attacker}})^m\)). It highlights analogies, differences and the relevant combinatorial remarks.</p>
+
+          <h4 style="margin-top:0.6rem">1. General perspective: pathwise vs. ensemble</h4>
+          <p>
+            In both assignments the fundamental unit is the Bernoulli trial with a fixed success probability (in the previous assignment \(q\), here \(p\)). Two complementary perspectives:
+          </p>
+          <ul>
+            <li><strong>Pathwise (LLN):</strong> follow a single realization and observe the sample mean \(\overline X_k\). The LLN guarantees that, for almost every path, \(\overline X_n\to p\) (or \(\to q\)).</li>
+            <li><strong>Ensemble (Binomial):</strong> repeat the entire experiment of fixed length \(n\) many times and build the empirical distribution of \(S_n\). This distribution is governed by the binomial PMF
+              \[
+                P(S_n=k)=\binom{n}{k}p^k(1-p)^{n-k},
+              \]
+              with \(p\) replaced by \(q\) in the previous assignment.</li>
+          </ul>
+
+          <h4 style="margin-top:0.6rem">2. Substitution \(p \mapsto q\)</h4>
+          <p class="formal">
+            All formulas and theorems transfer by substituting \(p\) with \(q=(1-p_{\text{attacker}})^m\). In particular:
+            \[
+              S_n\sim\mathrm{Binom}(n,q),\quad \mathbb{E}[S_n]=nq,\quad \mathrm{Var}(S_n)=nq(1-q),
+            \]
+            and
+            \[
+              \overline X_n \xrightarrow{a.s.} q,\qquad \sqrt{n}(\overline X_n - q)\xrightarrow{d}\mathcal{N}(0,q(1-q)).
+            \]
+            This shows that the difference between the two assignments is mainly numerical (the value of the probability) rather than structural.
+          </p>
+
+          <h4 style="margin-top:0.6rem">3. Combinatorial relations and the role of Pascal</h4>
+          <p>
+            The recursive relation for binomial coefficients
+            \[
+              \binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}
+            \]
+            builds Pascal's triangle; the binomial expansion
+            \[
+              (1-p + p)^n = \sum_{k=0}^n \binom{n}{k}(1-p)^{n-k} p^k = 1
+            \]
+            directly links combinatorial coefficients to binomial probabilities. Sums along diagonals of Pascal produce, among other things, the Fibonacci sequence:
+            \[
+              F_n=\sum_{i=0}^{\lfloor (n-1)/2\rfloor} \binom{n-1-i}{i}.
+            \]
+            Adding a graphic panel (Pascal with highlighted diagonals) is useful relative to the combinatorial part of the exam.
+          </p>
+
+          <h4 style="margin-top:0.6rem">4. Practical interpretation and suggestions for the report</h4>
+          <ol>
+            <li>Include figures: (A) paths of \(\overline X_k\) with dashed line \(p\) (or \(q\)); (B) bar chart of the empirical distribution of \(S_n\) with the theoretical \(\mathrm{Binom}(n,p)\) curve overlaid (or \(\mathrm{Binom}(n,q)\)); (C) histogram of \(\sqrt{n}(\overline X_n-p)\) with the theoretical normal density; (D) annotated Pascal triangle to illustrate Fibonacci.</li>
+            <li>Always report experimental parameters: \(n\), \(p\) (or \(q\)), number of paths \(m\), number of repetitions \(R\) for empirical estimates, and number of bins for histograms.</li>
+            <li>Discuss finite-sample discrepancies: Monte Carlo error, skewness for \(p\) far from 0.5, accuracy of the normal approximation as \(n\) grows (rate \(O(1/\sqrt{n})\)).</li>
+            <li>In the text explicitly state the substitution \(p\mapsto q\) when comparing to the previous assignment and comment on the numerical results in that context.</li>
+          </ol>
+
+          <p class="formal"><strong>Conclusion.</strong> The current exercise is directly reducible to the previous one via the substitution of the success probability; the combinatorial connections (binomial coefficients, Pascal, binomial expansion and Fibonacci) provide a coherent mathematical framework that justifies the empirical observations shown in the demos.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>7. Pascal's Triangle and Fibonacci (tool)</h2>
+        <div class="controls" style="margin-top:8px">
+          <div style="flex:1"><label>Generate Pascal up to row n</label><input id="pascal_n" type="number" value="12" min="1" max="30"></div>
+          <button id="gen_pascal" class="btn">Generate Pascal</button>
+        </div>
+        <div id="pascal_box" class="code" style="margin-top:8px;max-height:220px;overflow:auto"></div>
+        <pre id="fib_out" class="code">—</pre>
+      </article>
+
+      <article class="card">
+        <h2>References</h2>
+        <ol class="small"><li>W. Feller, <em>An Introduction to Probability Theory and Its Applications</em>, Vol.1.</li><li>P. Billingsley, <em>Probability and Measure</em>.</li><li>G. Graham, D. Knuth, O. Patashnik, <em>Concrete Mathematics</em>.</li></ol>
+      </article>
+    </main>
+
+    <footer class="small">© 2025 Riccardo D'Annibale</footer>
+  </div>
+
+  <script>
+    // Wait for Chart.js
+    function ready(){
+      if(typeof Chart === 'undefined'){ setTimeout(ready,50); return; }
+
+      // combinatorics helper
+      function binomCoeff(n,k){
+        if(k<0||k>n) return 0;
+        k = Math.min(k, n-k);
+        let num=1, den=1;
+        for(let i=1;i<=k;i++){ num *= (n - (k - i)); den *= i; }
+        return Math.round(num/den);
+      }
+
+      function generatePascal(n){
+        const T = [];
+        for(let i=0;i<=n;i++){
+          T[i]=[];
+          for(let j=0;j<=i;j++){
+            if(j===0||j===i) T[i][j]=1; else T[i][j]=T[i-1][j-1]+T[i-1][j];
+          }
+        }
+        return T;
+      }
+
+      // UI: Pascal
+      document.getElementById('gen_pascal').addEventListener('click', ()=>{
+        const n = Math.max(1, Math.min(30, Math.floor(Number(document.getElementById('pascal_n').value))));
+        const T = generatePascal(n);
+        const box = document.getElementById('pascal_box'); box.innerHTML='';
+        const maxLen = T[n].length * 4;
+        for(let i=0;i<T.length;i++){
+          const row = T[i].map(x=>String(x).padStart(3,' ')).join(' ');
+          const pad = ' '.repeat(Math.floor((maxLen - row.length)/2));
+          const div = document.createElement('div'); div.className='pascalRow'; div.textContent = pad + row;
+          box.appendChild(div);
+        }
+        const fib = [1,1];
+        for(let k=3;k<=n+2;k++){
+          let s=0;
+          for(let i=0;i<=Math.floor((k-1)/2);i++){ s += binomCoeff(k-1-i, i); }
+          fib.push(s);
+        }
+        document.getElementById('fib_out').textContent = 'Fibonacci (extracted from Pascal diagonals):\n' + fib.join(', ');
+      });
+
+      // Charts setup
+      const llnCtx = document.getElementById('llnChart').getContext('2d');
+      const binomCtx = document.getElementById('binomChart').getContext('2d');
+      const cltCtx = document.getElementById('cltChart').getContext('2d');
+
+      // common options to ensure ticks are visible and space is reserved
+      const commonOptions = {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:true, position:'top' }
+        },
+        layout:{ padding:{ bottom:28 } }, // reserve space for x-axis labels
+      };
+
+      let llnChart = new Chart(llnCtx, {
+        type:'line',
+        data:{ labels:[], datasets:[] },
+        options: Object.assign({}, commonOptions, {
+          scales:{
+            y:{ min:0, max:1, title:{display:true, text:'sample mean' } },
+            x:{ title:{display:true, text:'k (number of trials)' }, ticks:{ autoSkip:true, maxTicksLimit:10, maxRotation:45, minRotation:0 } }
+          }
+        })
+      });
+
+      let binomChart = new Chart(binomCtx, {
+        type:'bar',
+        data:{ labels:[], datasets:[] },
+        options: Object.assign({}, commonOptions, {
+          scales:{
+            y:{ beginAtZero:true, title:{display:true, text:'probability / frequency' } },
+            x:{ title:{display:true, text:'count k' }, ticks:{ autoSkip:true, maxTicksLimit:12, maxRotation:45, minRotation:0 } }
+          }
+        })
+      });
+
+      let cltChart = new Chart(cltCtx, {
+        type:'bar',
+        data:{ labels:[], datasets:[] },
+        options: Object.assign({}, commonOptions, {
+          scales:{
+            y:{ beginAtZero:true, title:{display:true, text:'density/normalized frequency' } },
+            x:{ title:{display:true, text:'standardized value' }, ticks:{ autoSkip:true, maxTicksLimit:10, maxRotation:45, minRotation:0 } }
+          }
+        })
+      });
+
+      // helper: normal pdf
+      function normalPdf(x, mu, sigma){
+        return (1/(Math.sqrt(2*Math.PI)*sigma)) * Math.exp(-0.5 * Math.pow((x-mu)/sigma,2));
+      }
+
+      // helper: histogram bins
+      function histogram(data, binCount){
+        const min = Math.min(...data);
+        const max = Math.max(...data);
+        const eps = (max - min) * 1e-6;
+        const width = (max - min + eps)/binCount;
+        const bins = Array(binCount).fill(0);
+        const edges = [];
+        for(let i=0;i<binCount;i++) edges.push(min + i*width);
+        for(const v of data){
+          let idx = Math.floor((v - min)/width);
+          if(idx<0) idx=0;
+          if(idx>=binCount) idx=binCount-1;
+          bins[idx]++;
+        }
+        const centers = edges.map((e,i)=> e + width/2);
+        const freqs = bins.map(b => b / data.length); // relative frequency
+        return {centers, freqs, width};
+      }
+
+      // LLN + Binomial button
+      document.getElementById('btn_lln').addEventListener('click', ()=>{
+        const n = Math.max(1, Math.floor(Number(document.getElementById('n_lln').value)));
+        const m = Math.max(1, Math.floor(Number(document.getElementById('m_lln').value)));
+        const p = Math.max(0, Math.min(1, Number(document.getElementById('p_lln').value)));
+
+        // LLN: sample points (limit to 200 for performance)
+        const samplePoints = 200;
+        const step = Math.max(1, Math.floor(n / samplePoints));
+        const labels = []; for(let i=step;i<=n;i+=step) labels.push(i);
+
+        const datasets = [];
+        for(let path=0; path<m; path++){
+          let sum = 0; const data=[];
+          for(let i=1;i<=n;i++){
+            const X = Math.random() < p ? 1 : 0; sum += X;
+            if(i % step === 0) data.push(sum / i);
+          }
+          datasets.push({ label: 'path '+(path+1), data, borderColor:'rgba(255,255,255,0.12)', pointRadius:0, tension:0.3, fill:false, borderWidth:1 });
+        }
+        // add theoretical p
+        const pLine = Array(labels.length).fill(p);
+        datasets.push({ label: 'p (expected value)', data: pLine, borderColor: 'rgba(76,175,80,0.95)', borderWidth:2, pointRadius:0, tension:0, borderDash:[6,6], fill:false });
+
+        llnChart.data.labels = labels; llnChart.data.datasets = datasets; llnChart.update();
+
+        // Binomial empirical vs theoretical
+        const trials = 2000;
+        const counts = Array(n+1).fill(0);
+        for(let t=0;t<trials;t++){
+          let k=0;
+          for(let i=0;i<n;i++) if(Math.random() < p) k++;
+          counts[k]++;
+        }
+        const freqs = counts.map(c=>c/trials);
+        const theo = counts.map((_,k) => binomCoeff(n,k) * Math.pow(p,k) * Math.pow(1-p,n-k));
+        const labelsK = counts.map((_,k)=>k);
+
+        binomChart.data.labels = labelsK;
+        binomChart.data.datasets = [
+          { label:'Empirical (frequency)', data: freqs, backgroundColor:'rgba(76,175,80,0.45)' },
+          { label:'Theoretical Binom(n,p)', data: theo, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:2, tension:0.2 }
+        ];
+        binomChart.update();
+
+        // metrics text
+        const mean_count = n * p;
+        const var_count = n * p * (1 - p);
+        const var_bar = (p * (1 - p)) / n;
+
+        document.getElementById('binom_metrics').textContent =
+          `Theoretical mean S_n = np = ${mean_count.toFixed(3)} · Var(S_n) = np(1-p) = ${var_count.toFixed(3)}. (n=${n}, p=${p})`;
+
+        document.getElementById('lln_metrics').textContent =
+          `Theoretical mean of the sample mean = p = ${p.toFixed(3)} · Var(\\overline{X}_n) = p(1-p)/n = ${var_bar.toFixed(6)}.`;
+      });
+
+      // CLT demo button: histogram of sqrt(n)(Xbar - p)
+      document.getElementById('btn_clt').addEventListener('click', ()=>{
+        const n = Math.max(2, Math.floor(Number(document.getElementById('n_lln').value)));
+        const p = Math.max(0, Math.min(1, Number(document.getElementById('p_lln').value)));
+        const repetitions = 5000;
+
+        const zvals = [];
+        for(let t=0;t<repetitions;t++){
+          let k=0;
+          for(let i=0;i<n;i++) if(Math.random() < p) k++;
+          const xbar = k / n;
+          zvals.push(Math.sqrt(n) * (xbar - p));
+        }
+
+        // histogram
+        const bins = Math.min(50, Math.max(10, Math.round(Math.sqrt(repetitions))));
+        const hist = histogram(zvals, bins);
+        // theoretical normal density N(0, sigma^2) with sigma^2 = p(1-p)
+        const sigma = Math.sqrt(p * (1 - p));
+        // create density points on same centers
+        const dens = hist.centers.map(x => normalPdf(x, 0, sigma));
+        // Scale density to match histogram relative frequency (density * binWidth ≈ prob)
+        const densityScaled = dens.map(d => d * hist.width);
+
+        // format labels and reduce displayed ticks
+        const labelsFormatted = hist.centers.map(c => c.toFixed(3));
+        cltChart.data.labels = labelsFormatted;
+        cltChart.data.datasets = [
+          { label: `Histogram (repetitions=${repetitions})`, data: hist.freqs, backgroundColor:'rgba(120,144,156,0.45)' },
+          { label: `Theoretical density N(0,${(p*(1-p)).toFixed(5)})`, data: densityScaled, type:'line', borderColor:'#ffffff', borderWidth:2, fill:false, pointRadius:0, tension:0.3 }
+        ];
+
+        // ensure X ticks are not overcrowded and remain visible
+        cltChart.options.scales.x.ticks.autoSkip = true;
+        cltChart.options.scales.x.ticks.maxTicksLimit = 10;
+        cltChart.options.scales.x.ticks.maxRotation = 45;
+        cltChart.options.scales.x.ticks.minRotation = 0;
+        cltChart.update();
+
+        // metrics
+        const sampleMean = zvals.reduce((a,b)=>a+b,0)/zvals.length;
+        const sampleVar = zvals.reduce((a,b)=>a + (b - sampleMean)*(b - sampleMean),0) / (zvals.length-1);
+        document.getElementById('clt_metrics').textContent =
+          `E[z] ≈ ${sampleMean.toFixed(4)} · Var[z] ≈ ${sampleVar.toFixed(4)} · theoretical var = p(1-p) = ${(p*(1-p)).toFixed(4)}. (n=${n}, p=${p})`;
+      });
+
+    } // ready
+    ready();
+  </script>
+</body>
+</html>

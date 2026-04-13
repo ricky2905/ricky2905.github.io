@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <title>Datasets in Statistics and Cybersecurity | Riccardo D'Annibale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f111a;
+  color: #e0e0e0;
+  line-height: 1.8;
+  padding: 2rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #4CAF50;
+}
+
+h1 {
+  font-size: 2.8rem;
+  border-bottom: 3px solid #4CAF50;
+  padding-bottom: 0.3rem;
+  margin: 0 0 1rem 0;
+}
+
+h2 { font-size: 2rem; margin-top: 2rem; }
+h3 { font-size: 1.5rem; margin-top: 1.5rem; }
+
+.card {
+  background-color: #1a1c2b;
+  border-left: 5px solid #4CAF50;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 15px rgba(76,175,80,0.08);
+}
+
+a { color: #4CAF50; text-decoration: none; }
+a:hover { color: #66bb6a; text-decoration: underline; }
+
+hr { border: none; height: 2px; background-color: #4CAF50; margin: 2rem 0; }
+
+select { padding:0.5rem 1rem; border-radius:5px; font-size:1rem; background-color: #222236; color: #e0e0e0; border: 1px solid #4CAF50; margin-top:0.5rem; }
+
+.topnav { display: flex; justify-content: flex-start; gap: 1rem; margin-bottom: 2rem; }
+.topnav a { font-weight: bold; }
+.topnav a:hover { color: #66bb6a; }
+
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #4CAF50; text-align: center; font-size: 0.9rem; color: #999; }
+
+table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #0f111a; }
+th, td { border: 1px solid rgba(255,255,255,0.06); padding: 8px; text-align: left; font-size: 0.95rem; color: #e7e7e7; }
+th { background: rgba(76,175,80,0.06); color: #dfffe0; }
+
+code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; color: #e8f5e9; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
+pre { background: #0b0c10; color: #dfeee0; padding: 12px; border-radius: 6px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.03); }
+img { max-width: 100%; display: block; margin: 12px 0; border-radius: 4px; }
+
+textarea{width:100%;height:110px;font-family:monospace;font-size:14px;margin-bottom:8px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:6px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.small{font-size:13px;color:#cfd8cf}
+input[type="number"]{width:72px;background:#0b0c10;color:#e6f4e6;border:1px solid rgba(255,255,255,0.04);padding:6px;border-radius:4px}
+button.small{padding:6px 10px;font-size:13px;border-radius:6px;background:#142218;color:#e8f5e9;border:1px solid rgba(76,175,80,0.12);cursor:pointer}
+button.small:hover{background:#1d2b20}
+.generator{border:1px dashed rgba(255,255,255,0.04);padding:12px;margin:12px 0;border-radius:6px}
+.result{white-space:pre-wrap;background:#0b0c10;border:1px solid rgba(255,255,255,0.03);padding:10px;margin-top:8px;max-height:260px;overflow:auto;border-radius:6px}
+.hiddenCol{display:none;}
+label.inline{display:inline-flex;align-items:center;gap:8px;color:#d0e8d0}
+thead th{position:sticky;top:0;background:rgba(11,12,16,0.9)}
+th.dimmed { opacity: 0.55; }
+
+/* FIXED chart layout to avoid resize loops */
+.chartRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.chartCard{
+  flex:1 1 320px;
+  background:#0f111a;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.03);
+  min-width:260px;
+  height:160px;          
+  box-sizing:border-box;
+  overflow:hidden;
+}
+.chartLegend{font-size:13px;color:#cfd8cf;margin-top:6px}
+
+.chartCard canvas { width:100%; height:120px; display:block; }
+
+@media (max-width:600px){
+  body { padding: 1rem; max-width: 100%; }
+  h1 { font-size: 2rem; }
+}
+  </style>
+
+  <script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <header>
+    <nav class="topnav">
+      <a href="/">Home</a>
+      <a href="/about/">About Me</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <article class="card">
+      <h1>Datasets in Statistics and Cybersecurity</h1>
+
+      <p>Datasets are fundamental for analyzing and modeling behaviors in cybersecurity. They form the basis for detecting anomalies, training predictive models, and evaluating intrusion detection systems [1].</p>
+
+      <hr/>
+
+      <h2>Types of Datasets</h2>
+
+      <h3>1. <strong>Structured</strong></h3>
+      <p>Data organized in tables with rows and columns, such as relational databases.<br/>
+      <strong>Example:</strong> access logs, user tables [2].</p>
+
+      <h3>2. <strong>Unstructured</strong></h3>
+      <p>Data without a fixed schema, such as text, images, or video. They require advanced processing techniques, like NLP or computer vision [3].</p>
+
+      <h3>3. <strong>Semi-Structured</strong></h3>
+      <p>Data with partial structure, such as JSON or XML files. They contain labels or metadata that facilitate analysis [2].</p>
+
+      <hr/>
+
+      <h2>Example: Tabular Dataset from KDD Cup '99</h2>
+      <p>The <strong>KDD Cup '99</strong> dataset is widely used for intrusion detection. It contains simulated network traffic information with 41 variables and various attack labels [6].<br/>
+      Here is a simplified tabular representation:</p>
+
+      <table>
+        <thead>
+          <tr><th>Duration</th><th>Protocol</th><th>Service</th><th>SrcBytes</th><th>DstBytes</th><th>Label</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>tcp</td><td>http</td><td>181</td><td>5450</td><td>normal</td></tr>
+          <tr><td>0</td><td>udp</td><td>domain</td><td>105</td><td>146</td><td>normal</td></tr>
+          <tr><td>0</td><td>tcp</td><td>ftp</td><td>239</td><td>486</td><td>attack</td></tr>
+        </tbody>
+      </table>
+
+      <p>This structure allows the application of statistical and machine learning techniques to identify anomalous behaviors.</p>
+
+      <hr/>
+
+      <h2>Dataset Management</h2>
+      <p>Proper dataset management is crucial for reliable and replicable results. Main steps include:</p>
+      <ul>
+        <li><strong>Data cleaning</strong>: removing missing, duplicate, or erroneous values.</li>
+        <li><strong>Normalization and standardization</strong>: aligning variable scales to avoid bias in models [4].</li>
+        <li><strong>Anonymization and privacy</strong>: protecting sensitive data, essential in cybersecurity [5].li>
+        <li><strong>Feature selection</strong>: choosing the most relevant features to improve model performance and reduce computational complexity [2].</li>
+      </ul>
+
+      <hr/>
+
+      <h2>Data Distribution Concepts</h2>
+      <p><strong>Data distribution</strong> describes how values of a variable or set of variables are spread. Understanding distribution is essential to:</p>
+      <ul>
+        <li>Choose appropriate statistical tests</li>
+        <li>Identify outliers and anomalies</li>
+        <li>Improve predictive modeling [4]</li>
+      </ul>
+
+      <h3>Types of Distribution</h3>
+      <ul>
+        <li><strong>Univariate</strong> — examines one variable at a time, analyzing mean, median, mode, variance, skewness, and kurtosis [4].</li>
+        <li><strong>Bivariate</strong> — examines the relationship between two variables, using scatter plots, contingency tables, and correlations [4].</li>
+        <li><strong>Multivariate</strong> — involves multiple variables simultaneously, used in PCA, clustering, and complex predictive models [4].</li>
+      </ul>
+
+      <h3>Other Relevant Concepts</h3>
+      <ul>
+        <li><strong>Probability distributions</strong>: Normal, Poisson, Binomial — useful for modeling events like access attempts or attacks [4].</li>
+        <li><strong>Outliers</strong>: extreme values that may indicate anomalies or intrusions [1][5].</li>
+        <li><strong>Patterns and correlations</strong>: identifying dependencies between variables can reveal abnormal behaviors or vulnerabilities [2][4].</li>
+      </ul>
+
+      <hr/>
+
+      <h2>Mathematical Formulas for Distributions</h2>
+
+      <h3>Measures of location and dispersion</h3>
+      <ul>
+        <li><strong>Population mean</strong>:
+          \[
+            \mu = \frac{1}{N}\sum_{i=1}^N x_i
+          \]
+        </li>
+        <li><strong>Sample mean</strong>:
+          \[
+            \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i
+          \]
+        </li>
+        <li><strong>Population variance</strong>:
+          \[
+            \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i-\mu)^2
+          \]
+        </li>
+        <li><strong>Sample variance (unbiased)</strong>:
+          \[
+            s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar{x})^2
+          \]
+        </li>
+        <li><strong>Standard deviation</strong>:
+          \[
+            \sigma=\sqrt{\sigma^2},\qquad s=\sqrt{s^2}
+          \]
+        </li>
+      </ul>
+
+      <h3>Common probability distributions</h3>
+      <ul>
+        <li><strong>Normal distribution (pdf)</strong>:
+          \[
+            f(x)=\frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+          \]
+        </li>
+        <li><strong>Binomial distribution (pmf)</strong>:
+          \[
+            P(X=k)=\binom{n}{k} p^k (1-p)^{\,n-k},\qquad k=0,\dots,n
+          \]
+        </li>
+        <li><strong>Poisson distribution (pmf)</strong>:
+          \[
+            P(X=k)=\frac{\lambda^k e^{-\lambda}}{k!},\qquad k=0,1,2,\dots
+          \]
+        </li>
+      </ul>
+
+      <h3>Moments and shape</h3>
+      <ul>
+        <li><strong>Skewness (sample)</strong>:
+          \[
+            \text{skew}=\frac{\frac{1}{n}\sum_{i}(x_i-\bar{x})^3}{\left(\frac{1}{n}\sum_{i}(x_i-\bar{x})^2\right)^{3/2}}
+          \]
+        </li>
+        <li><strong>Excess kurtosis (sample)</strong>:
+          \[
+            \text{kurtosis}=\frac{\frac{1}{n}\sum_{i}(x_i-\bar{x})^4}{\left(\frac{1}{n}\sum_{i}(x_i-\bar{x})^2\right)^{2}} - 3
+          \]
+        </li>
+      </ul>
+
+      <h3>Chi-squared statistic</h3>
+      <p>Used to compare observed vs expected frequencies (also used in your scoring implementation):</p>
+      \[
+        \chi^2=\sum_{i}\frac{(O_i-E_i)^2}{E_i},
+      \]
+      <p>where \(O_i\) are observed counts and \(E_i\) are expected counts.</p>
+
+      <hr/>
+
+      <h2>Final Considerations</h2>
+      <p>Proper analysis of datasets and distributions is essential in cybersecurity for identifying threats and optimizing defense systems. The combined use of structured, unstructured, and semi-structured datasets, along with rigorous data management, allows the development of robust and reliable statistical and machine learning models [1][6].</p>
+
+      <hr/>
+
+      <h2>References</h2>
+      <ol>
+        <li>Provost, F., & Fawcett, T. (2013). <em>Data Science for Business</em>. O'Reilly Media.</li>
+        <li>Han, J., Pei, J., & Kamber, M. (2011). <em>Data Mining: Concepts and Techniques</em>. Elsevier.</li>
+        <li>Jurafsky, D., & Martin, J. H. (2020). <em>Speech and Language Processing</em>. Pearson.</li>
+        <li>Montgomery, D. C., & Runger, G. C. (2018). <em>Applied Statistics and Probability for Engineers</em>. Wiley.</li>
+        <li>Goodfellow, I., Bengio, Y., & Courville, A. (2016). <em>Deep Learning</em>. MIT Press.</li>
+        <li>Tavallaee, M., et al. (2009). <em>A detailed analysis of the KDD CUP 99 data set</em>. IEEE Symposium on Computational Intelligence for Security and Defense Applications.</li>
+      </ol>
+
+    </article>
+
+    <article class="card">
+      <h2>Univariate and Bivariate Distribution on a Dataset</h2>
+      <p>Here is an example based on a simple database created with Access. Using two basic SQL queries, we can calculate both the univariate and bivariate distributions. For the univariate distribution, we consider the <strong>Age</strong> variable, while for the bivariate distribution we examine <strong>Age</strong> and <strong>Height</strong>.</p>
+
+      <img src="/assets/images/dati.png" alt="Example tabular data" title="Example tabular data"/>
+
+      <h3>Univariate Distribution on Age</h3>
+      <img src="/assets/images/Dist_univariata.png" alt="Univariate Distribution" title="Univariate Distribution"/>
+
+      <p><strong>SQL Code:</strong></p>
+      <img src="/assets/images/Dist_univariata_sql.png" alt="Univariate Distribution SQL" title="Univariate Distribution SQL"/>
+
+      <h3>Bivariate Distribution on Age and Height</h3>
+      <img src="/assets/images/Dist_bivariata.png" alt="Bivariate Distribution" title="Bivariate Distribution"/>
+
+      <p><strong>SQL Code:</strong></p>
+      <img src="/assets/images/dist_bivariata_sql.png" alt="Bivariate Distribution SQL" title="Bivariate Distribution SQL"/>
+
+      <h3>Formulas for univariate / bivariate analysis</h3>
+      <p>Useful formulas for the displayed analyses:</p>
+      <ul>
+        <li><strong>Expected value of a discrete variable</strong>:
+          \[
+            E[X]=\sum_i x_i p_i
+          \]
+        </li>
+        <li><strong>Variance (alternative form)</strong>:
+          \[
+            \mathrm{Var}(X)=E[X^2]-(E[X])^2
+          \]
+        </li>
+        <li><strong>Covariance (sample)</strong>:
+          \[
+            \mathrm{Cov}(X,Y)=\frac{1}{n}\sum_{i=1}^n (x_i-\bar{x})(y_i-\bar{y})
+          \]
+        </li>
+        <li><strong>Pearson correlation coefficient</strong>:
+          \[
+            \rho_{X,Y}=\frac{\mathrm{Cov}(X,Y)}{\sigma_X \sigma_Y}
+          \]
+        </li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Using Distribution to Break a Caesar Cipher</h2>
+      <p>This section introduces a simple web-based tool and an explanation for working with the <strong>Caesar cipher (shift = 3)</strong>. The tool allows users to:</p>
+      <ul>
+        <li>Encrypt text</li>
+        <li>Attempt decryption by trying all 25 possible shifts (brute-force)</li>
+        <li>Automatically estimate the correct shift using letter frequency analysis (chi-squared test)</li>
+      </ul>
+      <p>The frequency-based approach provides a statistical guess for the most likely shift (for longer texts), while brute-force remains reliable for shorter ones.</p>
+
+      <h3>Main Goals of the Tool</h3>
+      <h4>Caesar Cipher Generation</h4>
+      <ul>
+        <li>Encrypts plaintext with a user-selected shift.</li>
+        <li>Supports accent mapping before encryption.</li>
+      </ul>
+      <h4>Attempted Decryption of All Shifts</h4>
+      <ul>
+        <li>Performs brute-force over all 26 possible Caesar cipher shifts.</li>
+      </ul>
+
+      <h4>Scoring and Ranking of Candidates</h4>
+      <p>Calculates scores based on:</p>
+      <ul>
+        <li>Hamming distance (letter order)</li>
+        <li>Chi-squared statistic (χ²) for frequencies</li>
+        <li>Presence of common English/Italian words (wordScore)</li>
+        <li>Presence of common bigrams (bigramScore)</li>
+      </ul>
+
+      <h4>Results Display</h4>
+      <ul>
+        <li>Shows all candidate decryptions in a sortable table.</li>
+        <li>Highlights the top N candidates.</li>
+        <li>Allows selection of a candidate to view a preview and detailed scores.</li>
+      </ul>
+
+      <h4>User Utilities</h4>
+      <ul>
+        <li>Copy ciphertext to clipboard.</li>
+        <li>Automatically handle accents and capitalization.</li>
+      </ul>
+    </article>
+
+    <section class="card" aria-labelledby="caesar-title">
+      <h2 id="caesar-title">Caesar Cipher: Generate → Analyze (Improved Ranking)</h2>
+      <div class="small">Enter plaintext, choose a shift, and generate the cipher. Then you can analyze the cipher and update the two letter-frequency charts manualmente.</div>
+
+      <div class="generator">
+        <div class="small"><strong>Caesar Cipher Generator</strong></div>
+        <textarea id="plaintext">My password is Hello.123!</textarea>
+        <div class="controls">
+          <label class="inline">Shift <input id="genShift" type="number" min="0" max="25" value="3"></label>
+          <label class="inline"><input id="genMapAcc" type="checkbox" checked> Map accents before encrypting</label>
+          <button id="genBtn" class="small">Generate</button>
+          <button id="genAnalyzeBtn" class="small">Generate & Analyze</button>
+          <button id="copyCipher" class="small">Copy Cipher</button>
+          <div class="small" style="margin-left:8px">Output:</div>
+        </div>
+        <textarea id="generated" readonly style="height:80px"></textarea>
+      </div>
+
+      <label><strong>Ciphertext (for analysis)</strong></label>
+      <textarea id="cipher">Sh tph whzzdvyk l Jphv.123!</textarea>
+
+      <div class="controls">
+        <label><input type="checkbox" id="mapAccents" checked> Map accents (è→e)</label>
+        <label style="margin-left:6px"><input type="checkbox" id="ignoreCase" checked> Ignore case</label>
+        <button id="run">Try all shifts</button>
+        <button id="sortHam">Sort by Hamming</button>
+        <button id="sortChi">Sort by Chi²</button>
+        <button id="sortComb">Sort by Combined</button>
+        <label style="margin-left:8px" class="small">Top N: <input id="topN" type="number" value="5" min="1" max="26"/></label>
+
+        <button id="toggleAllShifts" class="small" title="Show all shifts">Show all shifts</button>
+      </div>
+
+      <div class="controls" style="margin-top:6px">
+        <label class="small inline"><input type="checkbox" id="toggleCols"> Show detailed columns</label>
+      </div>
+
+      <details style="margin-top:8px">
+        <summary class="small">Weights for combined scoring</summary>
+        <div style="margin-top:8px">
+          <label class="small">wordScore weight: <input id="w_word" type="number" step="0.05" value="0.45" /></label>
+          <label class="small" style="margin-left:12px">hamScore weight: <input id="w_ham" type="number" step="0.05" value="0.25" /></label>
+          <label class="small" style="margin-left:12px">chiScore weight: <input id="w_chi" type="number" step="0.05" value="0.15" /></label>
+          <label class="small" style="margin-left:12px">bigramScore weight: <input id="w_big" type="number" step="0.05" value="0.15" /></label>
+        </div>
+      </details>
+
+      <div id="summary" class="small" style="margin-top:8px"></div>
+
+      <table id="results" aria-live="polite">
+        <thead>
+          <tr>
+            <th data-col="shift">Shift</th>
+            <th data-col="combined">Combined</th>
+            <th data-col="word" class="hiddenCol">Word%</th>
+            <th data-col="ham" class="hiddenCol">Hamming</th>
+            <th data-col="chi" class="hiddenCol">Chi²</th>
+            <th data-col="bigram" class="hiddenCol">Bigram%</th>
+            <th data-col="preview">Preview</th>
+            <th data-col="action"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Selected Text</h3>
+      <div id="chosen" class="result">---</div>
+
+      <h3 style="margin-top:16px">Grafici: occorrenze lettere (Plaintext & Ciphertext)</h3>
+      <div class="small">Premi <strong>Aggiorna grafici</strong> per calcolare le frequenze A–Z per i due testi. Nessun aggiornamento automatico in background.</div>
+
+      <div class="controls" style="margin-top:8px">
+        <button id="updateCharts" class="small">Aggiorna grafici</button>
+        <button id="downloadCsv" class="small">Scarica CSV (lettera,percentPlain,percentCipher)</button>
+      </div>
+
+      <div class="chartRow" style="margin-top:12px">
+        <div class="chartCard">
+          <canvas id="chartPlain" width="700" height="120"></canvas>
+          <div class="chartLegend">Plaintext — percentuale per lettera (A–Z)</div>
+        </div>
+        <div class="chartCard">
+          <canvas id="chartCipher" width="700" height="120"></canvas>
+          <div class="chartLegend">Ciphertext — percentuale per lettera (A–Z)</div>
+        </div>
+      </div>
+
+    </section>
+
+    <article class="card">
+      <h1>Overview of the Caesar Cipher with Statistical Analysis</h1>
+      <p>The Caesar cipher is a <strong>monoalphabetic substitution cipher</strong> that shifts each letter of the plaintext by a fixed number of positions.</p>
+
+      <pre>
+Plaintext:  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+Ciphertext: DEFGHIJKLMNOPQRSTUVWXYZABC
+      </pre>
+
+      <h3>Encryption/Decryption Function</h3>
+      <pre><code>
+function caesarShift(text, shift){
+  return text.split('').map(ch => {
+    const code = ch.charCodeAt(0);
+    if(code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+    if(code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+    return ch;
+  }).join('');
+}
+      </code></pre>
+
+      <h3>Brute-force Decryption</h3>
+      <pre><code>
+for(let shift = 1; shift < 26; shift++){
+  results.push({shift, text: caesarShift(ciphertext, shift)});
+}
+      </code></pre>
+
+      <h3>Statistical / Distribution-based Decryption</h3>
+      <p>The advanced part of the code uses <strong>letter and bigram frequency distributions</strong> to estimate the most probable shift automatically.</p>
+
+      <h2>Metrics Explained</h2>
+      <table>
+        <tr><th>Metric</th><th>Description</th><th>Weight</th></tr>
+        <tr><td><strong>Word%</strong></td><td>Fraction of valid common words (English/Italian)</td><td>0.45</td></tr>
+        <tr><td><strong>Hamming</strong></td><td>Letter rank similarity</td><td>0.25</td></tr>
+        <tr><td><strong>Chi²</strong></td><td>Statistical deviation from expected frequencies</td><td>0.15</td></tr>
+        <tr><td><strong>Bigram%</strong></td><td>Common bigram presence</td><td>0.15</td></tr>
+      </table>
+
+      <h2>Cryptographic Insights</h2>
+      <p>The Caesar cipher is weak because of its <strong>small keyspace</strong> (25 shifts) and <strong>predictable frequency patterns</strong>. Statistical analysis quickly reveals the shift.</p>
+
+      <h2>Conclusion</h2>
+      <p>This implementation bridges <strong>cryptography</strong> and <strong>statistics</strong>, showing how data distributions can reveal hidden information. The <strong>combined score metric</strong> elegantly integrates multiple statistical indicators to automatically prioritize the most probable plaintext.</p>
+
+      <img src="/assets/images/script.png" alt="Code" title="Code"/>
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2025 Riccardo D'Annibale</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script>
+const referenceFreq = {
+  'A':10.85,'B':1.05,'C':4.30,'D':3.39,'E':11.49,'F':1.01,'G':1.65,'H':1.43,
+  'I':10.18,'J':0.01,'K':0.01,'L':5.70,'M':2.87,'N':7.02,'O':9.97,'P':2.96,
+  'Q':0.45,'R':6.19,'S':5.48,'T':6.97,'U':3.16,'V':1.75,'W':0.01,'X':0.01,
+  'Y':0.06,'Z':0.85
+};
+
+const accentMap = {
+  'à':'a','á':'a','â':'a','ã':'a','ä':'a','å':'a',
+  'è':'e','é':'e','ê':'e','ë':'e','ì':'i','í':'i','î':'i','ï':'i',
+  'ò':'o','ó':'o','ô':'o','õ':'o','ö':'o','ù':'u','ú':'u','û':'u','ü':'u',
+  'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','È':'E','É':'E','Ê':'E','Ë':'E',
+  'Ì':'I','Í':'I','Î':'I','Ï':'I','Ò':'O','Ó':'O','Ô':'O','Õ':'O','Ö':'O','Ù':'U','Ú':'U','Û':'U','Ü':'U',
+  'ç':'c','Ç':'C','ñ':'n','Ñ':'N'
+};
+function mapAccents(s){ return s.split('').map(ch => accentMap[ch] || ch).join(''); }
+
+const commonWords = new Set([
+  'di','e','il','la','che','a','in','un','per','con','non','una','sono','si','da','al','lo','ma','più',
+  'come','su','o','se','anche','perché','quando','dove','questo','quella','queste','noi','voi','loro',
+  'mia','mio','tua','tuo','suo','nostro','l','ha','hai','ho','era','stato','stata','cioè',
+  'ora','bene','male','molto','poco','grande','piccolo','anno','giorno','giorni',
+  'the','and','is','in','to','of','that','it','on','for','with','as','are','this','be','by','was','or','from'
+]);
+
+const commonBigrams = ['CH','GL','QU','SC','GN','TR','PR','BR','SP','RA','RE','RI','IN','AN','TO','TE','IO','IA','CO'];
+
+function caesarShift(text, shift){
+  return text.split('').map(ch => {
+    const code = ch.charCodeAt(0);
+    if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+    if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+    return ch;
+  }).join('');
+}
+
+function letterFrequencies(text){
+  const counts = {};
+  for (let c=65;c<=90;c++) counts[String.fromCharCode(c)] = 0;
+  let total=0;
+  for (const ch of text){
+    const C = ch.toUpperCase();
+    if (C >= 'A' && C <= 'Z'){ counts[C] = (counts[C]||0)+1; total++; }
+  }
+  const freqs = {};
+  for (const L in counts) freqs[L] = total ? (counts[L]/total*100) : 0;
+  return {counts, freqs, total};
+}
+
+function rankByFrequency(freqs){
+  return Object.keys(freqs).sort((a,b) => {
+    if (freqs[b] === freqs[a]) return a.localeCompare(b);
+    return freqs[b] - freqs[a];
+  });
+}
+
+function hammingRankDistance(orderA, orderB){
+  let diff=0;
+  for (let i=0;i<26;i++) if (orderA[i] !== orderB[i]) diff++;
+  return diff;
+}
+
+function chiSquared(obsFreqs){
+  let chi2=0;
+  for (const L in referenceFreq){
+    const O = obsFreqs[L] || 0;
+    const E = referenceFreq[L];
+    if (E>0) chi2 += ((O - E)*(O - E)) / E;
+  }
+  return chi2;
+}
+
+function wordScore(text){
+  const tokens = text.toLowerCase().split(/[^a-zA-Z]+/).filter(Boolean);
+  if (!tokens.length) return 0;
+  let hits=0;
+  for (const t of tokens) if (commonWords.has(t)) hits++;
+  return hits / tokens.length;
+}
+
+function bigramScore(text){
+  const s = text.toUpperCase().replace(/[^A-Z]/g,'');
+  if (s.length < 2) return 0;
+  let found=0;
+  for (const bg of commonBigrams) if (s.indexOf(bg)!==-1) found++;
+  return found / commonBigrams.length;
+}
+
+const referenceOrder = Object.keys(referenceFreq).sort((a,b) => {
+  if (referenceFreq[b] === referenceFreq[a]) return a.localeCompare(b);
+  return referenceFreq[b] - referenceFreq[a];
+});
+
+function setHeaderVisibility(showExtra) {
+  const ths = document.querySelectorAll('#results thead th');
+  ths.forEach(th => {
+    const col = th.getAttribute('data-col');
+    if (!col) return;
+    if (['word','ham','chi','bigram'].includes(col)) {
+      if (showExtra) {
+        th.classList.remove('hiddenCol');
+        th.classList.remove('dimmed');
+      } else {
+        th.classList.add('hiddenCol');
+        th.classList.remove('dimmed');
+      }
+    } else {
+      if (!showExtra) th.classList.add('dimmed'); else th.classList.remove('dimmed');
+    }
+  });
+}
+
+let chartPlain = null;
+let chartCipher = null;
+const LETTERS = Array.from({length:26}, (_,i) => String.fromCharCode(65+i));
+
+function initCharts() {
+  // create charts with responsive=false and animation disabled
+  const labels = LETTERS;
+  const emptyData = labels.map(_=>0);
+
+  const commonOpts = {
+    type: 'bar',
+    data: { labels, datasets: [{ label:'%', data: emptyData }] },
+    options: {
+      responsive: false,     
+      animation: false,       
+      maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false }, ticks: { maxRotation:0, autoSkip: false, color: '#dfeee0' } },
+        y: { beginAtZero: true, max:100, ticks: { callback: v => v + '%', color: '#dfeee0' } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => (Number(ctx.parsed.y).toFixed(2) + '%') } }
+      },
+      layout: { padding: 2 }
+    }
+  };
+
+  const ctxP = document.getElementById('chartPlain').getContext('2d');
+  chartPlain = new Chart(ctxP, JSON.parse(JSON.stringify(commonOpts)));
+
+  const ctxC = document.getElementById('chartCipher').getContext('2d');
+  chartCipher = new Chart(ctxC, JSON.parse(JSON.stringify(commonOpts)));
+}
+
+function updateChartsFromText() {
+  if (!chartPlain || !chartCipher) initCharts();
+
+  const plaintext = document.getElementById('plaintext').value || '';
+  const cipher = document.getElementById('cipher').value || document.getElementById('generated').value || '';
+  const map = document.getElementById('mapAccents').checked;
+  const ptText = map ? mapAccents(plaintext) : plaintext;
+  const ctText = map ? mapAccents(cipher) : cipher;
+
+  const pt = letterFrequencies(ptText);
+  const ct = letterFrequencies(ctText);
+
+  const dataPlain = LETTERS.map(l => Number(pt.freqs[l].toFixed(2)));
+  const dataCipher = LETTERS.map(l => Number(ct.freqs[l].toFixed(2)));
+
+  // update datasets only — dimensions are fixed, no layout change
+  chartPlain.data.labels = LETTERS;
+  chartPlain.data.datasets[0].data = dataPlain;
+  chartPlain.update();
+
+  chartCipher.data.labels = LETTERS;
+  chartCipher.data.datasets[0].data = dataCipher;
+  chartCipher.update();
+
+  return {labels: LETTERS, dataPlain, dataCipher, totalPlain: pt.total, totalCipher: ct.total};
+}
+
+
+function downloadCSV(){
+  const res = updateChartsFromText();
+  const rows = [['Letter','PercentPlain','PercentCipher']];
+  res.labels.forEach((L, i) => rows.push([L, res.dataPlain[i].toFixed(2), res.dataCipher[i].toFixed(2)]));
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'letter_freqs.csv'; a.click(); URL.revokeObjectURL(url);
+}
+
+function readWeights(){
+  const w_word = parseFloat(document.getElementById('w_word').value) || 0.45;
+  const w_ham  = parseFloat(document.getElementById('w_ham').value)  || 0.25;
+  const w_chi  = parseFloat(document.getElementById('w_chi').value)  || 0.15;
+  const w_big  = parseFloat(document.getElementById('w_big').value)  || 0.15;
+  const sum = w_word + w_ham + w_chi + w_big;
+  return {w_word: w_word/sum, w_ham: w_ham/sum, w_chi: w_chi/sum, w_big: w_big/sum};
+}
+
+function tryAll(){
+  try {
+    const raw = document.getElementById('cipher').value || '';
+    const mapAcc = document.getElementById('mapAccents').checked;
+    const ignoreCase = document.getElementById('ignoreCase').checked;
+    const text = mapAcc ? mapAccents(raw) : raw;
+    const results = [];
+
+    for (let s=0;s<26;s++){
+      const shifted = caesarShift(text, s);
+      const source = ignoreCase ? shifted.toUpperCase() : shifted;
+      const {freqs, total} = letterFrequencies(source);
+      const order = rankByFrequency(freqs);
+      const ham = hammingRankDistance(order, referenceOrder);
+      const chi2 = chiSquared(freqs);
+      const ws = wordScore(mapAcc ? mapAccents(shifted).toLowerCase() : shifted.toLowerCase());
+      const bg = bigramScore(shifted);
+      const hamScore = (26 - ham) / 26;
+      const chiScore = 1 / (1 + chi2);
+      results.push({shift:s, shifted, ham, chi2, freqs, total, wordScore: ws, bigramScore: bg, hamScore, chiScore});
+    }
+
+    const chiVals = results.map(r=>r.chiScore);
+    const chiMin = Math.min(...chiVals), chiMax = Math.max(...chiVals);
+    results.forEach(r => { r.chiScoreNorm = (chiMax === chiMin) ? 0 : ((r.chiScore - chiMin) / (chiMax - chiMin)); });
+
+    const weights = readWeights();
+    results.forEach(r => {
+      r.combined = weights.w_word * r.wordScore + weights.w_ham * r.hamScore + weights.w_chi * r.chiScoreNorm + weights.w_big * r.bigramScore;
+    });
+
+    window._lastResults = results;
+    renderResults(results, 'combined');
+    document.getElementById('summary').textContent = `Generated 26 candidates. Sorted by "Combined" (adjust weights if needed).`;
+    
+  } catch (err) {
+    console.error(err);
+    alert('Error: see console (F12) for details.');
+  }
+}
+
+function renderResults(results, mode){
+  if (!results || !results.length) { console.warn('No results yet'); return; }
+  const tbody = document.querySelector('#results tbody');
+  tbody.innerHTML = '';
+  const topN = Math.max(1, Math.min(26, parseInt(document.getElementById('topN').value || '5',10)));
+  let sorted = [...results];
+  if (mode === 'ham') sorted.sort((a,b)=>a.ham - b.ham || b.combined - a.combined);
+  else if (mode === 'chi') sorted.sort((a,b)=>a.chi2 - b.chi2 || b.combined - a.combined);
+  else sorted.sort((a,b)=>b.combined - a.combined || a.ham - b.ham);
+
+  const userRequested = document.getElementById('toggleCols').checked;
+  const showingAll = topN >= results.length;
+  const showExtra = userRequested || showingAll;
+
+  setHeaderVisibility(showExtra);
+
+  sorted.forEach((r, idx) => {
+    if (idx >= topN) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.shift}</td>
+      <td>${r.combined.toFixed(4)}</td>
+      <td class="${showExtra?'':'hiddenCol'}">${(r.wordScore*100).toFixed(1)}%</td>
+      <td class="${showExtra?'':'hiddenCol'}">${r.ham} (${r.hamScore.toFixed(3)})</td>
+      <td class="${showExtra?'':'hiddenCol'}">${r.chi2.toFixed(2)}</td>
+      <td class="${showExtra?'':'hiddenCol'}">${(r.bigramScore*100).toFixed(1)}%</td>
+      <td><code>${escapeHtml(r.shifted.slice(0,160))}${r.shifted.length>160?'…':''}</code></td>
+      <td><button data-shift="${r.shift}" class="small">Select</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  if (topN < results.length) {
+    const remaining = results.length - topN;
+    const trMore = document.createElement('tr');
+    trMore.innerHTML = `
+      <td colspan="8" style="text-align:center;">
+        <button id="showRemaining" class="small">Show ${remaining} remaining results</button>
+      </td>
+    `;
+    tbody.appendChild(trMore);
+    document.getElementById('showRemaining').addEventListener('click', () => {
+      const topNInput = document.getElementById('topN');
+      const toggleAllBtn = document.getElementById('toggleAllShifts');
+      topNInput.value = results.length;
+      if (toggleAllBtn) toggleAllBtn.textContent = 'Show top only';
+      renderResults(results, mode);
+    });
+  }
+
+  tbody.querySelectorAll('button[data-shift]').forEach(btn => btn.addEventListener('click', e => {
+    const s = parseInt(e.currentTarget.getAttribute('data-shift'),10);
+    const obj = results.find(r => r.shift === s);
+    showSelected(obj);
+  }));
+}
+
+function showSelected(obj){
+  if (!obj) return;
+  const out = document.getElementById('chosen');
+  out.textContent = `${obj.shift}: ${obj.shifted}\n\nTotal letters A–Z considered: ${obj.total}\n\nScores:\n  combined: ${obj.combined.toFixed(4)}\n  wordScore: ${(obj.wordScore*100).toFixed(1)}%\n  ham: ${obj.ham} (hamScore ${(obj.hamScore).toFixed(3)})\n  chi²: ${obj.chi2.toFixed(2)} (chiScoreNorm ${(obj.chiScoreNorm||0).toFixed(3)})\n  bigramScore: ${(obj.bigramScore*100).toFixed(1)}%\n\nPreview:\n${obj.shifted}`;
+  out.scrollIntoView({behavior:'smooth'});
+
+  try {
+    document.getElementById('plaintext').value = obj.shifted;
+    updateChartsFromText();
+  } catch (e) {
+    console.warn('Impossibile aggiornare i grafici automaticamente:', e);
+  }
+}
+
+function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const runBtn = document.getElementById('run');
+  const sortHamBtn = document.getElementById('sortHam');
+  const sortChiBtn = document.getElementById('sortChi');
+  const sortCombBtn = document.getElementById('sortComb');
+  const genBtn = document.getElementById('genBtn');
+  const genAnalyzeBtn = document.getElementById('genAnalyzeBtn');
+  const copyCipherBtn = document.getElementById('copyCipher');
+  const toggleAllBtn = document.getElementById('toggleAllShifts');
+  const topNInput = document.getElementById('topN');
+  const toggleColsEl = document.getElementById('toggleCols');
+  const updateChartsBtn = document.getElementById('updateCharts');
+  const downloadCsvBtn = document.getElementById('downloadCsv');
+
+  runBtn.addEventListener('click', tryAll);
+  sortHamBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'ham'));
+  sortChiBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'chi'));
+  sortCombBtn.addEventListener('click', ()=>renderResults(window._lastResults || [], 'combined'));
+
+  genBtn.addEventListener('click', () => {
+    const pt = document.getElementById('plaintext').value || '';
+    const s = Math.max(0, Math.min(25, parseInt(document.getElementById('genShift').value || '0',10)));
+    const map = document.getElementById('genMapAcc').checked;
+    const input = map ? mapAccents(pt) : pt;
+    const c = caesarShift(input, s);
+    document.getElementById('generated').value = c;
+  });
+
+  genAnalyzeBtn.addEventListener('click', () => {
+    genBtn.click();
+    const c = document.getElementById('generated').value || '';
+    document.getElementById('cipher').value = c;
+    tryAll();
+  });
+
+  copyCipherBtn.addEventListener('click', async () => {
+    try {
+      const text = document.getElementById('generated').value || document.getElementById('cipher').value || '';
+      await navigator.clipboard.writeText(text);
+      alert('Cipher copied to clipboard.');
+    } catch (e) {
+      alert('Cannot copy automatically. Copy manually.');
+    }
+  });
+
+  let __showingAll = false;
+  let __prevTopN = null;
+  toggleAllBtn && toggleAllBtn.addEventListener('click', () => {
+    if (!__showingAll) {
+      __prevTopN = parseInt(topNInput.value || '5', 10);
+      topNInput.value = 26;
+      toggleAllBtn.textContent = 'Show top only';
+      __showingAll = true;
+    } else {
+      topNInput.value = (__prevTopN && __prevTopN >= 1) ? __prevTopN : 5;
+      toggleAllBtn.textContent = 'Show all shifts';
+      __showingAll = false;
+    }
+    renderResults(window._lastResults || [], 'combined');
+  });
+
+  toggleColsEl && toggleColsEl.addEventListener('change', () => {
+    renderResults(window._lastResults || [], 'combined');
+  });
+
+  updateChartsBtn && updateChartsBtn.addEventListener('click', () => {
+    updateChartsFromText();
+    alert('Grafici aggiornati');
+  });
+  downloadCsvBtn && downloadCsvBtn.addEventListener('click', downloadCSV);
+
+  initCharts();
+  updateChartsFromText();
+});
+  </script>
+</body>
+</html>

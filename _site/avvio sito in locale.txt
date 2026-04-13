@@ -1,0 +1,5 @@
+cmd shell with ruby
+bundle _2.3.26_ exec jekyll serve
+
+browser
+http://localhost:4000/
