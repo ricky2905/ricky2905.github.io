@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Probability — Theory: Interpretations, Axioms, Measure | Riccardo D'Annibale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{ --bg:#0f111a; --panel:#1a1c2b; --accent:#4CAF50; --muted:#cfd8cf }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:#e0e0e0;padding:2rem;max-width:1100px;margin:auto}
+    .topnav{display:flex;gap:1rem;margin-bottom:1rem}
+    .topnav a{color:var(--accent);text-decoration:none;font-weight:700}
+    h1,h2,h3{color:var(--accent)}
+    .card{background:var(--panel);border-left:5px solid var(--accent);border-radius:8px;padding:1.25rem;margin:1.25rem 0}
+    p{max-width:100%;text-align:justify;margin:0 0 1rem}
+    .display-equation{background:rgba(255,255,255,0.02);padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);margin:12px 0}
+    ol,ul{margin:0 0 1rem;padding-left:1.25rem}
+    pre{background:#0b0c10;color:#dfeee0;padding:12px;border-radius:6px;overflow:auto;border:1px solid rgba(255,255,255,0.03)}
+    .muted{color:var(--muted)}
+    footer{font-size:0.9rem;color:var(--muted);margin-top:1rem}
+    .example{background:rgba(255,255,255,0.02);padding:10px;border-radius:6px;margin:8px 0;border:1px solid rgba(255,255,255,0.03)}
+  </style>
+
+  <script>
+    window.MathJax = {
+      loader: { load: ['input/tex','output/chtml'] },
+      tex: { packages: {'[+]': ['ams','amsmath','amssymb']}, inlineMath:[['\\(','\\)']], displayMath:[['\\[','\\]']] },
+      chtml: { scale:1.06 }, startup:{ typeset:false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+    <div class="wrap">
+     <header class="topnav" role="navigation" aria-label="Main navigation">
+      <a href="/" aria-label="Home">Home</a>
+      <a href="/about/" aria-label="About">About</a>
+      <div style="flex:1"></div>
+    </header>
+
+  <main>
+    <article class="card">
+      <h1>Probability — Interpretations, axiomatic theory, measure</h1>
+    </article>
+
+    <article class="card">
+      <h2>1. Interpretations of probability</h2>
+
+      <p>The term <em>probability</em> is used in different contexts and with meanings that, at first glance, may appear confusing or in conflict. The most common readings are:</p>
+
+      <h3>1.1 Classical interpretation (Laplace)</h3>
+      <p>This applies when the outcome space is finite and the elementary outcomes are considered equally likely for reasons of symmetry. The probability of an event is the ratio between the number of favorable outcomes and the total number of possible outcomes:</p>
+      <div class="example"><strong>Example.</strong> roll of a fair die: \(P(\text{even number}) = 3/6 = 1/2\).</div>
+      <p>Limitation: it is not directly applicable to infinite spaces or continuous variables without an additional criterion that justifies equal weighting.</p>
+
+      <h3>1.2 Frequentist interpretation</h3>
+      <p>Probability is seen as the limit of relative frequencies in the long run: if an experiment is repeated many times, the fraction of times the event occurs tends to its probability.</p>
+      <div class="example"><strong>Example.</strong> If we repeat a Bernoulli experiment \(N\) times and observe \(k_N\) successes, the frequency \(k_N/N\) may stabilize for large \(N\) towards a value \(p\).</div>
+      <p>Limitation: it requires the notion of repeatability and does not assign a probability to single non-repeatable events (e.g., the probability of a unique historical event).</p>
+
+      <h3>1.3 Bayesian interpretation</h3>
+      <p>Probability is a coherent measure of degree of belief or information of a rational agent. An updating rule (Bayes' theorem) is needed to change beliefs in light of new information.</p>
+      <div class="example"><strong>Example.</strong> before testing a drug we have an initial belief about its efficacy (the prior). Trial data update that belief (the posterior).</div>
+      <p>Advantage: it allows assigning probabilities to hypotheses or parameters. Criticism: it requires an explicit choice of prior (but there are principles for 'non-informative' priors).</p>
+
+      <h3>1.4 Geometric / measure interpretation</h3>
+      <p>For continuous phenomena one introduces a measure on a space (e.g., Lebesgue measure on an interval) and normalizes it to obtain probabilities. A point chosen "at random" is modeled via the measure.</p>
+      <div class="example"><strong>Example.</strong> choosing a point at random in the interval \([0,1]\) corresponds to the uniform measure; the length of a subinterval is its probability.</div>
+
+      <h3>1.5 Propensity (physical tendencies)</h3>
+      <p>In physics and philosophy of science the probability is sometimes interpreted as a tendency or disposition of the system to produce certain outcomes: it is an objective property of the system, not merely a matter of our ignorance.</p>
+    <h3>1.6 Apparent conflicts and how axiomatization resolves them</h3>
+
+    <p>
+    The differences often arise from how one constructs the outcome space
+    \((\Omega,\mathcal{F},P)\).
+    The axiomatic approach (Kolmogorov) does not impose a unique construction
+    of \(\Omega\) or \(P\): it imposes formal properties that any construction
+    must satisfy (non-negativity, normalization, σ-additivity).
+    In this way:
+    </p>
+
+    <ul>
+      <li>The classical construction is a special case (finite space with equal weights).</li>
+      <li>Lebesgue measure provides the geometric construction for continuous spaces.</li>
+      <li>The frequentist approach gives an empirical justification for certain constructions of \(P\).</li>
+      <li>The Bayesian uses the same axiomatic structure but interprets the assigned value as a degree of belief.</li>
+    </ul>
+
+    <p>
+    Thus there is no mathematical contradiction: the different readings operate
+    at a semantic/interpretative level but converge on the same mathematical language.
+    </p>
+
+    </article>
+
+    <article class="card">
+      <h2>2. Probability as a measure — technical details</h2>
+
+      <h3>2.1 Probability space</h3>
+      <p>The formal model is the triple</p>
+    <div class="display-equation">
+\[ (\Omega, \mathcal{F}, P) \]
+</div>
+
+    <ul>
+      <li>\(\Omega\): the set of outcomes (sample space).</li>
+      <li>\(\mathcal{F}\): a σ-algebra of measurable subsets (closed under complements and countable unions).</li>
+      <li>\(P:\mathcal{F}\to[0,1]\): a measure with \(P(\Omega)=1\) and σ-additivity.</li>
+    </ul>
+
+    <p><strong>Example of a σ-algebra:</strong> on \(\Omega=\mathbb{R}\) the standard σ-algebra is the Borel σ-algebra \(\mathcal{B}(\mathbb{R})\), generated by open intervals; one often also works with the completion with respect to a measure (e.g., Lebesgue measure).</p>
+
+      <h3>2.2 Random variables and measurability</h3>
+      <p>A random variable is a measurable function</p>
+      <div class="display-equation"> \[ X:(\Omega,\mathcal{F}) \to (\mathbb{R},\mathcal{B}) \] </div>
+      <p>Measurability means that for every Borel set \(B\) the preimage \(X^{-1}(B)\in\mathcal{F}\). This ensures we can speak of the probability that \(X\) falls in a given set and define the pushforward distribution \(P_X\).</p>
+
+      <h3>2.3 Expectation and the Lebesgue integral</h3>
+      <p>The expectation of a random variable is the Lebesgue integral with respect to the probability measure:</p>
+      <div class="display-equation"> \[ \mathbb{E}[X] = \int_\Omega X(\omega)\,P(d\omega) = \int_{\mathbb{R}} x\,P_X(dx). \] </div>
+      <p>This formalism is more general and robust than the Riemann integral: it allows handling heavy-tailed variables, discontinuous functions, convergence issues, etc.</p>
+
+      <h3>2.4 Main notions of convergence</h3>
+      <ul>
+        <li><strong>Almost everywhere convergence (a.e.)</strong>: \(X_n(\omega)\to X(\omega)\) for every \(\omega\) outside a set of measure zero.</li>
+        <li><strong>Convergence in probability</strong>: \(P(|X_n-X|>\varepsilon)\to 0\) for every \(\varepsilon>0\).</li>
+        <li><strong>Convergence in \(L^1\)</strong>: \(\mathbb{E}[|X_n-X|]\to 0\).</li>
+      </ul>
+      <p>Fundamental results (law of large numbers, central limit theorems) are expressed in these terms.</p>
+    </article>
+
+    <article class="card">
+      <h2>3. Required axiomatic derivations</h2>
+
+      <h3>3.1 Subadditivity (Boole)</h3>
+      <p><strong>Statement.</strong> For any sequence of events \(A_1,A_2,\dots\) we have</p>
+      <div class="display-equation"> \[ P\Big(\bigcup_{i=1}^\infty A_i\Big) \le \sum_{i=1}^\infty P(A_i). \] </div>
+      <p><strong>Proof.</strong> Define disjoint sets</p>
+      <div class="display-equation"> \[ B_1 = A_1,\qquad B_n = A_n \setminus \bigcup_{i=1}^{n-1} A_i\ (n\ge2). \] </div>
+      <p>Then the \(B_n\) are disjoint and \(\bigcup_n B_n = \bigcup_n A_n\). By σ-additivity</p>
+      <div class="display-equation"> \[ P\Big(\bigcup_{i=1}^\infty A_i\Big) = \sum_{i=1}^\infty P(B_i). \] </div>
+      <p>Since \(B_i\subseteq A_i\) it follows \(P(B_i)\le P(A_i)\) and therefore summing yields the inequality.</p>
+
+      <h3>3.2 Inclusion–exclusion principle</h3>
+      <p>For a finite number of events \(A_1,\dots,A_n\) we have</p>
+      <div class="display-equation"> 
+        \[
+          P\!\left(\bigcup_{i=1}^n A_i\right)
+          = \sum_{k=1}^n (-1)^{k+1}
+            \sum_{1 \le i_1 < \cdots < i_k \le n}
+            P\!\left(A_{i_1} \cap \cdots \cap A_{i_k}\right).
+        \]
+      </div>
+      <p><strong>Proof (idea).</strong> For each \(\omega\) consider the indicator functions \(1_{A_i}(\omega)\). The combinatorial identity for indicators gives the correct pointwise count; integrating with respect to \(P\) yields the formula for probabilities. An alternative proof proceeds by induction on \(n\) using the identity</p>
+      <div class="display-equation"> \[ P\Big(\bigcup_{i=1}^{n+1}A_i\Big) = P\Big(\bigcup_{i=1}^n A_i\Big) + P(A_{n+1}) - P\Big(\bigcup_{i=1}^n (A_i\cap A_{n+1})\Big). \] </div>
+
+      <p><em>Practical note</em>: the formula is exact but practically impossible to use if \(n\) is large; one therefore resorts to inequalities (Bonferroni) or probabilistic estimates.</p>
+    </article>
+
+    <article class="card">
+      <h2>4. References</h2>
+      <ol>
+        <li>A. N. Kolmogorov — <em>Foundations of the Theory of Probability</em> (1933).</li>
+        <li>P. Billingsley — <em>Probability and Measure</em>.</li>
+        <li>R. Durrett — <em>Probability: Theory and Examples</em>.</li>
+        <li>J. F. C. Kingman — <em>Poisson Processes</em>.</li>
+      </ol>
+    </article>
+
+    <footer>© 2025 Riccardo D'Annibale</footer>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if(window.MathJax && MathJax.typesetPromise){
+        MathJax.typesetPromise().catch(()=>{});
+      }
+    });
+  </script>
+</body>
+</html>
