@@ -40,21 +40,4 @@ The site is a personal portfolio that displays
     </div>
   </div>
 </section>
-
-<section class="section">
-  <h2>Profilo</h2>
-  <div class="grid-2">
-    <div class="card">
-      <h3>Parte tecnica</h3>
-      <p>
-        Un profilo cyber credibile si vede da progetti, architettura e capacità di costruire soluzioni leggibili e solide.
-      </p>
-    </div>
-    <div class="card">
-      <h3>Parte professionale</h3>
-      <p>
-        L'obiettivo è presentare competenze tecniche insieme a un atteggiamento serio, ordinato e orientato alla crescita.
-      </p>
-    </div>
-  </div>
 </section>
