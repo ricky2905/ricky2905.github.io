@@ -13,7 +13,7 @@ permalink: /info/
   <div class="card">
     <h3>Curriculum Vitae</h3>
     <p>Versione PDF pronta per il download e da allegare a candidature, colloqui e networking professionale.</p>
-    <div class="cta-row"><a class="button primary" href="{{ '/assets/docs/Riccardo_Dannibale_CV.pdf' | relative_url }}">Scarica il CV PDF</a></div>
+    <div class="cta-row"><a class="button primary" href="{{ '/assets/docs/Riccardo_DAnnibale_CV.pdf' | relative_url }}">Scarica il CV PDF</a></div>
   </div>
   <div class="card">
     <h3>Contatti</h3>
