@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Home Statistics
+title: Home Page
 permalink: /
 ---
 
