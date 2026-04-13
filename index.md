@@ -5,41 +5,21 @@ permalink: /
 ---
 
 <section class="hero">
-  <div class="kicker">Cybersecurity · engineering · programming</div>
+  <div class="kicker">Cybersecurity · Engineering · Programming</div>
   <h1>Riccardo D’Annibale</h1>
   <p>
-    Studente magistrale in Cybersecurity con background in Information Engineering, programmazione e sistemi.
-    Il sito raccoglie progetti personali, percorso universitario e informazioni professionali in una forma pulita,
-    sobria e orientata a un profilo tecnico serio.
+     Cybersecurity Master’s student with a strong technical background in information engineering and programming, interested in IT security, risk management, and the role of cybersecurity in organizational and business contexts.
   </p>
 
-  <div class="hero-grid">
-    <div class="metric">
-      <strong>Focus</strong>
-      <span>Cybersecurity, risk management, security architecture e contesto organizzativo.</span>
-    </div>
-    <div class="metric">
-      <strong>Background</strong>
-      <span>Programmazione, networking, database, sviluppo web e sistemi Linux/Windows.</span>
-    </div>
-    <div class="metric">
-      <strong>Metodo</strong>
-      <span>Precisione, analisi, attenzione al dettaglio e capacità di lavorare con continuità.</span>
-    </div>
-  </div>
-
-  <div class="cta-row">
-    <a class="button primary" href="{{ '/progetti/' | relative_url }}">Esplora i progetti</a>
-    <a class="button" href="{{ '/universita/' | relative_url }}">Percorso universitario</a>
-    <a class="button" href="{{ '/info/' | relative_url }}">CV e contatti</a>
-    <a class="button" href="{{ '/HOMEWORK/' | relative_url }}">Blog statistica</a>
-  </div>
-</section>
 
 <section class="section">
-  <h2>Panoramica</h2>
+  <h2>Overview</h2>
   <p class="lead">
-    Le sezioni sono organizzate per rendere il portfolio immediato: progetti personali, università, informazioni professionali e un blog separato per gli homework di statistica.
+The site is a personal portfolio that displays
+-👤 personal information
+-📄 Downloadable CV
+-📚 Homework/Projects section
+-🎓 Academic background
   </p>
 
   <div class="grid-3">
