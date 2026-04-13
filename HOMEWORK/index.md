@@ -1,7 +1,7 @@
 ---
-layout: page
+layout: homework
 title: Home Page
-permalink: /
+permalink: /HOMEWORK/
 ---
 
 # Riccardo D'Annibale – 2063306
