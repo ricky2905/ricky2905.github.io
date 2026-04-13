@@ -1,84 +1,52 @@
 ---
-layout: homework
-title: Blog di statistica
-permalink: /HOMEWORK/
+layout: page
+title: Home Page
+permalink: /
 ---
 
-<section class="hw-hero">
-  <div class="hw-kicker">Blog accademico · statistica · appunti e homework</div>
-  <h1>Homework di statistica</h1>
-  <p>
-    Questa area raccoglie gli elaborati del corso in una forma separata dal portfolio principale.
-    La struttura è pensata come un piccolo blog: sezioni chiare, lettura semplice e collegamenti rapidi ai singoli homework.
-  </p>
+# Riccardo D'Annibale – 2063306
 
-  <div class="chips">
-    <span class="chip">Statistica descrittiva</span>
-    <span class="chip">Distribuzioni</span>
-    <span class="chip">Analisi bivariata</span>
-    <span class="chip">SQL e dati</span>
-    <span class="chip">Grafici e script</span>
-  </div>
-</section>
+**Email:** [dannibale.2063306@studenti.uniroma1.it](mailto:dannibale.2063301@studenti.uniroma1.it)  
 
-<section class="hw-section">
-  <h2>Sezioni del blog</h2>
-  <p class="hw-lead">Ogni blocco raggruppa gli homework per tema, così il materiale resta più ordinato e facile da consultare.</p>
+**GitHub:** [ricky2905](https://github.com/ricky2905)  
+[![View on GitHub](https://img.shields.io/badge/View-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/ricky2905)
 
-  <div class="blog-sections">
-    <div class="blog-block">
-      <h3>1. Fondamenti e raccolta dati</h3>
-      <p>Introduzione al lavoro statistico, struttura dei dati, osservazioni e preparazione del materiale.</p>
-      <div class="blog-links">
-        <a href="{{ '/HOMEWORK/homework1/' | relative_url }}"><strong>Homework 1</strong><span>Apri</span></a>
-        <a href="{{ '/HOMEWORK/homework2/' | relative_url }}"><strong>Homework 2</strong><span>Apri</span></a>
-      </div>
-    </div>
+---
 
-    <div class="blog-block">
-      <h3>2. Distribuzioni e grafici</h3>
-      <p>Analisi descrittiva, lettura delle distribuzioni e rappresentazioni visive utili a interpretare i dati.</p>
-      <div class="blog-links">
-        <a href="{{ '/HOMEWORK/homework3/' | relative_url }}"><strong>Homework 3</strong><span>Apri</span></a>
-        <a href="{{ '/HOMEWORK/homework4/' | relative_url }}"><strong>Homework 4</strong><span>Apri</span></a>
-      </div>
-    </div>
+## Welcome to My Cybersecurity Blog
 
-    <div class="blog-block">
-      <h3>3. Analisi bivariata</h3>
-      <p>Confronto tra variabili, relazioni, correlazioni e interpretazione con supporto grafico.</p>
-      <div class="blog-links">
-        <a href="{{ '/HOMEWORK/homework5/' | relative_url }}"><strong>Homework 5</strong><span>Apri</span></a>
-        <a href="{{ '/HOMEWORK/homework6/' | relative_url }}"><strong>Homework 6</strong><span>Apri</span></a>
-      </div>
-    </div>
+This blog is dedicated to **Statistics and Cybersecurity**.  
 
-    <div class="blog-block">
-      <h3>4. SQL, elaborazione dati e script</h3>
-      <p>Query, gestione dei dati, automazione e supporto tecnico per l'analisi.</p>
-      <div class="blog-links">
-        <a href="{{ '/HOMEWORK/homework7/' | relative_url }}"><strong>Homework 7</strong><span>Apri</span></a>
-        <a href="{{ '/HOMEWORK/homework8/' | relative_url }}"><strong>Homework 8</strong><span>Apri</span></a>
-      </div>
-    </div>
+Here you will find **homework, projects, articles, and insights** on cybersecurity topics.
 
-    <div class="blog-block">
-      <h3>5. Approfondimenti finali</h3>
-      <p>Materiale conclusivo, esercizi integrativi e casi utili per ripassare l'intero percorso.</p>
-      <div class="blog-links">
-        <a href="{{ '/HOMEWORK/homework9/' | relative_url }}"><strong>Homework 9</strong><span>Apri</span></a>
-        <a href="{{ '/HOMEWORK/homework10/' | relative_url }}"><strong>Homework 10</strong><span>Apri</span></a>
-        <a href="{{ '/HOMEWORK/homework11/' | relative_url }}"><strong>Homework 11</strong><span>Apri</span></a>
-      </div>
-    </div>
-  </div>
-</section>
+---
 
-<section class="hw-section">
-  <h2>Nota</h2>
-  <p class="hw-lead">
-    Se in futuro vuoi ampliare questa sezione, puoi aggiungere per ogni homework un breve abstract, un'immagine del risultato e un link al file originale.
-  </p>
-</section>
+## Homework Assignments
 
-<div class="hw-footer">Blog separato dal portfolio principale.</div>
+Select Homework:
+
+- [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
+- [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/index.html)
+- [Homework 3 – RSA (toy) — Letter-level encryption and statistical recovery](/HOMEWORK/homework3/index.html)
+- [Homework 4 – Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
+- [Homework 5 – Measures of Location and Dispersion](/HOMEWORK/homework5/index.html)
+- [Homework 6 –  Mean and Variance Simulator - Numerical Stability and Algorithm Comparison](/HOMEWORK/homework6/index.html)
+- [Homework 7 – Random Walk & Binomial Convergence](/HOMEWORK/homework7/index.html)
+- [Homework 8 – Bernoulli process, LLN, Pascal & Fibonacci](/HOMEWORK/homework8/index.html)
+- [Homework 9 – Foundations of Probability Theory](/HOMEWORK/homework9/index.html)
+- [Homework 10 – Simulating a Counting Process](/HOMEWORK/homework10/index.html)
+- [Homework 11 – Wiener Process: Interactive Simulators, Scale Tests, and Statistical Diagnostics](/HOMEWORK/homework11/index.html)
+
+
+
+---
+
+## About Me
+
+Learn more about me in the [About page](/about/).
+
+---
+
+## Statistics 2025/2026
+
+In this Website I will publish the **homeworks** of the Statistics course (delivered in the academic year 2025/2026).
