@@ -14,7 +14,7 @@ permalink: /info/
   <div class="card">
     <h3>Curriculum Vitae</h3>
     <p>PDF version ready for download.</p>
-    <div class="cta-row"><a class="button primary" href="{{ '/assets/docs/Riccardo\\\_DAnnibale\\\_CV.pdf' | relative\\\_url }}">Download the CV PDF</a></div>
+    <div class="cta-row"><a class="button primary" href="{{ '/assets/docs/Riccardo_DAnnibale_CV.pdf' | relative\\\_url }}">Download the CV PDF</a></div>
   </div>
   <div class="card">
     <h3>Contatti</h3>
