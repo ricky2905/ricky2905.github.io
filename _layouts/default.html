@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{{ page.title | default: site.title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="topbar">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <span class="brand-mark">RD</span>
+        <span>{{ site.title | default: "Riccardo D'Annibale" }}</span>
+      </a>
+      <nav class="nav">
+        <a href="{{ '/' | relative_url }}" class="{% if page.url == '/' %}active{% endif %}">Home</a>
+        <a href="{{ '/progetti/' | relative_url }}" class="{% if page.url contains 'progetti' %}active{% endif %}">Projects</a>
+        <a href="{{ '/universita/' | relative_url }}" class="{% if page.url contains 'universita' %}active{% endif %}">University</a>
+        <a href="{{ '/info/' | relative_url }}" class="{% if page.url contains 'info' %}active{% endif %}">Info / CV</a>
+      </nav>
+    </header>
+
+    <main>
+      {{ content }}
+    </main>
+
+  <footer class="footer">
+    <div>© {{ site.time | date: "%Y" }} Riccardo D'Annibale</div>
+  </footer>
+  </div>
+</body>
+</html>

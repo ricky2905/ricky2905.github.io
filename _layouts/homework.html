@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ '/assets/css/homework.css' | relative_url }}">
+</head>
+<body>
+  <header>
+    <nav class="topnav">
+      <a href="{{ '/' | relative_url }}">Portfolio</a>
+      <a href="{{ '/HOMEWORK/' | relative_url }}">Home of blog</a>
+      <a href="{{ '/info' | relative_url }}">About Me</a>
+    </nav>
+  </header>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer>
+    <p>© 2025 Riccardo D'Annibale</p>
+  </footer>
+</body>
+</html>

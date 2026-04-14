@@ -1,0 +1,51 @@
+---
+layout: homework
+title: Home Page
+permalink: /HOMEWORK/
+---
+
+# Riccardo D'Annibale – 2063306
+
+**Email:** [dannibale.2063306@studenti.uniroma1.it](mailto:dannibale.2063306@studenti.uniroma1.it)
+
+**GitHub:** [ricky2905](https://github.com/ricky2905)
+
+[![View on GitHub](https://img.shields.io/badge/View-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/ricky2905)
+
+---
+
+## Welcome to My Cybersecurity Blog
+
+This blog is dedicated to **Statistics and Cybersecurity**.
+
+Here you will find **homework, projects, articles, and insights** on cybersecurity topics.
+
+---
+
+## Homework Assignments
+
+Select Homework:
+
+* [Homework 1 – Statistics and Its Role in Cybersecurity](/HOMEWORK/homework1/)
+* [Homework 2 – Decoding Language: Exploring Algorithms and Frequency Distributions](/HOMEWORK/homework2/index.html)
+* [Homework 3 – RSA (toy) — Letter-level encryption and statistical recovery](/HOMEWORK/homework3/index.html)
+* [Homework 4 – Law of Large Numbers — Simulation and Visualization](/HOMEWORK/homework4/index.html)
+* [Homework 5 – Measures of Location and Dispersion](/HOMEWORK/homework5/index.html)
+* [Homework 6 – Mean and Variance Simulator - Numerical Stability and Algorithm Comparison](/HOMEWORK/homework6/index.html)
+* [Homework 7 – Random Walk & Binomial Convergence](/HOMEWORK/homework7/index.html)
+* [Homework 8 – Bernoulli process, LLN, Pascal & Fibonacci](/HOMEWORK/homework8/index.html)
+* [Homework 9 – Foundations of Probability Theory](/HOMEWORK/homework9/index.html)
+* [Homework 10 – Simulating a Counting Process](/HOMEWORK/homework10/index.html)
+* [Homework 11 – Wiener Process: Interactive Simulators, Scale Tests, and Statistical Diagnostics](/HOMEWORK/homework11/index.html)
+
+---
+
+## About Me
+
+Learn more about me in the [About page](/about/).
+
+---
+
+## Statistics 2025/2026
+
+In this website I publish the **homeworks** of the Statistics course for academic year 2025/2026.
