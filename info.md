@@ -1,11 +1,9 @@
-\---
-
+---
 layout: default
 title: Info / CV
 permalink: /info/
 ---
 
-\---
 
 <h1 class="page-title">Info, CV and contacts</h1>
 <p class="page-subtitle">
