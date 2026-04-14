@@ -42,7 +42,7 @@ Select Homework:
 
 ## About Me
 
-Learn more about me in the [About page](/about/).
+Learn more about me in the [About page](/info/).
 
 ---
 
