@@ -1,11 +1,9 @@
-\---
-
+---
 layout: default
 title: Progetti personali 
 permalink: /progetti/
 ---
 
-\---
 
 
 
