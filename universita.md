@@ -1,12 +1,8 @@
-\---
-
+---
 layout: default
-
 title: Università
-
 permalink: /universita/
-
-\---
+---
 
 <style>
 
